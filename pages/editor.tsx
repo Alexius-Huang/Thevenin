@@ -1,6 +1,7 @@
 import React from 'react';
 import { NextPage } from 'next';
 import Layout from '../components/Layout';
+import Workspace from '../components/Editor.Workspace';
 
 type EditorProps = {};
 
@@ -14,7 +15,9 @@ const Editor: NextPage<EditorProps> = () => (
       </aside>
 
       <section className="circuitry-design">
-        Design...
+        <Workspace>
+
+        </Workspace>
       </section>
 
       <style jsx>{`
@@ -31,6 +34,7 @@ const Editor: NextPage<EditorProps> = () => (
           background-color: #222;
           color: white;
           display: inline-block;
+          vertical-align: top;
         }
 
         aside.tools > div.title-wrapper > h1 {
@@ -43,6 +47,7 @@ const Editor: NextPage<EditorProps> = () => (
           width: 70vw;
           height: 100vh;
           display: inline-block;
+          vertical-align: top;
         }
       `}</style>
     </div>
