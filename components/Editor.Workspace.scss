@@ -2,7 +2,7 @@ svg#workspace {
   display: inline-block;
   background-color: #aaa;
 
-  & > g.grid {
+  & > g > g.grid {
 
     & > rect.grid-bg {
       fill: white;

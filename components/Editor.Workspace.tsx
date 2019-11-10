@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import IdealWire from './Circuit.IdealWire';
 import './Editor.Workspace.scss';
 
 type Coordinate = [number, number];
@@ -12,7 +13,6 @@ type WorkspaceState = {
     unitSize: number;
     rows: number;
     columns: number;
-    center: Coordinate;
   };
 };
 
@@ -26,7 +26,6 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
       unitSize: 25,
       rows: 10,
       columns: 10,
-      center: [5, 5],
     },
   };
   private svgRef: SVGSVGElement | null = null;
@@ -42,7 +41,7 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
 
   private get workspaceTranslation() {
     const { width, height } = this.state.svg;
-    const { unitSize, rows, columns, center } = this.state.workspace;
+    const { unitSize, rows, columns } = this.state.workspace;
 
     const coord: Coordinate = [
       (width - (rows * unitSize)) / 2,
@@ -83,23 +82,33 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox={this.svgViewBox}
     >
-      <g className="grid" transform={this.workspaceTranslation}>
-        <rect
-          transform={`translate(${[-unitSize / 2, -unitSize / 2]})`}
-          className="grid-bg"
-          width={(rows + 1) * unitSize}
-          height={(columns + 1) * unitSize}
-        />
+      <g transform={this.workspaceTranslation}>
+        <g className="grid">
+          <rect
+            transform={`translate(${[-unitSize / 2, -unitSize / 2]})`}
+            className="grid-bg"
+            width={(rows + 1) * unitSize}
+            height={(columns + 1) * unitSize}
+          />
 
-        {
-          Array.from(Array(rows)).map((_, i) =>
-            Array.from(Array(columns)).map((_, j) =>
-              <circle className="grid-point" key={`${i}-${j}`} cx={(i + .5) * unitSize} cy={(j + .5) * unitSize} />
+          {
+            Array.from(Array(rows)).map((_, i) =>
+              Array.from(Array(columns)).map((_, j) =>
+                <circle className="grid-point" key={`${i}-${j}`} cx={(i + .5) * unitSize} cy={(j + .5) * unitSize} />
+              )
             )
-          )
-        }
+          }
+        </g>
+
+
+        <g className="circuit">
+          <IdealWire
+            terminals={[[1, 1], [1, 5]]}
+            unitSize={unitSize}
+          />
+        </g>
+        {this.props.children}
       </g>
-      {this.props.children}
     </svg>;
   }
 };
