@@ -1,4 +1,5 @@
-import React, { ReactNode, Fragment, useState, useEffect, useRef } from 'react';
+import React, { ReactNode } from 'react';
+import './Editor.Workspace.scss';
 
 type Coordinate = [number, number];
 type WorkspaceProps = { children: ReactNode };
@@ -29,10 +30,6 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
     },
   };
   private svgRef: SVGSVGElement | null = null;
-
-  // constructor(props: WorkspaceProps) {
-  //   super(props);
-  // }
 
   static async getInitialProps() {
     return {};
@@ -77,50 +74,33 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
   render() {
     const { rows, columns, unitSize } = this.state.workspace;
 
-    return (
-      <Fragment>
-        <svg
-          ref={(c) => { this.svgRef = c; }}
-          id="workspace"
-          width="100%"
-          height="100%"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlnsXlink="http://www.w3.org/1999/xlink"
-          viewBox={this.svgViewBox}
-        >
-          <g className="grid" transform={this.workspaceTranslation}>
-            <rect
-              transform={`translate(${[-unitSize / 2, -unitSize / 2]})`}
-              className="grid-bg"
-              width={(rows + 1) * unitSize}
-              height={(columns + 1) * unitSize}
-            />
+    return <svg
+      ref={(c) => { this.svgRef = c; }}
+      id="workspace"
+      width="100%"
+      height="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      viewBox={this.svgViewBox}
+    >
+      <g className="grid" transform={this.workspaceTranslation}>
+        <rect
+          transform={`translate(${[-unitSize / 2, -unitSize / 2]})`}
+          className="grid-bg"
+          width={(rows + 1) * unitSize}
+          height={(columns + 1) * unitSize}
+        />
 
-            {
-              Array.from(Array(rows)).map((_, i) =>
-                Array.from(Array(columns)).map((_, j) =>
-                  <circle cx={(i + .5) * unitSize} cy={(j + .5) * unitSize} r="1" fill="rgba(0, 0, 0, 0.3)" />
-                )
-              )
-            }
-          </g>
-          {this.props.children}
-        </svg>
-  
-        <style jsx>{`
-          svg#workspace {
-            display: inline-block;
-            background-color: #aaa;
-          }
-
-          svg#workspace > g.grid > rect.grid-bg {
-            fill: white;
-            stroke: #333;
-            stroke-width: 1;
-          }
-        `}</style>
-      </Fragment>
-    );
+        {
+          Array.from(Array(rows)).map((_, i) =>
+            Array.from(Array(columns)).map((_, j) =>
+              <circle className="grid-point" key={`${i}-${j}`} cx={(i + .5) * unitSize} cy={(j + .5) * unitSize} />
+            )
+          )
+        }
+      </g>
+      {this.props.children}
+    </svg>;
   }
 };
 

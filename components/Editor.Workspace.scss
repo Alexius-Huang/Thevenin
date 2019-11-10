@@ -1,0 +1,18 @@
+svg#workspace {
+  display: inline-block;
+  background-color: #aaa;
+
+  & > g.grid {
+
+    & > rect.grid-bg {
+      fill: white;
+      stroke: #333;
+      stroke-width: 1;
+    }
+
+    & > circle.grid-point {
+      r: 1;
+      fill: rgba(0, 0, 0, 0.3);
+    }
+  }
+}
