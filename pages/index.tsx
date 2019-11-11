@@ -1,12 +1,11 @@
-import React from 'react';
-import Layout from '../components/Layout';
+import React, { Fragment } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 
 type HomePageProps = {};
 
 const Home: NextPage<HomePageProps> = () => (
-  <Layout>
+  <Fragment>
     <div className="home">
       <h1 className="title">Welcome to <span className="main">Conductor</span>!</h1>
 
@@ -25,7 +24,7 @@ const Home: NextPage<HomePageProps> = () => (
         line-height: 48pt;
       }
     `}</style>
-  </Layout>
+  </Fragment>
 );
 
 export default Home;

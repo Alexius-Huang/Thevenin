@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { connect } from 'react-redux';
 import IdealWire from './Circuit.IdealWire';
 import './Editor.Workspace.scss';
 
@@ -72,6 +73,7 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
 
   render() {
     const { rows, columns, unitSize } = this.state.workspace;
+    console.log(this.props);
 
     return <svg
       ref={(c) => { this.svgRef = c; }}
@@ -113,4 +115,4 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
   }
 };
 
-export default Workspace;
+export default connect(state => state)(Workspace);
