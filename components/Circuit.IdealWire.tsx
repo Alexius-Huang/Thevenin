@@ -1,12 +1,8 @@
 import React, { FC } from 'react';
+import { connect } from 'react-redux';
+import { IdealWireProps } from './Circuit.IdealWire.d';
+import State from '../reducers/State';
 import './Circuit.IdealWire.scss';
-
-type Coordinate = [number, number];
-
-type IdealWireProps = {
-  terminals: [Coordinate, Coordinate];
-  unitSize: number;
-};
 
 const IdealWire: FC<IdealWireProps> = ({ terminals, unitSize }) => {
   const pathDirectives = 'M ' + terminals
@@ -18,4 +14,8 @@ const IdealWire: FC<IdealWireProps> = ({ terminals, unitSize }) => {
   );
 };
 
-export default IdealWire;
+function mapStateToProps({ Workspace: w }: { Workspace: State }) {
+  return { unitSize: w.unitSize };
+}
+
+export default connect(mapStateToProps)(IdealWire);

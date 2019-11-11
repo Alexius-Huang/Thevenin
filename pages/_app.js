@@ -1,20 +1,18 @@
 // pages/_app.js
 import React from "react";
+import App from "next/app";
+
+import withRedux from "next-redux-wrapper";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import App from "next/app";
-import withRedux from "next-redux-wrapper";
-import Layout from '../components/Layout';
 import { combineReducers } from 'redux';
+import { Workspace } from '../reducers';
 
-const reducer = (state = { foo: '' }, action) => {
-  switch (action.type) {
-    case 'FOO':
-      return {...state, foo: action.payload};
-    default:
-      return state
-  }
-};
+import Layout from '../layouts/Default';
+
+const rootReducer = combineReducers({
+  Workspace,
+})
 
 /**
 * @param {object} initialState
@@ -25,16 +23,15 @@ const reducer = (state = { foo: '' }, action) => {
 * @param {string} options.storeKey This key will be used to preserve store in global namespace for safe HMR 
 */
 const makeStore = (initialState/* , options */) => {
-  return createStore(combineReducers({ bar: reducer }), initialState);
+  return createStore(rootReducer, initialState);
 };
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
     // we can dispatch from here too
-    ctx.store.dispatch({ type: 'FOO', payload: 'foo' });
+    // ctx.store.dispatch({ type: 'FOO', payload: 'foo' });
 
     const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
-
     return { pageProps };
   }
 

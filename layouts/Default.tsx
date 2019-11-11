@@ -1,7 +1,7 @@
 import React, { ReactNode, Fragment } from 'react';
 import Head from 'next/head';
 import { NextPage } from 'next';
-import './Layout.scss';
+import './Default.scss';
 
 type LayoutProps = { children: ReactNode };
 

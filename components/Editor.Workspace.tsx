@@ -1,34 +1,13 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import { WorkspaceProps, WorkspaceState, Coordinate } from './Editor.Workspace.d';
 import IdealWire from './Circuit.IdealWire';
+import * as actions from '../actions/Workspace';
+import State from '../reducers/State';
 import './Editor.Workspace.scss';
 
-type Coordinate = [number, number];
-type WorkspaceProps = { children: ReactNode };
-type WorkspaceState = {
-  svg: {
-    width: number;
-    height: number;
-  };
-  workspace: {
-    unitSize: number;
-    rows: number;
-    columns: number;
-  };
-};
-
 class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
-  public state: WorkspaceState = {
-    svg: {
-      width: 0,
-      height: 0,
-    },
-    workspace: {
-      unitSize: 25,
-      rows: 10,
-      columns: 10,
-    },
-  };
+  public state: WorkspaceState = {};
   private svgRef: SVGSVGElement | null = null;
 
   static async getInitialProps() {
@@ -36,13 +15,12 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
   }
 
   private get svgViewBox() {
-    const { width, height } = this.state.svg;
+    const { width, height } = this.props;
     return `0 0 ${width} ${height}`;
   }
 
   private get workspaceTranslation() {
-    const { width, height } = this.state.svg;
-    const { unitSize, rows, columns } = this.state.workspace;
+    const { width, height, unitSize, rows, columns } = this.props;
 
     const coord: Coordinate = [
       (width - (rows * unitSize)) / 2,
@@ -67,13 +45,12 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
   private handleResize = () => {
     if (this.svgRef !== null) {
       const { clientWidth: width, clientHeight: height } = this.svgRef;
-      this.setState(state => ({ ...state, svg: { ...state.svg, width, height } }));
+      this.props.dispatch(actions.setSize({ width, height }));
     }
   }
 
   render() {
-    const { rows, columns, unitSize } = this.state.workspace;
-    console.log(this.props);
+    const { rows, columns, unitSize } = this.props;
 
     return <svg
       ref={(c) => { this.svgRef = c; }}
@@ -106,7 +83,6 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
         <g className="circuit">
           <IdealWire
             terminals={[[1, 1], [1, 5]]}
-            unitSize={unitSize}
           />
         </g>
         {this.props.children}
@@ -115,4 +91,8 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
   }
 };
 
-export default connect(state => state)(Workspace);
+function mapStateToProps({ Workspace: w }: { Workspace: State }) {
+  return w;
+}
+
+export default connect(mapStateToProps)(Workspace);
