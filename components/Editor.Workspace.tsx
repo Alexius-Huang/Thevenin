@@ -52,6 +52,17 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
   render() {
     const { rows, columns, unitSize } = this.props;
 
+    const renderGridPoints = Array.from(Array(rows)).map((_, i) =>
+      Array.from(Array(columns)).map((_, j) =>
+        <circle
+          className="grid-point"
+          key={`${i}-${j}`}
+          cx={(i + .5) * unitSize}
+          cy={(j + .5) * unitSize}
+        />
+      )
+    );
+
     return <svg
       ref={(c) => { this.svgRef = c; }}
       id="workspace"
@@ -70,13 +81,7 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
             height={(columns + 1) * unitSize}
           />
 
-          {
-            Array.from(Array(rows)).map((_, i) =>
-              Array.from(Array(columns)).map((_, j) =>
-                <circle className="grid-point" key={`${i}-${j}`} cx={(i + .5) * unitSize} cy={(j + .5) * unitSize} />
-              )
-            )
-          }
+          {renderGridPoints}
         </g>
 
 
