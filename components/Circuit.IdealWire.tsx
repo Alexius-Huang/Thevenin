@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { connect } from 'react-redux';
 import { IdealWireProps } from './Circuit.IdealWire.d';
-import State from '../reducers/State';
+import { WorkspaceStoreState } from '../reducers/State';
 import './Circuit.IdealWire.scss';
 
 const IdealWire: FC<IdealWireProps> = ({ terminals, unitSize }) => {
@@ -14,7 +14,7 @@ const IdealWire: FC<IdealWireProps> = ({ terminals, unitSize }) => {
   );
 };
 
-function mapStateToProps({ Workspace: w }: { Workspace: State }) {
+function mapStateToProps({ Workspace: w }: { Workspace: WorkspaceStoreState }) {
   return { unitSize: w.unitSize };
 }
 
