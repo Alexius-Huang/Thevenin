@@ -1,103 +1,95 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { WorkspaceProps, WorkspaceState, Coordinate } from './Workspace.d';
-import IdealWire from '../Circuit.IdealWire';
+import { connect, useDispatch } from 'react-redux';
+import { WorkspaceProps, Coordinate } from './Workspace.d';
+// import IdealWire from '../Circuit.IdealWire';
+import { useResize } from '../../hooks';
 import * as actions from '../../actions/Workspace';
-import { WorkspaceStoreState } from '../../reducers/State.d';
+import { WorkspaceStoreState, ToolsStoreState } from '../../reducers/State.d';
 import './Workspace.scss';
 
-class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
-  public state: WorkspaceState = {};
-  private svgRef: SVGSVGElement | null = null;
+const Workspace: React.FC<WorkspaceProps> = ({
+  width,
+  height,
+  rows,
+  columns,
+  unitSize,
+  children,
+}) => {
+  const dispatch = useDispatch();
 
-  static async getInitialProps() {
-    return {};
-  }
+  const $svg = React.createRef<SVGSVGElement>();
+  const $circuit = React.createRef<SVGRectElement>();
 
-  private get svgViewBox() {
-    const { width, height } = this.props;
-    return `0 0 ${width} ${height}`;
-  }
+  const svgViewBox = `0 0 ${width} ${height}`;
 
-  private get workspaceTranslation() {
-    const { width, height, unitSize, rows, columns } = this.props;
+  const coord: Coordinate = [
+    (width - (rows * unitSize)) / 2,
+    (height - (columns * unitSize)) / 2,
+  ];
+  const workspaceTranslation = `translate(${coord})`;
 
-    const coord: Coordinate = [
-      (width - (rows * unitSize)) / 2,
-      (height - (columns * unitSize)) / 2,
-    ];
-    return `translate(${coord})`;
-  }
-
-  public componentDidMount() {
-    if (process.browser) {
-      this.handleResize();
-      window.addEventListener('resize', this.handleResize);
+  const handleResize = () => {
+    if ($svg.current !== null) {
+      const { clientWidth: width, clientHeight: height } = $svg.current;
+      dispatch(actions.setSize({ width, height }));
     }
-  }
+  };
 
-  public componentWillUnmount() {
-    if (process.browser) {
-      window.removeEventListener('resize', this.handleResize);
-    }
-  }
+  useResize(handleResize);
 
-  private handleResize = () => {
-    if (this.svgRef !== null) {
-      const { clientWidth: width, clientHeight: height } = this.svgRef;
-      this.props.dispatch(actions.setSize({ width, height }));
-    }
-  }
+  // private handleMousemove = (e: React.MouseEvent) => {
+  //   console.log(e.target);
+  // }
 
-  render() {
-    const { rows, columns, unitSize } = this.props;
+  const renderGridPoints = Array.from(Array(rows)).map((_, i) =>
+    Array.from(Array(columns)).map((_, j) =>
+      <circle
+        className="grid-point"
+        key={`${i}-${j}`}
+        cx={(i + .5) * unitSize}
+        cy={(j + .5) * unitSize}
+      />
+    )
+  );
 
-    const renderGridPoints = Array.from(Array(rows)).map((_, i) =>
-      Array.from(Array(columns)).map((_, j) =>
-        <circle
-          className="grid-point"
-          key={`${i}-${j}`}
-          cx={(i + .5) * unitSize}
-          cy={(j + .5) * unitSize}
+  return <svg
+    ref={$svg}
+    id="workspace"
+    width="100%"
+    height="100%"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+    viewBox={svgViewBox}
+  >
+    <g transform={workspaceTranslation}>
+      <g className="grid">
+        <rect
+          ref={$circuit}
+          // onMouseMove={handleMousemove}
+          transform={`translate(${[-unitSize / 2, -unitSize / 2]})`}
+          className="grid-bg"
+          width={(rows + 1) * unitSize}
+          height={(columns + 1) * unitSize}
         />
-      )
-    );
 
-    return <svg
-      ref={(c) => { this.svgRef = c; }}
-      id="workspace"
-      width="100%"
-      height="100%"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
-      viewBox={this.svgViewBox}
-    >
-      <g transform={this.workspaceTranslation}>
-        <g className="grid">
-          <rect
-            transform={`translate(${[-unitSize / 2, -unitSize / 2]})`}
-            className="grid-bg"
-            width={(rows + 1) * unitSize}
-            height={(columns + 1) * unitSize}
-          />
-
-          {renderGridPoints}
-        </g>
-
-
-        <g className="circuit">
-          <IdealWire
-            terminals={[[1, 1], [1, 5]]}
-          />
-        </g>
-
-        {this.props.children}
+        {renderGridPoints}
       </g>
-    </svg>;
-  }
+
+
+      <g className="circuit">
+      </g>
+
+      {children}
+    </g>
+  </svg>;
+}
+
+type DestructuredStore = {
+  Tools: ToolsStoreState,
+  Workspace: WorkspaceStoreState,
 };
 
-function mapStateToProps({ Workspace: w }: { Workspace: WorkspaceStoreState }) {
+function mapStateToProps({ Tools: t, Workspace: w }: DestructuredStore) {
   return w;
 }
 
