@@ -11,6 +11,9 @@ export type WorkspaceProps = {
   columns: number;
   children: ReactNode;
   dispatch: (action: Action) => void;
+
+  svgViewBox: string;
+  workspaceTranslation: string;
 };
 
 export type WorkspaceState = {};

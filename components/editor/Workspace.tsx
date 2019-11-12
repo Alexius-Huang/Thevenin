@@ -1,32 +1,27 @@
 import React from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { WorkspaceProps, Coordinate } from './Workspace.d';
+import { WorkspaceProps } from './Workspace.d';
 // import IdealWire from '../Circuit.IdealWire';
 import { useResize } from '../../hooks';
 import * as actions from '../../actions/Workspace';
+import * as selectors from '../../selectors/Workspace';
 import { WorkspaceStoreState, ToolsStoreState } from '../../reducers/State.d';
 import './Workspace.scss';
 
 const Workspace: React.FC<WorkspaceProps> = ({
-  width,
-  height,
+  // width,
+  // height,
   rows,
   columns,
   unitSize,
   children,
+  svgViewBox,
+  workspaceTranslation,
 }) => {
   const dispatch = useDispatch();
 
   const $svg = React.createRef<SVGSVGElement>();
   const $circuit = React.createRef<SVGRectElement>();
-
-  const svgViewBox = `0 0 ${width} ${height}`;
-
-  const coord: Coordinate = [
-    (width - (rows * unitSize)) / 2,
-    (height - (columns * unitSize)) / 2,
-  ];
-  const workspaceTranslation = `translate(${coord})`;
 
   const handleResize = () => {
     if ($svg.current !== null) {
@@ -89,8 +84,12 @@ type DestructuredStore = {
   Workspace: WorkspaceStoreState,
 };
 
-function mapStateToProps({ Tools: t, Workspace: w }: DestructuredStore) {
-  return w;
+function mapStateToProps({ Workspace: w }: DestructuredStore) {
+  return {
+    svgViewBox: selectors.svgViewBoxSelector(w),
+    workspaceTranslation: selectors.workspaceTranslationSelector(w),
+    ...w,
+  };
 }
 
 export default connect(mapStateToProps)(Workspace);
