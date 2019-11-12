@@ -5,14 +5,10 @@ import App from "next/app";
 import withRedux from "next-redux-wrapper";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import { combineReducers } from 'redux';
-import { Workspace } from '../reducers';
+import RootReducer from '../reducers';
 
 import Layout from '../layouts/Default';
 
-const rootReducer = combineReducers({
-  Workspace,
-})
 
 /**
 * @param {object} initialState
@@ -23,7 +19,7 @@ const rootReducer = combineReducers({
 * @param {string} options.storeKey This key will be used to preserve store in global namespace for safe HMR 
 */
 const makeStore = (initialState/* , options */) => {
-  return createStore(rootReducer, initialState);
+  return createStore(RootReducer, initialState);
 };
 
 class MyApp extends App {

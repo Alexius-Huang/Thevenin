@@ -1,15 +1,17 @@
 import { IElectronic } from "../lib/Electronic";
 
-type WorkspaceState = {
+export type ToolsStoreState = {
+  selectedTool: string | null;
+}
+
+export type WorkspaceStoreState = {
   width: number;
   height: number;
   unitSize: number;
   rows: number;
   columns: number;
-
-  electronics: Array<IElectronic>;
 }
 
-type State = WorkspaceState;
+type State = ToolsStoreState | WorkspaceStoreState;
 
 export default State;

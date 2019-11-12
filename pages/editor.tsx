@@ -1,20 +1,19 @@
 import React from 'react';
 import { NextPage } from 'next';
-import Workspace from '../components/Editor.Workspace';
+import Tools from '../components/editor/Tools';
+import Workspace from '../components/editor/Workspace';
 
 type EditorProps = {};
 
 const Editor: NextPage<EditorProps> = () => (
   <div className="Editor">
-    <aside className="tools">
-      <div className="title-wrapper">
-        <h1>Tools</h1>
-      </div>
+    <aside className="tools-wrapper">
+      <Tools>
+      </Tools>
     </aside>
 
     <section className="circuitry-design">
       <Workspace>
-
       </Workspace>
     </section>
 
@@ -26,19 +25,13 @@ const Editor: NextPage<EditorProps> = () => (
         overflow: hidden;
       }
 
-      div.Editor > aside.tools {
+      div.Editor > aside.tools-wrapper {
         width: 30vw;
         height: 100vh;
         background-color: #222;
         color: white;
         display: inline-block;
         vertical-align: top;
-      }
-
-      aside.tools > div.title-wrapper > h1 {
-        padding: 8pt 12pt;
-        font-size: 12pt;
-        color: white;
       }
 
       div.Editor > section.circuitry-design {

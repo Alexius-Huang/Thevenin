@@ -1,6 +1,4 @@
-import actionCreatorFactory from 'typescript-fsa';
-
-const createAction = actionCreatorFactory();
+import createAction from './createAction';
 
 export const setSize = createAction<{
   height: number;

@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { WorkspaceProps, WorkspaceState, Coordinate } from './Editor.Workspace.d';
-import IdealWire from './Circuit.IdealWire';
-import * as actions from '../actions/Workspace';
-import State from '../reducers/State';
-import './Editor.Workspace.scss';
+import { WorkspaceProps, WorkspaceState, Coordinate } from './Workspace.d';
+import IdealWire from '../Circuit.IdealWire';
+import * as actions from '../../actions/Workspace';
+import { WorkspaceStoreState } from '../../reducers/State.d';
+import './Workspace.scss';
 
 class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
   public state: WorkspaceState = {};
@@ -90,13 +90,14 @@ class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
             terminals={[[1, 1], [1, 5]]}
           />
         </g>
+
         {this.props.children}
       </g>
     </svg>;
   }
 };
 
-function mapStateToProps({ Workspace: w }: { Workspace: State }) {
+function mapStateToProps({ Workspace: w }: { Workspace: WorkspaceStoreState }) {
   return w;
 }
 

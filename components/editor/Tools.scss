@@ -1,0 +1,59 @@
+div.list-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10pt 12pt;
+
+  & > h2 {
+    font-size: 16pt;
+    color: white;
+  }
+
+  & > h2 + ul {
+    margin-top: 6pt
+  }
+
+  & > ul {
+    font-size: 0;
+    & > li {
+      display: inline-block;
+      width: 50%;
+
+      & > button {
+        border: none;
+        height: 32pt;
+        line-height: 32pt;
+        width: 100%;
+        background-color: #aaa;
+        transition: .25s;
+      }
+
+      & > button:hover {
+        background-color: #ddd;
+        transition: .25s;
+      }
+
+      &.active > button,
+      &.active > button.hover {
+        background-color: white;
+      }
+
+      & > button > img {
+        vertical-align: middle;
+        max-width: 32pt;
+        background-color: transparent;
+      }
+
+      & > button > img + span {
+        margin-left: 6pt;
+      }
+
+      & > button > span {
+        font-size: 10pt;
+        display: inline-block;
+        height: 32pt;
+        line-height: 32pt;
+        vertical-align: top;
+      }
+    }
+  }
+}

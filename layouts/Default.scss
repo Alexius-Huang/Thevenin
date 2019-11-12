@@ -6,12 +6,17 @@ body {
   color: #333;
 }
 
-h1, h2, h3, h4, h5, h6, p {
+h1, h2, h3, h4, h5, h6, p, ul {
   padding: 0;
   margin: 0;
 }
 
+li {
+  list-style-type: none;
+}
+
 button {
+  box-sizing: border-box;
   border: 1pt solid #333;
   padding: 0;
   margin: 0;
@@ -23,7 +28,6 @@ button {
     height: 24pt;
     line-height: 24pt;
     display: inline-block;
-    box-sizing: border-box;
     padding: 0 6pt;
     transition: .25s;
     border-radius: 2pt;  
@@ -33,5 +37,9 @@ button {
     transition: .25s;
     color: white;
     background-color: #333;
+  }
+
+  &:focus {
+    outline: none;
   }
 }
