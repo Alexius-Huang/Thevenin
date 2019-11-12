@@ -1,27 +1,32 @@
-import React from 'react';
+import React, { RefObject, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { WorkspaceProps } from './Workspace.d';
+
+import * as Electronic from '../electronics';
 // import IdealWire from '../Circuit.IdealWire';
+
 import { useResize } from '../../hooks';
+import { WorkspaceProps, Coordinate } from './Workspace.d';
 import * as actions from '../../actions/Workspace';
 import * as selectors from '../../selectors/Workspace';
-import { WorkspaceStoreState, ToolsStoreState } from '../../reducers/State.d';
+import { DestructuredStore } from '../../reducers/State.d';
 import './Workspace.scss';
 
 const Workspace: React.FC<WorkspaceProps> = ({
-  // width,
-  // height,
   rows,
   columns,
   unitSize,
   children,
   svgViewBox,
+  selectedTool,
   workspaceTranslation,
 }) => {
   const dispatch = useDispatch();
 
   const $svg = React.createRef<SVGSVGElement>();
   const $circuit = React.createRef<SVGRectElement>();
+  const $circuitPoints = new Map<string, RefObject<SVGCircleElement>>();
+
+  const [newElectronicCoord, setNewElectronicCoord] = useState<Coordinate | null>(null);
 
   const handleResize = () => {
     if ($svg.current !== null) {
@@ -32,19 +37,40 @@ const Workspace: React.FC<WorkspaceProps> = ({
 
   useResize(handleResize);
 
-  // private handleMousemove = (e: React.MouseEvent) => {
-  //   console.log(e.target);
-  // }
+  function handleMouseover(e: React.MouseEvent, meta: { [type: string]: any; }) {
+    if (selectedTool === null) {
+      setNewElectronicCoord(null);
+      return;
+    }
+
+    const { row, column } = meta;
+    setNewElectronicCoord([row, column]);
+
+    /* To get the reference of the circuit point DOM */
+    // const refKey = `${row}-${column}`;
+    // const circleRef = $circuitPoints.get(refKey);
+    // if (circleRef !== undefined && circleRef.current !== null) {
+    //   const circle = circleRef.current;
+    //   /* anything... */
+    // }
+  }
 
   const renderGridPoints = Array.from(Array(rows)).map((_, i) =>
-    Array.from(Array(columns)).map((_, j) =>
-      <circle
+    Array.from(Array(columns)).map((_, j) => {
+      const meta = { row: i + 1, column: j + 1 };
+      const key = `${meta.row}-${meta.column}`;
+      const ref = React.createRef<SVGCircleElement>();
+      $circuitPoints.set(key, ref);
+
+      return <circle
         className="grid-point"
-        key={`${i}-${j}`}
+        key={key}
+        ref={ref}
         cx={(i + .5) * unitSize}
         cy={(j + .5) * unitSize}
-      />
-    )
+        onMouseOver={(e) => handleMouseover(e, meta)}
+      />;
+    })
   );
 
   return <svg
@@ -57,10 +83,9 @@ const Workspace: React.FC<WorkspaceProps> = ({
     viewBox={svgViewBox}
   >
     <g transform={workspaceTranslation}>
-      <g className="grid">
+      <g className={`grid ${selectedTool !== null ? 'tool-selected' : ''}`}>
         <rect
           ref={$circuit}
-          // onMouseMove={handleMousemove}
           transform={`translate(${[-unitSize / 2, -unitSize / 2]})`}
           className="grid-bg"
           width={(rows + 1) * unitSize}
@@ -72,6 +97,14 @@ const Workspace: React.FC<WorkspaceProps> = ({
 
 
       <g className="circuit">
+        {
+          (newElectronicCoord !== null) && (
+            <Electronic.Resistor
+              unitSize={unitSize}
+              coordinate={newElectronicCoord}
+            />
+          )
+        }
       </g>
 
       {children}
@@ -79,16 +112,15 @@ const Workspace: React.FC<WorkspaceProps> = ({
   </svg>;
 }
 
-type DestructuredStore = {
-  Tools: ToolsStoreState,
-  Workspace: WorkspaceStoreState,
-};
 
-function mapStateToProps({ Workspace: w }: DestructuredStore) {
+function mapStateToProps({ Workspace: w, Tools: t }: DestructuredStore) {
   return {
     svgViewBox: selectors.svgViewBoxSelector(w),
     workspaceTranslation: selectors.workspaceTranslationSelector(w),
-    ...w,
+    rows: w.rows,
+    columns: w.columns,
+    unitSize: w.unitSize,
+    selectedTool: t.selectedTool,
   };
 }
 

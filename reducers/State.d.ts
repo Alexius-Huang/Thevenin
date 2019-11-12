@@ -12,6 +12,11 @@ export type WorkspaceStoreState = {
   columns: number;
 }
 
+export type DestructuredStore = {
+  Tools: ToolsStoreState;
+  Workspace: WorkspaceStoreState;
+};
+
 type State = ToolsStoreState | WorkspaceStoreState;
 
 export default State;

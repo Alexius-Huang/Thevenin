@@ -5,7 +5,7 @@ import State from './State.d';
 const initialState: State = {
   width: 0,
   height: 0,
-  unitSize: 25,
+  unitSize: 40,
   rows: 10,
   columns: 10,
 };

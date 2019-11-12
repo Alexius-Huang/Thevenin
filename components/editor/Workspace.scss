@@ -8,13 +8,17 @@ svg#workspace {
       fill: white;
       stroke: #333;
       stroke-width: 1;
-      pointer-events: visible;
+      pointer-events: none;
     }
 
     & > circle.grid-point {
       r: 1;
-      fill: rgba(0, 0, 0, 0.3);
-      pointer-events: none;
+      fill: rgba(0, 0, 0, 0.1);
+      pointer-events: visible;
+    }
+
+    &.tool-selected > circle.grid-point {
+      r: 5;
     }
   }
 }
