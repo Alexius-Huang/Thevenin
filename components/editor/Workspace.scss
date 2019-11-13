@@ -3,22 +3,23 @@ svg#workspace {
   background-color: #aaa;
 
   & > g > g.grid {
-
     & > rect.grid-bg {
       fill: white;
       stroke: #333;
       stroke-width: 1;
-      pointer-events: none;
-    }
-
-    & > circle.grid-point {
-      r: 1;
-      fill: rgba(0, 0, 0, 0.1);
       pointer-events: visible;
     }
 
+    & > circle.grid-point {
+      r: 0;
+      fill: rgba(0, 0, 0, 0.1);
+      pointer-events: visible;
+      transition: .25s;
+    }
+
     &.tool-selected > circle.grid-point {
-      r: 5;
+      r: 10;
+      transition: .25s;
     }
   }
 }

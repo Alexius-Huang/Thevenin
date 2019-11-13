@@ -1,7 +1,7 @@
 import createAction from './createAction';
 
-export const selectTool = createAction<{
+export const selectComponent = createAction<{
   name: string;
-}>('SELECT_TOOL');
+}>('SELECT_COMPONENT');
 
-export const unselectTool = createAction('UNSELECT_TOOL');
+export const unselectComponent = createAction('UNSELECT_COMPONENT');

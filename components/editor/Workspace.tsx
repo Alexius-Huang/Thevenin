@@ -1,4 +1,4 @@
-import React, { RefObject, useState } from 'react';
+import React, { RefObject, useState, useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
 
 import * as Electronic from '../electronics';
@@ -8,17 +8,19 @@ import { useResize } from '../../hooks';
 import { WorkspaceProps, Coordinate } from './Workspace.d';
 import * as actions from '../../actions/Workspace';
 import * as selectors from '../../selectors/Workspace';
-import { DestructuredStore } from '../../reducers/State.d';
+import { DestructuredStore, ToolMode } from '../../reducers/State.d';
 import './Workspace.scss';
 
 const Workspace: React.FC<WorkspaceProps> = ({
   rows,
   columns,
   unitSize,
-  children,
   svgViewBox,
-  selectedTool,
+  toolMode,
+  selectedComponent,
+  selectedComponentCoordinate,
   workspaceTranslation,
+  children,
 }) => {
   const dispatch = useDispatch();
 
@@ -26,25 +28,18 @@ const Workspace: React.FC<WorkspaceProps> = ({
   const $circuit = React.createRef<SVGRectElement>();
   const $circuitPoints = new Map<string, RefObject<SVGCircleElement>>();
 
-  const [newElectronicCoord, setNewElectronicCoord] = useState<Coordinate | null>(null);
-
-  const handleResize = () => {
+  useResize(() => {
     if ($svg.current !== null) {
       const { clientWidth: width, clientHeight: height } = $svg.current;
       dispatch(actions.setSize({ width, height }));
     }
-  };
+  });
 
-  useResize(handleResize);
-
-  function handleMouseover(e: React.MouseEvent, meta: { [type: string]: any; }) {
-    if (selectedTool === null) {
-      setNewElectronicCoord(null);
-      return;
+  function handleMouseEnterGridPoint(e: React.MouseEvent, meta: { [type: string]: any; }) {
+    if (toolMode === ToolMode.ADD_COMPONENT) {
+      const { row, column } = meta;
+      dispatch(actions.setSelectedComponentCoordinate({ coordinate: [row, column] }));  
     }
-
-    const { row, column } = meta;
-    setNewElectronicCoord([row, column]);
 
     /* To get the reference of the circuit point DOM */
     // const refKey = `${row}-${column}`;
@@ -53,6 +48,18 @@ const Workspace: React.FC<WorkspaceProps> = ({
     //   const circle = circleRef.current;
     //   /* anything... */
     // }
+  }
+
+  function handleMouseClickGridArea(e: React.MouseEvent) {
+    if (toolMode === ToolMode.ADD_COMPONENT) {
+      console.log('Append electronics');
+    }
+  }
+
+  function handleMouseLeaveGridArea(e: React.MouseEvent) {
+    if (toolMode === ToolMode.ADD_COMPONENT) {
+      dispatch(actions.unsetSelectedComponentCoordinate());
+    }
   }
 
   const renderGridPoints = Array.from(Array(rows)).map((_, i) =>
@@ -68,7 +75,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
         ref={ref}
         cx={(i + .5) * unitSize}
         cy={(j + .5) * unitSize}
-        onMouseOver={(e) => handleMouseover(e, meta)}
+        onMouseEnter={(e) => handleMouseEnterGridPoint(e, meta)}
       />;
     })
   );
@@ -83,25 +90,27 @@ const Workspace: React.FC<WorkspaceProps> = ({
     viewBox={svgViewBox}
   >
     <g transform={workspaceTranslation}>
-      <g className={`grid ${selectedTool !== null ? 'tool-selected' : ''}`}>
+      <g className={`grid ${selectedComponent !== null ? 'tool-selected' : ''}`}>
         <rect
           ref={$circuit}
           transform={`translate(${[-unitSize / 2, -unitSize / 2]})`}
           className="grid-bg"
           width={(rows + 1) * unitSize}
           height={(columns + 1) * unitSize}
+          onClick={handleMouseClickGridArea}
+          onMouseLeave={handleMouseLeaveGridArea}
         />
 
         {renderGridPoints}
       </g>
 
-
       <g className="circuit">
         {
-          (newElectronicCoord !== null) && (
+          (selectedComponentCoordinate !== null) && (
             <Electronic.Resistor
+              className="preview"
               unitSize={unitSize}
-              coordinate={newElectronicCoord}
+              coordinate={selectedComponentCoordinate}
             />
           )
         }
@@ -120,7 +129,10 @@ function mapStateToProps({ Workspace: w, Tools: t }: DestructuredStore) {
     rows: w.rows,
     columns: w.columns,
     unitSize: w.unitSize,
-    selectedTool: t.selectedTool,
+    selectedComponentCoordinate: selectors.selectedComponentCoordinate(w),
+
+    toolMode: t.mode,
+    selectedComponent: t.selectedComponent,
   };
 }
 

@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 export type ToolsProps = {
   children: ReactNode;
-  selectedTool: string | null;
+  selectedComponent: string | null;
 };
 
 export type ToolsState = {};

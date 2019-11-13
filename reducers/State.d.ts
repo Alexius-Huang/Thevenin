@@ -1,7 +1,13 @@
 import { IElectronic } from "../lib/Electronic";
 
+export enum ToolMode {
+  NONE,
+  ADD_COMPONENT,
+}
+
 export type ToolsStoreState = {
-  selectedTool: string | null;
+  mode: ToolMode;
+  selectedComponent: string | null;
 }
 
 export type WorkspaceStoreState = {
@@ -10,6 +16,10 @@ export type WorkspaceStoreState = {
   unitSize: number;
   rows: number;
   columns: number;
+
+  selectedComponent: {
+    coordinate: [number, number] | null;
+  };
 }
 
 export type DestructuredStore = {

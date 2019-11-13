@@ -13,3 +13,6 @@ export const workspaceTranslationSelector =
       (height - (columns * unitSize)) / 2,
     ]})`;
   };
+
+export const selectedComponentCoordinate =
+  (state: WorkspaceStoreState) => state.selectedComponent.coordinate;

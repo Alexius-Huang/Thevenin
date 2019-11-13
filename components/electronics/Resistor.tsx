@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react';
 
 type ResistorProps = {
+  className: string;
   coordinate: [number, number];
   unitSize: number;
 };
 
-export const Resistor: React.FC<ResistorProps> = ({ coordinate, unitSize }) => {
+export const Resistor: React.FC<ResistorProps> = ({ coordinate, unitSize, className }) => {
   const translation = `translate(${[
     unitSize * (coordinate[0] - 1.5),
     unitSize * (coordinate[1] - .5)
@@ -19,7 +20,7 @@ export const Resistor: React.FC<ResistorProps> = ({ coordinate, unitSize }) => {
   return (
     <Fragment>
       <g
-        className="electronics resistor"
+        className={`electronics resistor ${className}`}
         transform={translation}
       >
         <path d={wireDirective} stroke="#333" strokeWidth="1" />

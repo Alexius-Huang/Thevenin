@@ -5,14 +5,14 @@ import { ToolsStoreState } from '../../reducers/State';
 import * as actions from '../../actions/Tools';
 import './Tools.scss';
 
-const Tools: React.FC<ToolsProps> = ({ selectedTool }) => {
+const Tools: React.FC<ToolsProps> = ({ selectedComponent }) => {
   const dispatch = useDispatch();
 
   function handleToolSelect(name: string) {
-    if (selectedTool === name) {
-      dispatch(actions.unselectTool());
+    if (selectedComponent === name) {
+      dispatch(actions.unselectComponent());
     } else {
-      dispatch(actions.selectTool({ name }));
+      dispatch(actions.selectComponent({ name }));
     }
   }
 
@@ -22,7 +22,7 @@ const Tools: React.FC<ToolsProps> = ({ selectedTool }) => {
         <h2>Electronics</h2>
 
         <ul>
-          <li className={selectedTool === 'resistor' ? 'active' : ''}>
+          <li className={selectedComponent === 'resistor' ? 'active' : ''}>
             <button onClick={() => handleToolSelect('resistor')}>
               <img src={'/static/circuit/resistor.svg'} alt="Resistor" style={{ backgroundColor: 'transparent' }}/>
               <span>Resistor</span>
@@ -35,7 +35,7 @@ const Tools: React.FC<ToolsProps> = ({ selectedTool }) => {
 };
 
 function mapStateToProps({ Tools: t }: { Tools: ToolsStoreState }) {
-  return { selectedTool: t.selectedTool };
+  return { selectedComponent: t.selectedComponent };
 }
 
 export default connect(mapStateToProps)(Tools);
