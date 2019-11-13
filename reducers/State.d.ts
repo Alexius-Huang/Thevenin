@@ -1,4 +1,4 @@
-import { IElectronic } from "../lib/Electronic";
+import Electronic, { IElectronic, EC } from "../lib/Electronic";
 
 export enum ToolMode {
   NONE,
@@ -7,7 +7,7 @@ export enum ToolMode {
 
 export type ToolsStoreState = {
   mode: ToolMode;
-  selectedComponent: string | null;
+  selectedComponent: EC | null;
 }
 
 export type WorkspaceStoreState = {
@@ -20,6 +20,8 @@ export type WorkspaceStoreState = {
   selectedComponent: {
     coordinate: [number, number] | null;
   };
+
+  electronicComponents: Array<Electronic>;
 }
 
 export type DestructuredStore = {

@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Action } from 'redux';
 import { ToolMode } from '../../reducers/State';
+import { EC } from '../../lib/Electronic';
 
 export type Coordinate = [number, number];
 
@@ -9,7 +10,7 @@ export type WorkspaceProps = {
   rows: number;
   columns: number;
   selectedComponentCoordinate: Coordinate | null;
-  selectedComponent: string | null;
+  selectedComponent: EC | null;
   toolMode: ToolMode;
 
   svgViewBox: string;

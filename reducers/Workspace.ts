@@ -12,6 +12,8 @@ const initialState: State = {
   selectedComponent: {
     coordinate: null,
   },
+
+  electronicComponents: [],
 };
 
 export default createReducer(initialState)
@@ -33,4 +35,8 @@ export default createReducer(initialState)
       ...state.selectedComponent,
       coordinate: null,
     },
+  }))
+  .case(actions.appendElectronicComponent, (state, payload) => ({
+    ...state,
+    electronicComponents: [...state.electronicComponents, payload],
   }));

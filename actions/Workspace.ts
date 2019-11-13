@@ -1,4 +1,5 @@
 import createAction from './createAction';
+import Electronic from '../lib/Electronic';
 
 export const setSize = createAction<{
   height: number;
@@ -10,3 +11,5 @@ export const setSelectedComponentCoordinate = createAction<{
 }>('SET_SELECTED_COMPONENT_COORDINATE');
 
 export const unsetSelectedComponentCoordinate = createAction('UNSET_SELECTED_COMPONENT_COORDINATE');
+
+export const appendElectronicComponent = createAction<Electronic>('APPEND_ELECTRONIC_COMPONENT');

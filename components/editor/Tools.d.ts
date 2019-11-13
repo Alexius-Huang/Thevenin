@@ -1,8 +1,9 @@
 import { ReactNode } from "react";
+import { EC } from "../../lib/Electronic";
 
 export type ToolsProps = {
   children: ReactNode;
-  selectedComponent: string | null;
+  selectedComponent: EC | null;
 };
 
 export type ToolsState = {};

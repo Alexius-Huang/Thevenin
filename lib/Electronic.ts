@@ -1,4 +1,4 @@
-import { IElectronic } from './Electronic.d';
+import { IElectronic, Coordinate, NodeType as NT } from './Electronic.d';
 
 export default class Electronic implements IElectronic {
   constructor(
@@ -6,7 +6,8 @@ export default class Electronic implements IElectronic {
     public unit: string,
     public unitAbbrev: string,
     public value: number,
-    public dimension: [number, number],
+    public dimension: Array<Array<NT>>,
+    public coordinate: Coordinate,
   ) {}
 
   /* TODO: formal version like {value}{valueExponent}{unitAbbrev} */
@@ -21,26 +22,34 @@ export enum EC {
   DCSource,
 }
 
-const createResistor = () => new Electronic(
+const createResistor = (coord: Coordinate) => new Electronic(
   'Resistor',
   'Ohms',
   'Ω',
   1000,
-  [1, 3]
+  [[NT.Pin, NT.Occupied, NT.Pin]],
+  coord,
 );
 
-const createDCSource = () => new Electronic(
+const createDCSource = (coord: Coordinate) => new Electronic(
   'DC Source',
   'Volt',
   'V',
   10,
-  [1, 3]
+  [[NT.Pin, NT.Occupied, NT.Pin]],
+  coord,
 )
 
-export const createElectronic = (type: EC): IElectronic => {
+type ElectronicArgs = {
+  coordinate: Coordinate;
+};
+
+export const createElectronic = (type: EC, args: ElectronicArgs): IElectronic => {
+  const { coordinate: c } = args;
+
   switch (type) {
-    case EC.Resistor: return createResistor();
-    case EC.DCSource: return createDCSource();
+    case EC.Resistor: return createResistor(c);
+    case EC.DCSource: return createDCSource(c);
 
     default:
       throw new Error(`${type} isn't registered!`);

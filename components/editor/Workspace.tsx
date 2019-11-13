@@ -1,15 +1,16 @@
-import React, { RefObject, useState, useEffect } from 'react';
+import React, { RefObject } from 'react';
 import { connect, useDispatch } from 'react-redux';
 
 import * as Electronic from '../electronics';
 // import IdealWire from '../Circuit.IdealWire';
 
 import { useResize } from '../../hooks';
-import { WorkspaceProps, Coordinate } from './Workspace.d';
+import { WorkspaceProps } from './Workspace.d';
 import * as actions from '../../actions/Workspace';
 import * as selectors from '../../selectors/Workspace';
 import { DestructuredStore, ToolMode } from '../../reducers/State.d';
 import './Workspace.scss';
+import { createElectronic, EC } from '../../lib/Electronic';
 
 const Workspace: React.FC<WorkspaceProps> = ({
   rows,
@@ -17,8 +18,8 @@ const Workspace: React.FC<WorkspaceProps> = ({
   unitSize,
   svgViewBox,
   toolMode,
-  selectedComponent,
-  selectedComponentCoordinate,
+  selectedComponent: SC,
+  selectedComponentCoordinate: SCC,
   workspaceTranslation,
   children,
 }) => {
@@ -51,8 +52,12 @@ const Workspace: React.FC<WorkspaceProps> = ({
   }
 
   function handleMouseClickGridArea(e: React.MouseEvent) {
-    if (toolMode === ToolMode.ADD_COMPONENT) {
-      console.log('Append electronics');
+    if (
+      toolMode === ToolMode.ADD_COMPONENT &&
+      SCC !== null
+    ) {
+      const electronic = createElectronic(EC.Resistor, { coordinate: SCC });
+      dispatch(actions.appendElectronicComponent(electronic));
     }
   }
 
@@ -90,15 +95,17 @@ const Workspace: React.FC<WorkspaceProps> = ({
     viewBox={svgViewBox}
   >
     <g transform={workspaceTranslation}>
-      <g className={`grid ${selectedComponent !== null ? 'tool-selected' : ''}`}>
+      <g
+        className={`grid ${SC !== null ? 'tool-selected' : ''}`}
+        onClick={handleMouseClickGridArea}
+        onMouseLeave={handleMouseLeaveGridArea}
+      >
         <rect
           ref={$circuit}
           transform={`translate(${[-unitSize / 2, -unitSize / 2]})`}
           className="grid-bg"
           width={(rows + 1) * unitSize}
           height={(columns + 1) * unitSize}
-          onClick={handleMouseClickGridArea}
-          onMouseLeave={handleMouseLeaveGridArea}
         />
 
         {renderGridPoints}
@@ -106,11 +113,11 @@ const Workspace: React.FC<WorkspaceProps> = ({
 
       <g className="circuit">
         {
-          (selectedComponentCoordinate !== null) && (
+          (SCC !== null) && (
             <Electronic.Resistor
               className="preview"
               unitSize={unitSize}
-              coordinate={selectedComponentCoordinate}
+              coordinate={SCC}
             />
           )
         }

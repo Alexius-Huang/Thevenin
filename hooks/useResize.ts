@@ -1,14 +1,19 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export const useResize = (handler: any) => {
+  if (!process.browser) return;
+
+  const [size, setSize] = useState([window.innerWidth, window.innerHeight]);
+  function handleResize() {
+    setSize([window.innerWidth, window.innerHeight]);
+  }
+
   useEffect(() => {
-    if (!process.browser) return;
-
-    handler();
-    window.addEventListener('resize', handler);
-
+    window.addEventListener('resize', handleResize);
     return () => {
-      window.removeEventListener('resize', handler);
+      window.removeEventListener('resize', handleResize);
     };
   });
+
+  useEffect(handler, [size]);
 };
