@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import classnames from 'classnames';
 
 type ResistorProps = {
   className?: string;
@@ -17,22 +18,24 @@ export const Resistor: React.FC<ResistorProps> = ({ coordinate, unitSize, classN
   const quarterUnitSize = unitSize / 4;
   const iconTranslation = `translate(${[halfUnitSize, -quarterUnitSize]})`;
 
+  const electronicName = 'resistor';
+
   return (
     <Fragment>
       <g
-        className={`electronics resistor ${className}`}
+        className={classnames('electronics', electronicName, className)}
         transform={translation}
       >
         <path d={wireDirective} stroke="#333" strokeWidth="1" />
 
         <rect
+          className="electronic-bg"
           width={unitSize}
           height={halfUnitSize}
           transform={iconTranslation}
-          fill="white"
         />
         <image
-          xlinkHref="/static/circuit/resistor.svg"
+          xlinkHref="/static/circuit/resistor-error.svg"
           width={unitSize}
           height={halfUnitSize}
           transform={iconTranslation}

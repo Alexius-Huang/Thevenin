@@ -1,6 +1,6 @@
-import { IElectronic, NodeType as NT } from './Electronic.d';
+import { IElectronic, NT } from './Electronic';
 
-enum PinState {
+export enum PinState {
   Available,
   Pin,
   Crossed,

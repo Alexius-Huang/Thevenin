@@ -1,5 +1,6 @@
 import React, { RefObject } from 'react';
 import { connect, useDispatch } from 'react-redux';
+import classnames from 'classnames';
 
 import * as Electronic from '../electronics';
 // import IdealWire from '../Circuit.IdealWire';
@@ -86,6 +87,10 @@ const Workspace: React.FC<WorkspaceProps> = ({
     })
   );
 
+  const workspaceGridClassname = classnames('grid', {
+    'tool-selected': SC !== null
+  });
+
   return <svg
     ref={$svg}
     id="workspace"
@@ -97,7 +102,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
   >
     <g transform={workspaceTranslation}>
       <g
-        className={`grid ${SC !== null ? 'tool-selected' : ''}`}
+        className={workspaceGridClassname}
         onClick={handleMouseClickGridArea}
         onMouseLeave={handleMouseLeaveGridArea}
       >

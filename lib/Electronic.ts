@@ -1,5 +1,31 @@
-import { IElectronic, Coordinate, NodeType as NT } from './Electronic.d';
 import GUIDGenerator from './GUIDGenerator';
+
+export type Coordinate = [number, number];
+
+// Node Type
+export enum NT {
+  Occupied,
+  Pin,
+};
+
+export interface IElectronic {
+  id: string;
+
+  name: string;
+  unit: string;
+  unitAbbrev: string;
+  value: number;
+  valueStringified: string;
+
+  /* The occupied state of the component */
+  dimension: Array<Array<NT>>;
+
+  /* Center is the coordinate with respect to dimension */
+  center: Coordinate,
+
+  /* Coordinate according to the workspace corordinate system */
+  coordinate: Coordinate;
+}
 
 export default class Electronic implements IElectronic {
   public id: string = GUIDGenerator();
