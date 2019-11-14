@@ -1,6 +1,8 @@
 language: node_js
 node_js:
   - "stable"
+before_install:
+  - npm update
 install:
   - yarn
 cache:
@@ -8,3 +10,4 @@ cache:
     - "node_modules"
 script:
   - yarn test
+  - yarn coveralls
