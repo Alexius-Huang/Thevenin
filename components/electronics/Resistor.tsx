@@ -19,6 +19,7 @@ export const Resistor: React.FC<ResistorProps> = ({ coordinate, unitSize, classN
   const iconTranslation = `translate(${[halfUnitSize, -quarterUnitSize]})`;
 
   const electronicName = 'resistor';
+  const error = className.includes('invalid');
 
   return (
     <Fragment>
@@ -26,7 +27,7 @@ export const Resistor: React.FC<ResistorProps> = ({ coordinate, unitSize, classN
         className={classnames('electronics', electronicName, className)}
         transform={translation}
       >
-        <path d={wireDirective} stroke="#333" strokeWidth="1" />
+        <path className="wire" d={wireDirective} />
 
         <rect
           className="electronic-bg"
@@ -35,7 +36,7 @@ export const Resistor: React.FC<ResistorProps> = ({ coordinate, unitSize, classN
           transform={iconTranslation}
         />
         <image
-          xlinkHref="/static/circuit/resistor-error.svg"
+          xlinkHref={`/static/circuit/resistor${error ? '-error' : ''}.svg`}
           width={unitSize}
           height={halfUnitSize}
           transform={iconTranslation}

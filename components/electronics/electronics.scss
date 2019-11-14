@@ -3,6 +3,15 @@
   pointer-events: none;
 }
 
+.electronics > path.wire {
+  stroke: #333;
+  stroke-width: 1;
+}
+
+.electronics.invalid > path.wire {
+  stroke: red;
+}
+
 .electronics > rect.electronic-bg {
   fill: white;
 }

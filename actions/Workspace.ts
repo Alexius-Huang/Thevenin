@@ -6,10 +6,11 @@ export const setSize = createAction<{
   width: number;
 }>('SET_SIZE');
 
-export const setSelectedComponentCoordinate = createAction<{
+export const setPreviewComponentInfo = createAction<{
   coordinate: [number, number];
-}>('SET_SELECTED_COMPONENT_COORDINATE');
+  isValid: boolean;
+}>('SET_PREVIEW_COMPONENT_INFO');
 
-export const unsetSelectedComponentCoordinate = createAction('UNSET_SELECTED_COMPONENT_COORDINATE');
+export const unsetPreviewComponentInfo = createAction('UNSET_PREVIEW_COMPONENT_INFO');
 
 export const appendElectronicComponent = createAction<Electronic>('APPEND_ELECTRONIC_COMPONENT');

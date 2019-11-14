@@ -1,5 +1,5 @@
 import Circuit, { PinState } from './Circuit';
-import { createElectronic, EC } from './Electronic';
+import { createElectronic, EC, Coordinate } from './Electronic';
 
 function createCircuitGrid(row: number, col: number) {
   return Array.from(Array(row)).map(() =>
@@ -16,12 +16,39 @@ beforeEach(() => {
 });
 
 describe('Lib: Circuit', () => {
-  
   it('creates a circuit instance', () => {
     expect(circuit.layout).toMatchObject(result);
     expect(circuit.electronics).toMatchObject([]);
   });
 
+  describe('Circuit.canAttachComponent', () => {
+    it('returns false if component isn\'t attachable', () => {
+      // [[a, n, o, n, a]]
+      circuit.appendElectronics(
+        createElectronic(EC.Resistor, {
+          coordinate: [2, 0]
+        })
+      );
+
+      const testCases: Array<[Coordinate, boolean]> = [
+        [[1, 0], false],
+        [[3, 0], false],
+        [[4, 0], false],
+        [[2, 1],  true],
+        [[4, 1], false],
+        [[1, 1],  true],
+        [[0, 1], false],
+      ];
+
+      testCases.forEach(([coordinate, result]) => {
+        expect(
+          circuit.canAttachComponent(
+            createElectronic(EC.Resistor, { coordinate })
+          )
+        ).toBe(result);  
+      });
+    });
+  });
 
   describe('Electronic Components', () => {
     it('attach resistors', () => {

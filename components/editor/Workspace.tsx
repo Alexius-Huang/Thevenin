@@ -6,7 +6,7 @@ import * as Electronic from '../electronics';
 // import IdealWire from '../Circuit.IdealWire';
 
 import { useResize } from '../../hooks';
-import { WorkspaceProps } from './Workspace.d';
+import { WorkspaceProps, Coordinate } from './Workspace.d';
 import * as actions from '../../actions/Workspace';
 import * as selectors from '../../selectors/Workspace';
 import { DestructuredStore, ToolMode } from '../../reducers/State.d';
@@ -20,7 +20,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
   svgViewBox,
   toolMode,
   selectedComponent: SC,
-  selectedComponentCoordinate: SCC,
+  previewComponent: PC,
   workspaceTranslation,
   circuit,
   children,
@@ -41,7 +41,11 @@ const Workspace: React.FC<WorkspaceProps> = ({
   function handleMouseEnterGridPoint(e: React.MouseEvent, meta: { [type: string]: any; }) {
     if (toolMode === ToolMode.ADD_COMPONENT) {
       const { row, column } = meta;
-      dispatch(actions.setSelectedComponentCoordinate({ coordinate: [row, column] }));  
+      const coordinate = [row, column] as Coordinate;
+      const electronic = createElectronic(EC.Resistor, { coordinate });
+      const isValid = circuit.canAttachComponent(electronic);
+
+      dispatch(actions.setPreviewComponentInfo({ coordinate, isValid }));
     }
 
     /* To get the reference of the circuit point DOM */
@@ -54,18 +58,21 @@ const Workspace: React.FC<WorkspaceProps> = ({
   }
 
   function handleMouseClickGridArea(e: React.MouseEvent) {
+    const { coordinate, isValid } = PC;
+
     if (
       toolMode === ToolMode.ADD_COMPONENT &&
-      SCC !== null
+      isValid &&
+      coordinate !== null
     ) {
-      const electronic = createElectronic(EC.Resistor, { coordinate: SCC });
+      const electronic = createElectronic(EC.Resistor, { coordinate });
       dispatch(actions.appendElectronicComponent(electronic));
     }
   }
 
   function handleMouseLeaveGridArea(e: React.MouseEvent) {
     if (toolMode === ToolMode.ADD_COMPONENT) {
-      dispatch(actions.unsetSelectedComponentCoordinate());
+      dispatch(actions.unsetPreviewComponentInfo());
     }
   }
 
@@ -119,11 +126,13 @@ const Workspace: React.FC<WorkspaceProps> = ({
 
       <g className="circuit">
         {
-          (SCC !== null) && (
+          (PC.coordinate !== null) && (
             <Electronic.Resistor
-              className="preview"
+              className={classnames('preview', {
+                invalid: !PC.isValid,
+              })}
               unitSize={unitSize}
-              coordinate={SCC}
+              coordinate={PC.coordinate}
             />
           )
         }
@@ -152,7 +161,7 @@ function mapStateToProps({ Workspace: w, Tools: t }: DestructuredStore) {
     rows: w.rows,
     columns: w.columns,
     unitSize: w.unitSize,
-    selectedComponentCoordinate: selectors.selectedComponentCoordinate(w),
+    previewComponent: w.previewComponent,
     circuit: w.circuit,
 
     toolMode: t.mode,

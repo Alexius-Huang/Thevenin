@@ -10,7 +10,10 @@ export type WorkspaceProps = {
   unitSize: number;
   rows: number;
   columns: number;
-  selectedComponentCoordinate: Coordinate | null;
+  previewComponent: {
+    coordinate: Coordinate | null;
+    isValid: boolean;
+  };
   selectedComponent: EC | null;
   toolMode: ToolMode;
   circuit: Circuit;

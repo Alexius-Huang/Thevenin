@@ -10,8 +10,9 @@ const initialState: State = {
   rows: 10,
   columns: 10,
 
-  selectedComponent: {
+  previewComponent: {
     coordinate: null,
+    isValid: false,
   },
 
   circuit: new Circuit(10, 10),
@@ -23,18 +24,20 @@ export default createReducer(initialState)
     width,
     height,
   }))
-  .case(actions.setSelectedComponentCoordinate, (state, { coordinate }) => ({
+  .case(actions.setPreviewComponentInfo, (state, { coordinate, isValid }) => ({
     ...state,
-    selectedComponent: {
-      ...state.selectedComponent,
+    previewComponent: {
+      ...state.previewComponent,
       coordinate,
+      isValid,
     },
   }))
-  .case(actions.unsetSelectedComponentCoordinate, (state) => ({
+  .case(actions.unsetPreviewComponentInfo, (state) => ({
     ...state,
-    selectedComponent: {
-      ...state.selectedComponent,
+    previewComponent: {
+      ...state.previewComponent,
       coordinate: null,
+      isValid: false,
     },
   }))
   .case(actions.appendElectronicComponent, (state, payload) => {
