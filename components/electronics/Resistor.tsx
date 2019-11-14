@@ -1,15 +1,15 @@
 import React, { Fragment } from 'react';
 
 type ResistorProps = {
-  className: string;
+  className?: string;
   coordinate: [number, number];
   unitSize: number;
 };
 
-export const Resistor: React.FC<ResistorProps> = ({ coordinate, unitSize, className }) => {
+export const Resistor: React.FC<ResistorProps> = ({ coordinate, unitSize, className = '' }) => {
   const translation = `translate(${[
-    unitSize * (coordinate[0] - 1.5),
-    unitSize * (coordinate[1] - .5)
+    unitSize * (coordinate[0] - .5),
+    unitSize * (coordinate[1] + .5)
   ]})`;
 
   const wireDirective = `M 0 0 L ${unitSize * 2} 0`;

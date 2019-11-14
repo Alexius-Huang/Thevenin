@@ -21,6 +21,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
   selectedComponent: SC,
   selectedComponentCoordinate: SCC,
   workspaceTranslation,
+  circuit,
   children,
 }) => {
   const dispatch = useDispatch();
@@ -69,7 +70,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
 
   const renderGridPoints = Array.from(Array(rows)).map((_, i) =>
     Array.from(Array(columns)).map((_, j) => {
-      const meta = { row: i + 1, column: j + 1 };
+      const meta = { row: i, column: j };
       const key = `${meta.row}-${meta.column}`;
       const ref = React.createRef<SVGCircleElement>();
       $circuitPoints.set(key, ref);
@@ -121,6 +122,16 @@ const Workspace: React.FC<WorkspaceProps> = ({
             />
           )
         }
+
+        {
+          circuit.electronics.map(e => {
+            return <Electronic.Resistor
+              key={e.id}
+              unitSize={unitSize}
+              coordinate={e.coordinate}
+            />;
+          })
+        }
       </g>
 
       {children}
@@ -137,6 +148,7 @@ function mapStateToProps({ Workspace: w, Tools: t }: DestructuredStore) {
     columns: w.columns,
     unitSize: w.unitSize,
     selectedComponentCoordinate: selectors.selectedComponentCoordinate(w),
+    circuit: w.circuit,
 
     toolMode: t.mode,
     selectedComponent: t.selectedComponent,

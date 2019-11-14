@@ -1,12 +1,16 @@
 import { IElectronic, Coordinate, NodeType as NT } from './Electronic.d';
+import GUIDGenerator from './GUIDGenerator';
 
 export default class Electronic implements IElectronic {
+  public id: string = GUIDGenerator();
+
   constructor(
     public name: string,
     public unit: string,
     public unitAbbrev: string,
     public value: number,
     public dimension: Array<Array<NT>>,
+    public center: Coordinate,
     public coordinate: Coordinate,
   ) {}
 
@@ -28,6 +32,7 @@ const createResistor = (coord: Coordinate) => new Electronic(
   'Ω',
   1000,
   [[NT.Pin, NT.Occupied, NT.Pin]],
+  [1, 0],
   coord,
 );
 
@@ -37,6 +42,7 @@ const createDCSource = (coord: Coordinate) => new Electronic(
   'V',
   10,
   [[NT.Pin, NT.Occupied, NT.Pin]],
+  [1, 0],
   coord,
 )
 

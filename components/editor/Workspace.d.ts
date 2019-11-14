@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Action } from 'redux';
 import { ToolMode } from '../../reducers/State';
 import { EC } from '../../lib/Electronic';
+import Circuit from '../../lib/Circuit';
 
 export type Coordinate = [number, number];
 
@@ -12,6 +13,7 @@ export type WorkspaceProps = {
   selectedComponentCoordinate: Coordinate | null;
   selectedComponent: EC | null;
   toolMode: ToolMode;
+  circuit: Circuit;
 
   svgViewBox: string;
   workspaceTranslation: string;

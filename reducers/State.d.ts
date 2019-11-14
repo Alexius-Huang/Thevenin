@@ -1,4 +1,5 @@
 import Electronic, { IElectronic, EC } from "../lib/Electronic";
+import Circuit from "../lib/Circuit";
 
 export enum ToolMode {
   NONE,
@@ -21,7 +22,7 @@ export type WorkspaceStoreState = {
     coordinate: [number, number] | null;
   };
 
-  electronicComponents: Array<Electronic>;
+  circuit: Circuit;
 }
 
 export type DestructuredStore = {

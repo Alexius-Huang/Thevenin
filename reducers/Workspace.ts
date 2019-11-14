@@ -1,6 +1,7 @@
 import * as actions from '../actions/Workspace';
 import { reducerWithInitialState as createReducer } from 'typescript-fsa-reducers';
 import State from './State.d';
+import Circuit from '../lib/Circuit';
 
 const initialState: State = {
   width: 0,
@@ -13,7 +14,7 @@ const initialState: State = {
     coordinate: null,
   },
 
-  electronicComponents: [],
+  circuit: new Circuit(10, 10),
 };
 
 export default createReducer(initialState)
@@ -36,7 +37,7 @@ export default createReducer(initialState)
       coordinate: null,
     },
   }))
-  .case(actions.appendElectronicComponent, (state, payload) => ({
-    ...state,
-    electronicComponents: [...state.electronicComponents, payload],
-  }));
+  .case(actions.appendElectronicComponent, (state, payload) => {
+    state.circuit.appendElectronics(payload);
+    return { ...state };
+  });
