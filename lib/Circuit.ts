@@ -54,8 +54,18 @@ export default class Circuit {
         const cu = this.layout[relY][relX];
 
         if (
+          // Circuit unit is already occupied then isn't available
           cu.type === CircuitUnitType.Occupied ||
-          (eu.type === ElectronicUnitType.Occupied && cu.type !== CircuitUnitType.Available)
+
+          // Circuit unit isn't available but perhaps partially available
+          cu.type !== CircuitUnitType.Available && (
+            // Electronic unit should occupy then cannot accept non-available circuit unit
+            eu.type === ElectronicUnitType.Occupied ||
+
+            // Electronic unit is pin since is isn't occupied
+            // but isn't connectable to the circuit
+            !cu.isDirectionConnectable(eu.circuitConnectDirection)
+          )
         ) return false;
       }
     }
