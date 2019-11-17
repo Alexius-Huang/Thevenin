@@ -1,4 +1,5 @@
-import Unit, { ConnectableDirection, UnitState } from './Circuit.Unit';
+import Unit, { CircuitUnitType } from './Circuit.Unit';
+import { ConnectableDirection } from './circuit.lib';
 
 const directions: ConnectableDirection[] = ['left', 'right', 'top', 'bottom'];
 let unit: Unit;
@@ -17,47 +18,47 @@ describe('Lib: Circuit.Unit', () => {
     const testCases: Array<[
       ConnectableDirection[],
       { isLocked?: boolean, isNode?: boolean },
-      UnitState
+      CircuitUnitType
     ]> = [
       //   |
       // - + -  Fully available
       //   |
-      [[], {}, UnitState.Available],
+      [[], {}, CircuitUnitType.Available],
 
       //   X
       // - + -  Wire crossed from top to bottom
       //   X
-      [['top', 'bottom'], {}, UnitState.HorizontallyAvailable],
+      [['top', 'bottom'], {}, CircuitUnitType.HorizontallyAvailable],
 
       //   |
       // X + X  Wire crossed from left to right
       //   |
-      [['left', 'right'], {}, UnitState.VerticallyAvailable],
+      [['left', 'right'], {}, CircuitUnitType.VerticallyAvailable],
 
       //   |
       // X L X  Simple electronic component
       //   |
-      [['left', 'right'], { isLocked: true }, UnitState.Occupied],
+      [['left', 'right'], { isLocked: true }, CircuitUnitType.Occupied],
 
       //   |
       // X + -  Open wire
       //   |
-      [['left'], {}, UnitState.PartiallyAvailable],
+      [['left'], {}, CircuitUnitType.PartiallyAvailable],
 
       //   |
       // X + -  Turn-around wire
       //   X
-      [['left', 'bottom'], {}, UnitState.Occupied],
+      [['left', 'bottom'], {}, CircuitUnitType.Occupied],
 
       //   |
       // X N -  Intersection
       //   X
-      [['left', 'bottom'], { isNode: true }, UnitState.PartiallyAvailable],
+      [['left', 'bottom'], { isNode: true }, CircuitUnitType.PartiallyAvailable],
 
       //   X
       // X N X  Intersection
       //   |
-      [['left', 'top', 'right'], { isNode: true }, UnitState.PartiallyAvailable],
+      [['left', 'top', 'right'], { isNode: true }, CircuitUnitType.PartiallyAvailable],
     ];
 
     testCases.forEach(([directions, { isLocked, isNode }, result], i) => {
@@ -65,7 +66,7 @@ describe('Lib: Circuit.Unit', () => {
       unit.isLocked = typeof isLocked === 'boolean' ? isLocked : false;
       unit.isNode = typeof isNode === 'boolean' ? isNode : false;
       directions.forEach(d => unit.connect(d));
-      expect(unit.state).toBe(result);
+      expect(unit.type).toBe(result);
     });
   });
 });

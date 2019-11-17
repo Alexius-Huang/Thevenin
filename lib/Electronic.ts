@@ -1,12 +1,18 @@
 import GUIDGenerator from './GUIDGenerator';
+import ElectronicUnit from './Electronic.Unit';
 
 export type Coordinate = [number, number];
 
 // Node Type
-export enum NT {
-  Occupied,
-  Pin,
-};
+// export enum NT {
+//   Occupied,
+//   Pin,
+// };
+
+// export enum ElectronicUnit {
+//   Occupied,
+//   Pin,
+// }
 
 export interface IElectronic {
   id: string;
@@ -18,7 +24,7 @@ export interface IElectronic {
   valueStringified: string;
 
   /* The occupied state of the component */
-  dimension: Array<Array<NT>>;
+  dimension: Array<Array<ElectronicUnit>>;
 
   /* Center is the coordinate with respect to dimension */
   center: Coordinate,
@@ -35,7 +41,7 @@ export default class Electronic implements IElectronic {
     public unit: string,
     public unitAbbrev: string,
     public value: number,
-    public dimension: Array<Array<NT>>,
+    public dimension: Array<Array<ElectronicUnit>>,
     public center: Coordinate,
     public coordinate: Coordinate,
   ) {}
@@ -57,7 +63,7 @@ const createResistor = (coord: Coordinate) => new Electronic(
   'Ohms',
   'Ω',
   1000,
-  [[NT.Pin, NT.Occupied, NT.Pin]],
+  [[ElectronicUnit.LeftPin, ElectronicUnit.Occupied, ElectronicUnit.RightPin]],
   [1, 0],
   coord,
 );
@@ -67,7 +73,7 @@ const createDCSource = (coord: Coordinate) => new Electronic(
   'Volt',
   'V',
   10,
-  [[NT.Pin, NT.Occupied, NT.Pin]],
+  [[ElectronicUnit.LeftPin, ElectronicUnit.Occupied, ElectronicUnit.RightPin]],
   [1, 0],
   coord,
 )

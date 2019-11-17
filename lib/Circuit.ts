@@ -1,20 +1,14 @@
-import { IElectronic, NT } from './Electronic';
-
-export enum PinState {
-  Available,
-  Pin,
-  Crossed,
-  Intersected,
-  Occupied,
-}
+import { IElectronic } from './Electronic';
+import Unit, { CircuitUnitType } from './Circuit.Unit';
+import { ElectronicUnitType } from './Electronic.Unit';
 
 export default class Circuit {
   public electronics: Array<IElectronic> = [];
-  public layout: Array<Array<PinState>>;
+  public layout: Array<Array<Unit>>;
 
   constructor(public rows: number, public columns: number) {
     this.layout = Array.from(Array(rows)).map(() =>
-      Array.from(Array(columns)).map(() => PinState.Available)
+      Array.from(Array(columns)).map(() => new Unit())
     );
   }
 
@@ -27,49 +21,65 @@ export default class Circuit {
           x - (cx - col),
           y - (cy - row),
         ];
+        const cu = this.layout[relY][relX];
+        const cuType = cu.type;
+        const eu = d[row][col];
 
-        const nodeType = d[row][col];
-        this.assignPinState(nodeType).to([relX, relY]);
+        if (eu.type === ElectronicUnitType.Pin) {
+          const direction = eu.circuitConnectDirection;
+
+          if (cuType === CircuitUnitType.Available) {
+            cu.connect(direction);
+          } else if (cuType === CircuitUnitType.HorizontallyAvailable) {
+
+          } else if (cuType === CircuitUnitType.VerticallyAvailable) {
+
+          } else if (cuType === CircuitUnitType.PartiallyAvailable) {
+
+          } else if (cuType === CircuitUnitType.Occupied) {
+            throw new Error(`Electronic Connection Error`);
+          }
+        } else if (eu.type === ElectronicUnitType.Occupied) {
+          if (cuType === CircuitUnitType.Available) {
+            cu.isLocked = true;
+          } else {
+            throw new Error(`Electronic Connection Error`);
+          }
+        } else {
+          throw new Error(`Electronic Unit type ${ElectronicUnitType[eu.type]} isn't declared`);
+        }
       }
     }
 
     this.electronics.push(e);
   }
 
-  public canAttachComponent(e: IElectronic): boolean {
-    const { coordinate: [x, y], dimension: d, center: [cx, cy] } = e;
+  // public canAttachComponent(e: IElectronic): boolean {
+  //   const { coordinate: [x, y], dimension: d, center: [cx, cy] } = e;
 
-    for (let row = 0; row < d.length; row += 1) {
-      for (let col = 0; col < d[row].length; col += 1) {
-        const [relX, relY] = [
-          x - (cx - col),
-          y - (cy - row),
-        ];
+  //   for (let row = 0; row < d.length; row += 1) {
+  //     for (let col = 0; col < d[row].length; col += 1) {
+  //       const [relX, relY] = [
+  //         x - (cx - col),
+  //         y - (cy - row),
+  //       ];
 
-        const isOutOfBound = (relX < 0 || relY < 0 || relX >= this.columns || relY >= this.rows);
-        if (isOutOfBound) return false;
+  //       const isOutOfBound = (relX < 0 || relY < 0 || relX >= this.columns || relY >= this.rows);
+  //       if (isOutOfBound) return false;
 
-        const nodeType = d[row][col];
-        const pinState = this.layout[relY][relX];
-        const failed = (
-          (nodeType === NT.Pin && pinState === PinState.Occupied)       ||
-          (nodeType === NT.Occupied && pinState !== PinState.Available)
-        );
+  //       const nodeType = d[row][col];
+  //       const relCircuitUnitType = this.layout[relY][relX].state;
 
-        if (failed) return false;
-      }
-    }
+  //       const failed = (
+  //         relCircuitUnitType === CircuitUnitType.Occupied
+  //         // (nodeType === ElectronicUnit.Pin && CircuitUnitType === CircuitUnitType.Occupied) ||
+  //         // (nodeType === ElectronicUnit.Occupied && CircuitUnitType !== CircuitUnitType.Available)
+  //       );
 
-    return true;
-  }
+  //       if (failed) return false;
+  //     }
+  //   }
 
-  private assignPinState = (nt: NT) => ({
-    to: ([relX, relY]: [number, number]) => {
-      if (nt === NT.Pin) {
-        this.layout[relY][relX] = PinState.Pin;
-      } else if (nt === NT.Occupied) {
-        this.layout[relY][relX] = PinState.Occupied;
-      }
-    }
-  });
+  //   return true;
+  // }
 };
