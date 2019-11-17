@@ -4,17 +4,6 @@ import { ConnectableDirection } from './circuit.lib';
 
 export type Coordinate = [number, number];
 
-// Node Type
-// export enum NT {
-//   Occupied,
-//   Pin,
-// };
-
-// export enum ElectronicUnit {
-//   Occupied,
-//   Pin,
-// }
-
 export interface IElectronic {
   id: string;
 
@@ -84,6 +73,7 @@ export default class Electronic implements IElectronic {
       }
     }
 
+    this.center = [rows - 1 - this.center[1], this.center[0]];
     this.dimension = newDimension;
   }
 }

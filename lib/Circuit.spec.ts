@@ -104,7 +104,7 @@ describe('Lib: Circuit', () => {
   });
 
   describe('Attaching Components', () => {
-    it('simple attachment test', () => {
+    it('performs simple attachment', () => {
       circuit.appendElectronics(
         createElectronic(EC.Resistor, {
           coordinate: [1, 0]
@@ -130,7 +130,18 @@ describe('Lib: Circuit', () => {
       expect(circuit.layout).toMatchObject(result);
     });
 
-    it('components pin-to-pin attachment test', () => {
+    it('performs rotated components simple attachment', () => {
+      const resistor = createElectronic(EC.Resistor, { coordinate: [1, 1] });
+      resistor.rotate();
+      circuit.appendElectronics(resistor);
+
+      result[0][1].connect('bottom');
+      result[1][1].setOccupied();
+      result[2][1].connect('top');
+      expect(circuit.layout).toMatchObject(result);
+    });
+
+    it('performs components pin-to-pin attachment', () => {
       resetCircuitGrid(6, 1);
 
       circuit.appendElectronics(
@@ -152,5 +163,49 @@ describe('Lib: Circuit', () => {
       result[0][4].connect('left');
       expect(circuit.layout).toMatchObject(result);
     });
+  });
+
+  it('performs rotated components pin-to-pin attachment', () => {
+    const resistor1 = createElectronic(EC.Resistor, { coordinate: [2, 1] });
+    resistor1.rotate();
+
+    const resistor2 = createElectronic(EC.Resistor, { coordinate: [3, 2] });
+    resistor2.rotate();
+    resistor2.rotate();
+
+    const resistor3 = createElectronic(EC.Resistor, { coordinate: [2, 3] });
+    resistor3.rotate();
+    resistor3.rotate();
+    resistor3.rotate();
+
+    const resistor4 = createElectronic(EC.Resistor, { coordinate: [1, 2] });
+    resistor4.rotate();
+    resistor4.rotate();
+    resistor4.rotate();
+    resistor4.rotate();
+
+    circuit.appendElectronics(resistor1);
+    circuit.appendElectronics(resistor2);
+    circuit.appendElectronics(resistor3);
+    circuit.appendElectronics(resistor4);
+
+    // [ a a n a a ]
+    // [ a a o a a ]
+    // [ n o n o n ]
+    // [ a a o a a ]
+    // [ a a n a a ]
+    result[0][2].connect('bottom');
+    result[1][2].setOccupied();
+    result[2][0].connect('right');
+    result[2][1].setOccupied();
+    result[2][2].connect('left');
+    result[2][2].connect('top');
+    result[2][2].connect('right');
+    result[2][2].connect('bottom');
+    result[2][3].setOccupied();
+    result[2][4].connect('left');
+    result[3][2].setOccupied();
+    result[4][2].connect('top');
+    expect(circuit.layout).toMatchObject(result);
   });
 });
