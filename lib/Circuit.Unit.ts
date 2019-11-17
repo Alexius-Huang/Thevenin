@@ -16,7 +16,7 @@ export enum CircuitUnitType {
 export default class CircuitUnit {
   public isNode = false;
   public isLocked = false;
-  private connectedDirections = new Set<ConnectableDirection>([]);
+  public connectedDirections = new Set<ConnectableDirection>([]);
 
   public isDirectionConnectable(direction: ConnectableDirection) {
     return !this.connectedDirections.has(direction);
@@ -43,12 +43,12 @@ export default class CircuitUnit {
     this.connectedDirections.clear();
   }
 
-  get availableDirections() {
+  get availablePinCount() {
     return 4 - this.connectedDirections.size;
   }
 
   get type() {
-    const AD = this.availableDirections;
+    const AD = this.availablePinCount;
     if (this.isLocked || AD === 0) return CircuitUnitType.Occupied;
 
     if (AD === 4) return CircuitUnitType.Available;
