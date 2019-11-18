@@ -10,12 +10,15 @@ export enum CircuitUnitType {
   // usually occupied state of the electronics is locked state
   Occupied,
 
+  Electronic,
+
   // Invalid,
 }
 
 export default class CircuitUnit {
   public isNode = false;
   public isLocked = false;
+  public electronicID: null | string = null;
   public connectedDirections = new Set<ConnectableDirection>([]);
 
   public isDirectionConnectable(direction: ConnectableDirection) {
@@ -30,6 +33,11 @@ export default class CircuitUnit {
 
   public setOccupied() {
     this.disconnectAll();
+    this.isLocked = true;
+  }
+
+  public setElectronic(id: string) {
+    this.electronicID = id;
     this.isLocked = true;
   }
 
@@ -48,6 +56,8 @@ export default class CircuitUnit {
   }
 
   get type() {
+    if (this.electronicID !== null) return CircuitUnitType.Electronic;
+
     const AD = this.availablePinCount;
     if (this.isLocked || AD === 0) return CircuitUnitType.Occupied;
 

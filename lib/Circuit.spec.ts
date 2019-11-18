@@ -113,7 +113,7 @@ describe('Lib: Circuit', () => {
 
         circuit.appendElectronics(resistor1);
         result[2][1].connect('right');
-        result[2][2].setOccupied();
+        result[2][2].setElectronic(resistor1.id);
         result[2][3].connect('left');
 
         expect(circuit.layout).toMatchObject(result);
@@ -124,26 +124,20 @@ describe('Lib: Circuit', () => {
 
   describe('Attaching Components', () => {
     it('performs simple attachment', () => {
-      circuit.appendElectronics(
-        createElectronic(EC.Resistor, {
-          coordinate: [1, 0]
-        })
-      );
+      const resistor = createElectronic(EC.Resistor, { coordinate: [1, 0] });
+      circuit.appendElectronics(resistor);
 
       result[0][0].connect('right');
-      result[0][1].setOccupied();
+      result[0][1].setElectronic(resistor.id);
       result[0][2].connect('left');
       expect(circuit.electronics.length).toBe(1);
       expect(circuit.layout).toMatchObject(result);
 
-      circuit.appendElectronics(
-        createElectronic(EC.Resistor, {
-          coordinate: [3, 2]
-        })
-      );
+      const resistor2 = createElectronic(EC.Resistor, { coordinate: [3, 2] });
+      circuit.appendElectronics(resistor2);
 
       result[2][2].connect('right');
-      result[2][3].setOccupied();
+      result[2][3].setElectronic(resistor2.id);
       result[2][4].connect('left');
       expect(circuit.electronics.length).toBe(2);
       expect(circuit.layout).toMatchObject(result);
@@ -155,30 +149,24 @@ describe('Lib: Circuit', () => {
       circuit.appendElectronics(resistor);
 
       result[0][1].connect('bottom');
-      result[1][1].setOccupied();
+      result[1][1].setElectronic(resistor.id);
       result[2][1].connect('top');
       expect(circuit.layout).toMatchObject(result);
     });
 
     it('performs components pin-to-pin attachment', () => {
       resetCircuitGrid(6, 1);
+      const resistor1 = createElectronic(EC.Resistor, { coordinate: [1, 0] });
+      circuit.appendElectronics(resistor1);
 
-      circuit.appendElectronics(
-        createElectronic(EC.Resistor, {
-          coordinate: [1, 0],
-        })
-      );
-      circuit.appendElectronics(
-        createElectronic(EC.Resistor, {
-          coordinate: [3, 0],
-        })
-      );
+      const resistor2 = createElectronic(EC.Resistor, { coordinate: [3, 0] });
+      circuit.appendElectronics(resistor2);
 
       result[0][0].connect('right');
-      result[0][1].setOccupied();
+      result[0][1].setElectronic(resistor1.id);
       result[0][2].connect('left');
       result[0][2].connect('right');
-      result[0][3].setOccupied();
+      result[0][3].setElectronic(resistor2.id);
       result[0][4].connect('left');
       expect(circuit.layout).toMatchObject(result);
     });
@@ -213,16 +201,16 @@ describe('Lib: Circuit', () => {
       // [ a a o a a ]
       // [ a a n a a ]
       result[0][2].connect('bottom');
-      result[1][2].setOccupied();
+      result[1][2].setElectronic(resistor1.id);
       result[2][0].connect('right');
-      result[2][1].setOccupied();
+      result[2][1].setElectronic(resistor4.id);
       result[2][2].connect('left');
       result[2][2].connect('top');
       result[2][2].connect('right');
       result[2][2].connect('bottom');
-      result[2][3].setOccupied();
+      result[2][3].setElectronic(resistor2.id);
       result[2][4].connect('left');
-      result[3][2].setOccupied();
+      result[3][2].setElectronic(resistor3.id);
       result[4][2].connect('top');
       expect(circuit.layout).toMatchObject(result);
     });  
@@ -253,7 +241,7 @@ describe('Lib: Circuit', () => {
       result[1][0].connect('bottom');
       result[1][1].connect('left');
       result[1][1].connect('right');
-      result[1][2].setOccupied();
+      result[1][2].setElectronic(resistor1.id);
       result[1][3].connect('left');
       result[1][3].connect('right');
       result[1][4].connect('left');
@@ -264,7 +252,7 @@ describe('Lib: Circuit', () => {
       result[3][4].connect('top');
       result[3][3].connect('right');
       result[3][3].connect('left');
-      result[3][2].setOccupied();
+      result[3][2].setElectronic(resistor2.id);
       result[3][1].connect('right');
       result[3][1].connect('left');
       result[3][0].connect('right');

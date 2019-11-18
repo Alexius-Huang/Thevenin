@@ -38,7 +38,7 @@ export default class Circuit {
   }
 
   public appendElectronics(e: IElectronic) {
-    const { coordinate: [x, y], dimension: d, center: [cx, cy] } = e;
+    const { coordinate: [x, y], dimension: d, center: [cx, cy], id } = e;
 
     for (let row = 0; row < d.length; row += 1) {
       for (let col = 0; col < d[row].length; col += 1) {
@@ -52,7 +52,7 @@ export default class Circuit {
         if (eu.type === ElectronicUnitType.Pin) {
           cu.connect(eu.circuitConnectDirection);
         } else if (eu.type === ElectronicUnitType.Occupied) {
-          cu.setOccupied();
+          cu.setElectronic(id);
         } else {
           throw new Error(`Electronic Unit type ${ElectronicUnitType[eu.type]} isn't declared`);
         }
@@ -79,7 +79,7 @@ export default class Circuit {
         const cu = this.layout[relY][relX];
 
         if (
-          // Circuit unit is already occupied then isn't available
+          cu.type === CircuitUnitType.Electronic ||
           cu.type === CircuitUnitType.Occupied ||
 
           // Circuit unit isn't available but perhaps partially available
