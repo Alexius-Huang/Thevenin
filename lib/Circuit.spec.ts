@@ -100,6 +100,25 @@ describe('Lib: Circuit', () => {
           expect(testResult).toBe(result);
         });
       });
+
+      it('returns false if to-be attached component\'s pin is blocked by another component', () => {
+        // [ a a n a a ]
+        // [ a a o a a ]
+        // [ a n E n a ]
+        // [ a a a a a ]
+        // [ a a a a a ]
+        const resistor1 = createElectronic(EC.Resistor, { coordinate: [2, 2] });
+        const resistor2 = createElectronic(EC.Resistor, { coordinate: [2, 1] });
+        resistor2.rotate();
+
+        circuit.appendElectronics(resistor1);
+        result[2][1].connect('right');
+        result[2][2].setOccupied();
+        result[2][3].connect('left');
+
+        expect(circuit.layout).toMatchObject(result);
+        expect(circuit.canAttachComponent(resistor2)).toBe(false);
+      });
     });
   });
 
