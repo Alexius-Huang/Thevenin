@@ -1,4 +1,4 @@
-import { IElectronic } from './Electronic';
+import { IElectronic, Coordinate } from './Electronic';
 import Unit, { CircuitUnitType } from './Circuit.Unit';
 import { ElectronicUnitType } from './Electronic.Unit';
 
@@ -10,6 +10,31 @@ export default class Circuit {
     this.layout = Array.from(Array(rows)).map(() =>
       Array.from(Array(columns)).map(() => new Unit())
     );
+  }
+
+  public addJoint(c1: Coordinate, c2: Coordinate) {
+    let [[col1, row1], [col2, row2]] = [c1, c2];
+    const [deltaCol, deltaRow] = [col2 - col1, row2 - row1];
+
+    if (Math.abs(deltaCol) === 1 && deltaRow === 0) {
+      if (deltaCol > 0) {
+        this.layout[row1][col1].connect('right');
+        this.layout[row2][col2].connect('left');
+      } else {
+        this.layout[row1][col1].connect('left');
+        this.layout[row2][col2].connect('right');
+      }
+    } else if (Math.abs(deltaRow) === 1 && deltaCol === 0) {
+      if (deltaRow > 0) {
+        this.layout[row1][col1].connect('bottom');
+        this.layout[row2][col2].connect('top');
+      } else {
+        this.layout[row1][col1].connect('top');
+        this.layout[row2][col2].connect('bottom');
+      }
+    } else {
+      throw new Error('Invalid circuit joint connection!');
+    }
   }
 
   public appendElectronics(e: IElectronic) {
