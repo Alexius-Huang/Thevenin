@@ -3,7 +3,7 @@ import Unit, { CircuitUnitType } from './Circuit.Unit';
 import { ElectronicUnitType } from './Electronic.Unit';
 
 export default class Circuit {
-  public electronics: Array<IElectronic> = [];
+  public electronics = new Map<string, IElectronic>();
   public layout: Array<Array<Unit>>;
 
   constructor(public columns: number, public rows: number) {
@@ -59,7 +59,7 @@ export default class Circuit {
       }
     }
 
-    this.electronics.push(e);
+    this.electronics.set(id, e);
   }
 
   public canAttachComponent(e: IElectronic): boolean {

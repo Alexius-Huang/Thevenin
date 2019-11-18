@@ -1,5 +1,6 @@
 import GUIDGenerator from './GUIDGenerator';
 import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
+import ElectronicInfos, { ElectronicInfo } from './Electronic.Info';
 import { ConnectableDirection } from './circuit.lib';
 
 export type Coordinate = [number, number];
@@ -7,9 +8,8 @@ export type Coordinate = [number, number];
 export interface IElectronic {
   id: string;
 
-  name: string;
-  unit: string;
-  unitAbbrev: string;
+  readonly name: string;
+  readonly info: ElectronicInfo,
   value: number;
   valueStringified: string;
 
@@ -30,9 +30,7 @@ export default class Electronic implements IElectronic {
   public id: string = GUIDGenerator();
 
   constructor(
-    public name: string,
-    public unit: string,
-    public unitAbbrev: string,
+    public readonly name: string,
     public value: number,
     public dimension: Array<Array<ElectronicUnit>>,
     public center: Coordinate,
@@ -43,6 +41,11 @@ export default class Electronic implements IElectronic {
   get valueStringified() {
     return this.value.toString();
   }
+
+  get info() { return ElectronicInfos[this.name]; }
+  get type() { return this.info.type; }
+  get unit() { return this.info.unit; }
+  get unitPostfix() { return this.info.unitPostfix; }
 
   private static rotatedElectronicUnitMap: {
     [key: string]: ElectronicUnit,
@@ -86,8 +89,6 @@ export enum EC {
 
 const createResistor = (coord: Coordinate) => new Electronic(
   'Resistor',
-  'Ohms',
-  'Ω',
   1000,
   [[ElectronicUnit.LeftPin, ElectronicUnit.Occupied, ElectronicUnit.RightPin]],
   [1, 0],
@@ -96,8 +97,6 @@ const createResistor = (coord: Coordinate) => new Electronic(
 
 const createDCSource = (coord: Coordinate) => new Electronic(
   'DC Source',
-  'Volt',
-  'V',
   10,
   [[ElectronicUnit.LeftPin, ElectronicUnit.Occupied, ElectronicUnit.RightPin]],
   [1, 0],

@@ -1,6 +1,6 @@
 import Circuit from './Circuit';
 import Unit from './Circuit.Unit';
-import { createElectronic, EC, Coordinate } from './Electronic';
+import { createElectronic, EC, Coordinate, IElectronic } from './Electronic';
 // import { ElectronicUnitType } from './Electronic.Unit';
 
 let circuit: Circuit;
@@ -24,7 +24,7 @@ beforeEach(() => {
 describe('Lib: Circuit', () => {
   it('creates a circuit instance', () => {
     expect(circuit.layout).toMatchObject(result);
-    expect(circuit.electronics).toMatchObject([]);
+    expect(circuit.electronics).toMatchObject(new Map<string, IElectronic>());
   });
 
   describe('Circuit.canAttachComponent', () => {
@@ -130,7 +130,7 @@ describe('Lib: Circuit', () => {
       result[0][0].connect('right');
       result[0][1].setElectronic(resistor.id);
       result[0][2].connect('left');
-      expect(circuit.electronics.length).toBe(1);
+      expect(circuit.electronics.size).toBe(1);
       expect(circuit.layout).toMatchObject(result);
 
       const resistor2 = createElectronic(EC.Resistor, { coordinate: [3, 2] });
@@ -139,7 +139,7 @@ describe('Lib: Circuit', () => {
       result[2][2].connect('right');
       result[2][3].setElectronic(resistor2.id);
       result[2][4].connect('left');
-      expect(circuit.electronics.length).toBe(2);
+      expect(circuit.electronics.size).toBe(2);
       expect(circuit.layout).toMatchObject(result);
     });
 
