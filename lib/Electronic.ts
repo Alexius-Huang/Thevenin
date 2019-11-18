@@ -55,6 +55,14 @@ export default class Electronic implements IElectronic {
     top: ElectronicUnit.RightPin,
     bottom: ElectronicUnit.LeftPin,
   };
+  private static rotatedElectronicUnitCreationMap: {
+    [key: string]: (meta?: string) => ElectronicUnit,
+  } = {
+    left: ElectronicUnit.createTopPin,
+    right: ElectronicUnit.createBottomPin,
+    top: ElectronicUnit.createRightPin,
+    bottom: ElectronicUnit.createLeftPin,
+  };
 
   // Rotate clockwise
   public rotate() {
@@ -67,9 +75,15 @@ export default class Electronic implements IElectronic {
       for (let j = 0; j < rows; j += 1) {
         const eu = this.dimension[j][i];
         if (eu.type === ElectronicUnitType.Pin) {
-          this.dimension[j][i] = Electronic.rotatedElectronicUnitMap[
-            eu.connectDirection as ConnectableDirection
-          ];
+          if (eu.meta === '') {
+            this.dimension[j][i] = Electronic.rotatedElectronicUnitMap[
+              eu.connectDirection as ConnectableDirection
+            ];  
+          } else {
+            this.dimension[j][i] = Electronic.rotatedElectronicUnitCreationMap[
+              eu.connectDirection as ConnectableDirection
+            ](eu.meta);
+          }
         }
 
         newDimension[i][rows - 1 - j] = this.dimension[j][i];
@@ -91,7 +105,7 @@ export enum EC {
 const createDCSource = (coord: Coordinate) => new Electronic(
   'DC Source',
   10,
-  [[ElectronicUnit.LeftPin, ElectronicUnit.Occupied, ElectronicUnit.RightPin]],
+  [[ElectronicUnit.createLeftPin('POSITIVE'), ElectronicUnit.Occupied, ElectronicUnit.createRightPin('NEGATIVE')]],
   [1, 0],
   coord,
 );

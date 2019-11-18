@@ -41,5 +41,44 @@ describe('Lib: Electronic', () => {
       expect(resistor.dimension).toMatchObject(beforeRotationResult);
       expect(resistor.center).toMatchObject([1, 0]);
     });
+
+    it ('rotates electronic component along with meta info', () => {
+      const beforeRotationResult = [
+        [ElectronicUnit.createLeftPin('POSITIVE'), ElectronicUnit.Occupied, ElectronicUnit.createRightPin('NEGATIVE')]
+      ];
+      const quarterRotationResult = [
+        [ElectronicUnit.createTopPin('POSITIVE')],
+        [ElectronicUnit.Occupied],
+        [ElectronicUnit.createBottomPin('NEGATIVE')],
+      ];
+      const halfRotationResult = [
+        [ElectronicUnit.createLeftPin('NEGATIVE'), ElectronicUnit.Occupied, ElectronicUnit.createRightPin('POSITIVE')]
+      ];
+      const thirdQuarterRotationResult = [
+        [ElectronicUnit.createTopPin('NEGATIVE')],
+        [ElectronicUnit.Occupied],
+        [ElectronicUnit.createBottomPin('POSITIVE')],
+      ];
+  
+      const source = createElectronic(
+        EC.DCSource,
+        { coordinate: [1, 0] },
+      );
+
+      expect(source.dimension).toMatchObject(beforeRotationResult);
+      expect(source.center).toMatchObject([1, 0]);
+      source.rotate();
+      expect(source.dimension).toMatchObject(quarterRotationResult);
+      expect(source.center).toMatchObject([0, 1]);
+      source.rotate();
+      expect(source.dimension).toMatchObject(halfRotationResult);
+      expect(source.center).toMatchObject([1, 0]);
+      source.rotate();
+      expect(source.dimension).toMatchObject(thirdQuarterRotationResult);
+      expect(source.center).toMatchObject([0, 1]);
+      source.rotate();
+      expect(source.dimension).toMatchObject(beforeRotationResult);
+      expect(source.center).toMatchObject([1, 0]);
+    });
   });  
 });
