@@ -1,7 +1,6 @@
 import GUIDGenerator from './GUIDGenerator';
 import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
 import ElectronicInfos, { ElectronicInfo } from './Electronic.Info';
-import { ConnectableDirection } from './circuit.lib';
 
 export type Coordinate = [number, number];
 
@@ -46,23 +45,7 @@ export default class Electronic implements IElectronic {
   get type() { return this.info.type; }
   get unit() { return this.info.unit; }
   get unitPostfix() { return this.info.unitPostfix; }
-
-  // private static rotatedElectronicUnitMap: {
-  //   [key: string]: ElectronicUnit,
-  // } = {
-  //   left: ElectronicUnit.TopPin,
-  //   right: ElectronicUnit.BottomPin,
-  //   top: ElectronicUnit.RightPin,
-  //   bottom: ElectronicUnit.LeftPin,
-  // };
-  // private static rotatedElectronicUnitCreationMap: {
-  //   [key: string]: (meta?: string) => ElectronicUnit,
-  // } = {
-  //   left: ElectronicUnit.createTopPin,
-  //   right: ElectronicUnit.createBottomPin,
-  //   top: ElectronicUnit.createRightPin,
-  //   bottom: ElectronicUnit.createLeftPin,
-  // };
+  get pins() { return this.info.pins; }
 
   // Rotate clockwise
   public rotate() {
@@ -75,15 +58,6 @@ export default class Electronic implements IElectronic {
       for (let j = 0; j < rows; j += 1) {
         const eu = this.dimension[j][i];
         if (eu.type === ElectronicUnitType.Pin) {
-          // if (eu.meta === '') {
-          //   this.dimension[j][i] = Electronic.rotatedElectronicUnitMap[
-          //     eu.connectDirection as ConnectableDirection
-          //   ];  
-          // } else {
-          //   this.dimension[j][i] = Electronic.rotatedElectronicUnitCreationMap[
-          //     eu.connectDirection as ConnectableDirection
-          //   ](eu.meta);
-          // }
           eu.rotate();
         }
 
