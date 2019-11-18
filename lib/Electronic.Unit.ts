@@ -1,6 +1,10 @@
 import { ConnectableDirection } from './circuit.lib';
 
-export enum ElectronicUnitType { Pin, Occupied };
+export enum ElectronicUnitType {
+  // Unit,  // Occupies only one space, currently unimplemented
+  Pin,      // Bigger component's pin
+  Occupied, // Bigger component's concrete part
+};
 
 export default class ElectronicUnit {
   static LeftPin:   ElectronicUnit = ElectronicUnit.createLeftPin();

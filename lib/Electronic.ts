@@ -83,9 +83,29 @@ export default class Electronic implements IElectronic {
 
 /* Electronic Component */
 export enum EC {
-  Resistor,
+  Ground,
   DCSource,
+  Resistor,
 }
+
+const createDCSource = (coord: Coordinate) => new Electronic(
+  'DC Source',
+  10,
+  [[ElectronicUnit.LeftPin, ElectronicUnit.Occupied, ElectronicUnit.RightPin]],
+  [1, 0],
+  coord,
+);
+
+const createGround = (coord: Coordinate) => new Electronic(
+  'Ground',
+  NaN,
+  [
+    [ElectronicUnit.TopPin],
+    [ElectronicUnit.Occupied],
+  ],
+  [0, 1],
+  coord,
+);
 
 const createResistor = (coord: Coordinate) => new Electronic(
   'Resistor',
@@ -94,14 +114,6 @@ const createResistor = (coord: Coordinate) => new Electronic(
   [1, 0],
   coord,
 );
-
-const createDCSource = (coord: Coordinate) => new Electronic(
-  'DC Source',
-  10,
-  [[ElectronicUnit.LeftPin, ElectronicUnit.Occupied, ElectronicUnit.RightPin]],
-  [1, 0],
-  coord,
-)
 
 type ElectronicArgs = {
   coordinate: Coordinate;
@@ -113,6 +125,7 @@ export const createElectronic = (type: EC, args: ElectronicArgs): IElectronic =>
   switch (type) {
     case EC.Resistor: return createResistor(c);
     case EC.DCSource: return createDCSource(c);
+    case EC.Ground:   return createGround(c);
 
     default:
       throw new Error(`${type} isn't registered!`);

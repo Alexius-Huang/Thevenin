@@ -213,10 +213,10 @@ describe('Lib: Circuit', () => {
       result[3][2].setElectronic(resistor3.id);
       result[4][2].connect('top');
       expect(circuit.layout).toMatchObject(result);
-    });  
+    });
   });
 
-  describe('Wiring', () => {
+  describe('Circuit.addJoint', () => {
     it('wires simple circuit using wire-edges', () => {
       // [ a a a a a ]
       // [ w n o n w ]
@@ -259,6 +259,47 @@ describe('Lib: Circuit', () => {
       result[3][0].connect('top');
       result[2][0].connect('top');
       result[2][0].connect('bottom');
+      expect(circuit.layout).toMatchObject(result);
+    });
+  });
+
+  describe('Integration', () => {
+    it('creates simple circuit with mixed electronic components', () => {
+      // [ a a a a a ] R: resistor
+      // [ a n R n a ] S: DC Source
+      // [ a S a w a ] G: Ground
+      // [ a n n w a ]
+      // [ a a G a a ]
+      const resistor = createElectronic(EC.Resistor, { coordinate: [2, 1] });
+      const source = createElectronic(EC.DCSource, { coordinate : [1, 2]});
+      source.rotate();
+      const ground = createElectronic(EC.Ground, { coordinate: [2, 4] });
+
+      circuit.appendElectronics(resistor);
+      circuit.appendElectronics(source);
+      circuit.appendElectronics(ground);
+
+      circuit.addJoint([3, 1], [3, 2]);
+      circuit.addJoint([3, 2], [3, 3]);
+      circuit.addJoint([3, 3], [2, 3]);
+      circuit.addJoint([2, 3], [1, 3]);
+
+      result[1][1].connect('right');
+      result[1][1].connect('bottom');
+      result[1][2].setElectronic(resistor.id);
+      result[1][3].connect('left');
+      result[1][3].connect('bottom');
+      result[2][3].connect('top');
+      result[2][3].connect('bottom');
+      result[3][3].connect('top');
+      result[3][3].connect('left');
+      result[3][2].connect('left');
+      result[3][2].connect('right');
+      result[3][2].connect('bottom');
+      result[3][1].connect('right');
+      result[3][1].connect('top');
+      result[2][1].setElectronic(source.id);
+      result[4][2].setElectronic(ground.id);
       expect(circuit.layout).toMatchObject(result);
     });
   });
