@@ -5,20 +5,20 @@ describe('Lib: Electronic', () => {
   describe('Electronic Component Rotation', () => {
     it ('rotates electronic component clockwisely', () => {
       const beforeRotationResult = [
-        [ElectronicUnit.LeftPin, ElectronicUnit.Occupied, ElectronicUnit.RightPin]
+        [ElectronicUnit.createPin('left', '1'), ElectronicUnit.Occupied, ElectronicUnit.createPin('right', '2')]
       ];
       const quarterRotationResult = [
-        [ElectronicUnit.TopPin],
+        [ElectronicUnit.createPin('top', '1')],
         [ElectronicUnit.Occupied],
-        [ElectronicUnit.BottomPin],
+        [ElectronicUnit.createPin('bottom', '2')],
       ];
       const halfRotationResult = [
-        [ElectronicUnit.LeftPin, ElectronicUnit.Occupied, ElectronicUnit.RightPin]
+        [ElectronicUnit.createPin('left', '2'), ElectronicUnit.Occupied, ElectronicUnit.createPin('right', '1')]
       ];
       const thirdQuarterRotationResult = [
-        [ElectronicUnit.TopPin],
+        [ElectronicUnit.createPin('top', '2')],
         [ElectronicUnit.Occupied],
-        [ElectronicUnit.BottomPin],
+        [ElectronicUnit.createPin('bottom', '1')],
       ];
   
       const resistor = createElectronic(
@@ -44,20 +44,20 @@ describe('Lib: Electronic', () => {
 
     it ('rotates electronic component along with meta info', () => {
       const beforeRotationResult = [
-        [ElectronicUnit.createLeftPin('POSITIVE'), ElectronicUnit.Occupied, ElectronicUnit.createRightPin('NEGATIVE')]
+        [ElectronicUnit.createPin('left', 'POSITIVE'), ElectronicUnit.Occupied, ElectronicUnit.createPin('right', 'NEGATIVE')]
       ];
       const quarterRotationResult = [
-        [ElectronicUnit.createTopPin('POSITIVE')],
+        [ElectronicUnit.createPin('top', 'POSITIVE')],
         [ElectronicUnit.Occupied],
-        [ElectronicUnit.createBottomPin('NEGATIVE')],
+        [ElectronicUnit.createPin('bottom', 'NEGATIVE')],
       ];
       const halfRotationResult = [
-        [ElectronicUnit.createLeftPin('NEGATIVE'), ElectronicUnit.Occupied, ElectronicUnit.createRightPin('POSITIVE')]
+        [ElectronicUnit.createPin('left', 'NEGATIVE'), ElectronicUnit.Occupied, ElectronicUnit.createPin('right', 'POSITIVE')]
       ];
       const thirdQuarterRotationResult = [
-        [ElectronicUnit.createTopPin('NEGATIVE')],
+        [ElectronicUnit.createPin('top', 'NEGATIVE')],
         [ElectronicUnit.Occupied],
-        [ElectronicUnit.createBottomPin('POSITIVE')],
+        [ElectronicUnit.createPin('bottom', 'POSITIVE')],
       ];
   
       const source = createElectronic(

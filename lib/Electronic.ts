@@ -47,22 +47,22 @@ export default class Electronic implements IElectronic {
   get unit() { return this.info.unit; }
   get unitPostfix() { return this.info.unitPostfix; }
 
-  private static rotatedElectronicUnitMap: {
-    [key: string]: ElectronicUnit,
-  } = {
-    left: ElectronicUnit.TopPin,
-    right: ElectronicUnit.BottomPin,
-    top: ElectronicUnit.RightPin,
-    bottom: ElectronicUnit.LeftPin,
-  };
-  private static rotatedElectronicUnitCreationMap: {
-    [key: string]: (meta?: string) => ElectronicUnit,
-  } = {
-    left: ElectronicUnit.createTopPin,
-    right: ElectronicUnit.createBottomPin,
-    top: ElectronicUnit.createRightPin,
-    bottom: ElectronicUnit.createLeftPin,
-  };
+  // private static rotatedElectronicUnitMap: {
+  //   [key: string]: ElectronicUnit,
+  // } = {
+  //   left: ElectronicUnit.TopPin,
+  //   right: ElectronicUnit.BottomPin,
+  //   top: ElectronicUnit.RightPin,
+  //   bottom: ElectronicUnit.LeftPin,
+  // };
+  // private static rotatedElectronicUnitCreationMap: {
+  //   [key: string]: (meta?: string) => ElectronicUnit,
+  // } = {
+  //   left: ElectronicUnit.createTopPin,
+  //   right: ElectronicUnit.createBottomPin,
+  //   top: ElectronicUnit.createRightPin,
+  //   bottom: ElectronicUnit.createLeftPin,
+  // };
 
   // Rotate clockwise
   public rotate() {
@@ -75,15 +75,16 @@ export default class Electronic implements IElectronic {
       for (let j = 0; j < rows; j += 1) {
         const eu = this.dimension[j][i];
         if (eu.type === ElectronicUnitType.Pin) {
-          if (eu.meta === '') {
-            this.dimension[j][i] = Electronic.rotatedElectronicUnitMap[
-              eu.connectDirection as ConnectableDirection
-            ];  
-          } else {
-            this.dimension[j][i] = Electronic.rotatedElectronicUnitCreationMap[
-              eu.connectDirection as ConnectableDirection
-            ](eu.meta);
-          }
+          // if (eu.meta === '') {
+          //   this.dimension[j][i] = Electronic.rotatedElectronicUnitMap[
+          //     eu.connectDirection as ConnectableDirection
+          //   ];  
+          // } else {
+          //   this.dimension[j][i] = Electronic.rotatedElectronicUnitCreationMap[
+          //     eu.connectDirection as ConnectableDirection
+          //   ](eu.meta);
+          // }
+          eu.rotate();
         }
 
         newDimension[i][rows - 1 - j] = this.dimension[j][i];
@@ -105,7 +106,7 @@ export enum EC {
 const createDCSource = (coord: Coordinate) => new Electronic(
   'DC Source',
   10,
-  [[ElectronicUnit.createLeftPin('POSITIVE'), ElectronicUnit.Occupied, ElectronicUnit.createRightPin('NEGATIVE')]],
+  [[ElectronicUnit.createPin('left', 'POSITIVE'), ElectronicUnit.Occupied, ElectronicUnit.createPin('right', 'NEGATIVE')]],
   [1, 0],
   coord,
 );
@@ -114,7 +115,7 @@ const createGround = (coord: Coordinate) => new Electronic(
   'Ground',
   NaN,
   [
-    [ElectronicUnit.TopPin],
+    [ElectronicUnit.createPin('top')],
     [ElectronicUnit.Occupied],
   ],
   [0, 1],
@@ -124,7 +125,7 @@ const createGround = (coord: Coordinate) => new Electronic(
 const createResistor = (coord: Coordinate) => new Electronic(
   'Resistor',
   1000,
-  [[ElectronicUnit.LeftPin, ElectronicUnit.Occupied, ElectronicUnit.RightPin]],
+  [[ElectronicUnit.createPin('left', '1'), ElectronicUnit.Occupied, ElectronicUnit.createPin('right', '2')]],
   [1, 0],
   coord,
 );

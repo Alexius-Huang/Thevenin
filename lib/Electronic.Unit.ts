@@ -1,4 +1,5 @@
 import { ConnectableDirection } from './circuit.lib';
+import GUIDGenerator from './GUIDGenerator';
 
 export enum ElectronicUnitType {
   // Unit,  // Occupies only one space, currently unimplemented
@@ -9,7 +10,7 @@ export enum ElectronicUnitType {
 export default class ElectronicUnit {
   constructor(
     public readonly type: ElectronicUnitType,
-    public readonly connectDirection: ConnectableDirection | null,
+    public connectDirection: ConnectableDirection | null,
     public readonly meta: string = ''
   ) {}
 
@@ -22,34 +23,29 @@ export default class ElectronicUnit {
     bottom: 'top'
   };
 
+  private static rotatedDirection: {
+    [key: string]: ConnectableDirection,
+  } = {
+    left: 'top',
+    right: 'bottom',
+    top: 'right',
+    bottom: 'left'
+  };
+
   get circuitConnectDirection() {
     if (this.connectDirection === null) throw new Error('Electronic Unit is not a pin!');
     return ElectronicUnit.invertedDirection[this.connectDirection];
   }
 
-  static LeftPin:   ElectronicUnit = ElectronicUnit.createLeftPin();
-  static RightPin:  ElectronicUnit = ElectronicUnit.createRightPin();
-  static TopPin:    ElectronicUnit = ElectronicUnit.createTopPin();
-  static BottomPin: ElectronicUnit = ElectronicUnit.createBottomPin();
+  public rotate() {
+    if (this.connectDirection !== null) {
+      this.connectDirection = ElectronicUnit.rotatedDirection[this.connectDirection];
+    }
+  }
+
   static Occupied:  ElectronicUnit = new ElectronicUnit(ElectronicUnitType.Occupied, null);
 
-  private static createPin(direction: ConnectableDirection, meta?: string) {
+  static createPin(direction: ConnectableDirection, meta?: string) {
     return new ElectronicUnit(ElectronicUnitType.Pin, direction, meta);
-  }
-
-  public static createLeftPin(meta?: string) {
-    return ElectronicUnit.createPin('left', meta);
-  }
-
-  public static createRightPin(meta?: string) {
-    return ElectronicUnit.createPin('right', meta);
-  }
-
-  public static createTopPin(meta?: string) {
-    return ElectronicUnit.createPin('top', meta);
-  }
-
-  public static createBottomPin(meta?: string) {
-    return ElectronicUnit.createPin('bottom', meta);
   }
 }
