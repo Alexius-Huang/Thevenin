@@ -112,9 +112,9 @@ describe('Lib: Circuit', () => {
         resistor2.rotate();
 
         circuit.appendElectronics(resistor1);
-        result[2][1].connect('right');
+        result[2][1].connect('right', resistor1);
         result[2][2].setElectronic(resistor1.id);
-        result[2][3].connect('left');
+        result[2][3].connect('left', resistor1);
 
         expect(circuit.layout).toMatchObject(result);
         expect(circuit.canAttachComponent(resistor2)).toBe(false);
@@ -127,18 +127,18 @@ describe('Lib: Circuit', () => {
       const resistor = createElectronic(EC.Resistor, { coordinate: [1, 0] });
       circuit.appendElectronics(resistor);
 
-      result[0][0].connect('right');
+      result[0][0].connect('right', resistor);
       result[0][1].setElectronic(resistor.id);
-      result[0][2].connect('left');
+      result[0][2].connect('left', resistor);
       expect(circuit.electronics.size).toBe(1);
       expect(circuit.layout).toMatchObject(result);
 
       const resistor2 = createElectronic(EC.Resistor, { coordinate: [3, 2] });
       circuit.appendElectronics(resistor2);
 
-      result[2][2].connect('right');
+      result[2][2].connect('right', resistor2);
       result[2][3].setElectronic(resistor2.id);
-      result[2][4].connect('left');
+      result[2][4].connect('left', resistor2);
       expect(circuit.electronics.size).toBe(2);
       expect(circuit.layout).toMatchObject(result);
     });
@@ -148,9 +148,9 @@ describe('Lib: Circuit', () => {
       resistor.rotate();
       circuit.appendElectronics(resistor);
 
-      result[0][1].connect('bottom');
+      result[0][1].connect('bottom', resistor);
       result[1][1].setElectronic(resistor.id);
-      result[2][1].connect('top');
+      result[2][1].connect('top', resistor);
       expect(circuit.layout).toMatchObject(result);
     });
 
@@ -162,12 +162,12 @@ describe('Lib: Circuit', () => {
       const resistor2 = createElectronic(EC.Resistor, { coordinate: [3, 0] });
       circuit.appendElectronics(resistor2);
 
-      result[0][0].connect('right');
+      result[0][0].connect('right', resistor1);
       result[0][1].setElectronic(resistor1.id);
-      result[0][2].connect('left');
-      result[0][2].connect('right');
+      result[0][2].connect('left', resistor1);
+      result[0][2].connect('right', resistor2);
       result[0][3].setElectronic(resistor2.id);
-      result[0][4].connect('left');
+      result[0][4].connect('left', resistor2);
       expect(circuit.layout).toMatchObject(result);
     });
 
@@ -200,18 +200,18 @@ describe('Lib: Circuit', () => {
       // [ n o n o n ]
       // [ a a o a a ]
       // [ a a n a a ]
-      result[0][2].connect('bottom');
+      result[0][2].connect('bottom', resistor1);
       result[1][2].setElectronic(resistor1.id);
-      result[2][0].connect('right');
+      result[2][0].connect('right', resistor4);
       result[2][1].setElectronic(resistor4.id);
-      result[2][2].connect('left');
-      result[2][2].connect('top');
-      result[2][2].connect('right');
-      result[2][2].connect('bottom');
+      result[2][2].connect('left', resistor4);
+      result[2][2].connect('top', resistor1);
+      result[2][2].connect('right', resistor2);
+      result[2][2].connect('bottom', resistor3);
       result[2][3].setElectronic(resistor2.id);
-      result[2][4].connect('left');
+      result[2][4].connect('left', resistor2);
       result[3][2].setElectronic(resistor3.id);
-      result[4][2].connect('top');
+      result[4][2].connect('top', resistor3);
       expect(circuit.layout).toMatchObject(result);
     });
   });
@@ -237,28 +237,28 @@ describe('Lib: Circuit', () => {
       circuit.addJoint([0, 3], [0, 2]);
       circuit.addJoint([0, 2], [0, 1]);
 
-      result[1][0].connect('right');
-      result[1][0].connect('bottom');
-      result[1][1].connect('left');
-      result[1][1].connect('right');
+      result[1][0].connect('right', result[1][1]);
+      result[1][0].connect('bottom', result[2][0]);
+      result[1][1].connect('left', result[1][0]);
+      result[1][1].connect('right', resistor1);
       result[1][2].setElectronic(resistor1.id);
-      result[1][3].connect('left');
-      result[1][3].connect('right');
-      result[1][4].connect('left');
-      result[1][4].connect('bottom');
-      result[2][4].connect('top');
-      result[2][4].connect('bottom');
-      result[3][4].connect('left');
-      result[3][4].connect('top');
-      result[3][3].connect('right');
-      result[3][3].connect('left');
+      result[1][3].connect('left', resistor1);
+      result[1][3].connect('right', result[1][4]);
+      result[1][4].connect('left', result[1][3]);
+      result[1][4].connect('bottom', result[2][4]);
+      result[2][4].connect('top', result[1][4]);
+      result[2][4].connect('bottom', result[3][4]);
+      result[3][4].connect('left', result[3][3]);
+      result[3][4].connect('top', result[2][4]);
+      result[3][3].connect('right', result[3][4]);
+      result[3][3].connect('left', resistor2);
       result[3][2].setElectronic(resistor2.id);
-      result[3][1].connect('right');
-      result[3][1].connect('left');
-      result[3][0].connect('right');
-      result[3][0].connect('top');
-      result[2][0].connect('top');
-      result[2][0].connect('bottom');
+      result[3][1].connect('right', resistor2);
+      result[3][1].connect('left', result[3][0]);
+      result[3][0].connect('right', result[3][1]);
+      result[3][0].connect('top', result[2][0]);
+      result[2][0].connect('top', result[1][0]);
+      result[2][0].connect('bottom', result[3][0]);
       expect(circuit.layout).toMatchObject(result);
     });
   });
@@ -285,20 +285,20 @@ describe('Lib: Circuit', () => {
         circuit.addJoint([3, 3], [2, 3]);
         circuit.addJoint([2, 3], [1, 3]);
   
-        result[1][1].connect('right');
-        result[1][1].connect('bottom');
+        result[1][1].connect('right', resistor);
+        result[1][1].connect('bottom', source);
         result[1][2].setElectronic(resistor.id);
-        result[1][3].connect('left');
-        result[1][3].connect('bottom');
-        result[2][3].connect('top');
-        result[2][3].connect('bottom');
-        result[3][3].connect('top');
-        result[3][3].connect('left');
-        result[3][2].connect('left');
-        result[3][2].connect('right');
-        result[3][2].connect('bottom');
-        result[3][1].connect('right');
-        result[3][1].connect('top');
+        result[1][3].connect('left', resistor);
+        result[1][3].connect('bottom', result[2][3]);
+        result[2][3].connect('top', result[1][3]);
+        result[2][3].connect('bottom', result[3][3]);
+        result[3][3].connect('top', result[2][3]);
+        result[3][3].connect('left', result[3][2]);
+        result[3][2].connect('left', result[3][1]);
+        result[3][2].connect('right', result[3][3]);
+        result[3][2].connect('bottom', ground);
+        result[3][1].connect('right', result[3][2]);
+        result[3][1].connect('top', source);
         result[2][1].setElectronic(source.id);
         result[4][2].setElectronic(ground.id);
         expect(circuit.layout).toMatchObject(result);

@@ -1,4 +1,5 @@
 import { ConnectableDirection } from './circuit.lib';
+import { IElectronic } from './Electronic';
 
 export enum CircuitUnitType {
   Available,             // all direction
@@ -21,14 +22,20 @@ export default class CircuitUnit {
   public electronicID: null | string = null;
   public connectedDirections = new Set<ConnectableDirection>([]);
 
+  public left: CircuitUnit | IElectronic | null = null;
+  public right: CircuitUnit | IElectronic | null = null;
+  public top: CircuitUnit | IElectronic | null = null;
+  public bottom: CircuitUnit | IElectronic | null = null;
+
   public isDirectionConnectable(direction: ConnectableDirection) {
     return !this.connectedDirections.has(direction);
   }
 
-  public connect(direction: ConnectableDirection) {
+  public connect(direction: ConnectableDirection, connectedUnit: CircuitUnit | IElectronic) {
     if (this.connectedDirections.has(direction))
       throw new Error(`Direction \`${direction}\` has already connected`);
     this.connectedDirections.add(direction);
+    this[direction] = connectedUnit;
   }
 
   public setOccupied() {
