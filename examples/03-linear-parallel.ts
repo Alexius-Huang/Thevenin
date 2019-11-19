@@ -1,15 +1,18 @@
 import Circuit from '../lib/Circuit';
 import { createElectronic, EC } from '../lib/Electronic';
 
-// Circuit Layout:
-// [ a  a  a  a  a  a  a ] R: resistor
-// [ a +n  w  n  w  n  a ] S: DC Source
-// [ a  S  a  R  a  R  a ] G: Ground
-// [ a -n  w  n  w  n  a ]
-// [ a  a  a  a  a  G  a ]
+/*
+ *  Circuit Layout:
+ *  [ a  a  a  a  a  a  a ] R: resistor
+ *  [ a +n  w  n  w  n  a ] S: DC Source
+ *  [ a  S  a  R  a  R  a ] G: Ground
+ *  [ a -n  w  n  w  n  a ]
+ *  [ a  a  a  a  a  G  a ]
+ */
 
+
+/* Circuit Implementation */
 const circuit = new Circuit(7, 5);
-
 const resistor1 = createElectronic(EC.Resistor, { coordinate: [3, 2] });
 resistor1.rotate();
 const resistor2 = createElectronic(EC.Resistor, { coordinate: [5, 2] })
@@ -33,6 +36,24 @@ circuit.addJoint([2, 3], [3, 3]);
 circuit.addJoint([3, 3], [4, 3]);
 circuit.addJoint([4, 3], [5, 3]);
 
+/* Expectations */
+const graph = new Circuit.Graph();
+const n1 = graph.createNode(resistor1);
+const n2 = graph.createNode(resistor2);
+const n3 = graph.createNode(source);
+const n4 = graph.createNode(ground);
+
+const e1 = graph.createEdge();
+n1.connect(e1, '1');
+n2.connect(e1, '1');
+n3.connect(e1, 'POSITIVE');
+
+const e2 = graph.createEdge();
+n1.connect(e2, '2');
+n2.connect(e2, '2');
+n3.connect(e2, 'NEGATIVE');
+n4.connect(e2);
+
 export default {
   circuit,
   components: {
@@ -41,4 +62,5 @@ export default {
     source,
     ground,
   },
+  expected: { graph }
 };
