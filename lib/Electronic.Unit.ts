@@ -1,5 +1,4 @@
 import { ConnectableDirection } from './circuit.lib';
-import GUIDGenerator from './GUIDGenerator';
 
 export enum ElectronicUnitType {
   // Unit,  // Occupies only one space, currently unimplemented

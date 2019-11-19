@@ -16,22 +16,29 @@ export enum CircuitUnitType {
   // Invalid,
 }
 
+export type ElectronicConnection = {
+  electronic: IElectronic;
+  pinName: string;
+};
+
+export type CircuitConnection = CircuitUnit | ElectronicConnection | null;
+
 export default class CircuitUnit {
   public isNode = false;
   public isLocked = false;
   public electronicID: null | string = null;
-  public connectedDirections = new Set<ConnectableDirection>([]);
+  public connectedDirections = new Set<ConnectableDirection>();
 
-  public left: CircuitUnit | IElectronic | null = null;
-  public right: CircuitUnit | IElectronic | null = null;
-  public top: CircuitUnit | IElectronic | null = null;
-  public bottom: CircuitUnit | IElectronic | null = null;
+  public left:   CircuitConnection = null;
+  public right:  CircuitConnection = null;
+  public top:    CircuitConnection = null;
+  public bottom: CircuitConnection = null;
 
   public isDirectionConnectable(direction: ConnectableDirection) {
     return !this.connectedDirections.has(direction);
   }
 
-  public connect(direction: ConnectableDirection, connectedUnit: CircuitUnit | IElectronic) {
+  public connect(direction: ConnectableDirection, connectedUnit: CircuitUnit | ElectronicConnection) {
     if (this.connectedDirections.has(direction))
       throw new Error(`Direction \`${direction}\` has already connected`);
     this.connectedDirections.add(direction);
