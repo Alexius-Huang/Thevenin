@@ -65,7 +65,10 @@ describe('Lib: Circuit.Unit', () => {
       unit = new Unit();
       unit.isLocked = typeof isLocked === 'boolean' ? isLocked : false;
       unit.isNode = typeof isNode === 'boolean' ? isNode : false;
-      directions.forEach(d => unit.connect(d));
+      directions.forEach(d => {
+        const attachedUnit = new Unit();
+        unit.connect(d, attachedUnit);
+      });
       expect(unit.type).toBe(result);
     });
   });

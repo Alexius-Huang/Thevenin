@@ -23,6 +23,13 @@ export type ElectronicConnection = {
 
 export type CircuitConnection = CircuitUnit | ElectronicConnection | null;
 
+const invertDirectionMap: { [key: string]: ConnectableDirection } = {
+  left: 'right',
+  right: 'left',
+  top: 'bottom',
+  bottom: 'top',
+};
+
 export default class CircuitUnit {
   public isNode = false;
   public isLocked = false;
@@ -43,6 +50,12 @@ export default class CircuitUnit {
       throw new Error(`Direction \`${direction}\` has already connected`);
     this.connectedDirections.add(direction);
     this[direction] = connectedUnit;
+
+    if (connectedUnit instanceof CircuitUnit) {
+      const invDir = invertDirectionMap[direction];
+      connectedUnit[invDir] = this;
+      connectedUnit.connectedDirections.add(invDir);
+    }
   }
 
   public setOccupied() {
@@ -59,6 +72,15 @@ export default class CircuitUnit {
     if (!this.connectedDirections.has(direction))
       throw new Error(`Direction \`${direction}\` has already disconnected`);
     this.connectedDirections.delete(direction);
+
+    const connectedUnit = this[direction];
+    if (connectedUnit instanceof CircuitUnit) {
+      const invDir = invertDirectionMap[direction];
+      connectedUnit[invDir] = null;
+      connectedUnit.connectedDirections.delete(invDir);
+    }
+
+    this[direction] = null;
   }
 
   public disconnectAll() {

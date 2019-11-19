@@ -1,9 +1,8 @@
 import { IElectronic, Coordinate } from './Electronic';
-import Unit, { CircuitUnitType } from './Circuit.Unit';
+import Unit, { CircuitUnitType, CircuitConnection } from './Circuit.Unit';
 import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
 import Graph, { Node, Edge } from './Circuit.Graph';
 import CircuitUnit from './Circuit.Unit';
-import { ConnectableDirection } from './circuit.lib';
 
 export default class Circuit {
   static Graph = Graph;
@@ -27,18 +26,18 @@ export default class Circuit {
     if (Math.abs(deltaCol) === 1 && deltaRow === 0) {
       if (deltaCol > 0) {
         cu1.connect('right', cu2);
-        cu2.connect('left', cu1);
+        // cu2.connect('left', cu1);
       } else {
         cu1.connect('left', cu2);
-        cu2.connect('right', cu1);
+        // cu2.connect('right', cu1);
       }
     } else if (Math.abs(deltaRow) === 1 && deltaCol === 0) {
       if (deltaRow > 0) {
         cu1.connect('bottom', cu2);
-        cu2.connect('top', cu1);
+        // cu2.connect('top', cu1);
       } else {
         cu1.connect('top', cu2);
-        cu2.connect('bottom', cu1);
+        // cu2.connect('bottom', cu1);
       }
     } else {
       throw new Error('Invalid circuit joint connection!');
@@ -84,85 +83,60 @@ export default class Circuit {
     return true;
   }
 
-  // public deriveGraph() {
-  //   const graph = new Circuit.Graph();
+  public deriveGraph() {
+    const graph = new Circuit.Graph();
 
-  //   const traversedElectronics = new Set<IElectronic>();
-  //   const traversedCircuitUnit = new Set<CircuitUnit>();
-  //   const electronicNodeMap = new Map<string, Node>();
-  //   // const circuitUnitEdgeMap = {
-  //   //   top:    new Map<CircuitUnit, Edge>(),
-  //   //   right:  new Map<CircuitUnit, Edge>(),
-  //   //   bottom: new Map<CircuitUnit, Edge>(),
-  //   //   left:   new Map<CircuitUnit, Edge>(),
-  //   // };
+    const traversedCircuitUnit = new Set<CircuitUnit>();
+    const electronicNodeMap = new Map<string, Node>();
 
-  //   let traverseFromElectronic = (e: IElectronic) => {
-  //     const node = electronicNodeMap.get(e.id) as Node;
+    let traverseFromElectronic = (e: IElectronic) => {
+      this.mapElectronicUnitWithCircuitUnit(e, (eu, cu) => {
+        const { connectDirection: connectDir } = eu;
 
-  //     // Traverse from different pin
-  //     this.mapElectronicUnitWithCircuitUnit(e, (eu, cu) => {
-  //       const { connectDirection: connectDir } = eu;
+        // Check if it is pin and if the pin is already traversed or not
+        if (connectDir !== null && !traversedCircuitUnit.has(cu)) {
+          traverseFromCircuitUnit(cu);
+        }
+      });
+    }
 
-  //       // Check if it is pin
-  //       if (connectDir !== null && !traversedCircuitUnit.has(cu)) {
-  //         const edge = graph.createEdge();
-  //         node.connect(edge, eu.meta);
-  //         traverseFromCircuitUnit(cu, edge);
-  //       }
-  //     });
-  //   }
+    let traverseFromCircuitUnit = (cu: CircuitUnit, linkedEdge?: Edge) => {
+      traversedCircuitUnit.add(cu);
+      const edge = linkedEdge || graph.createEdge();
+      const spannedUnit: Array<CircuitConnection> = [cu.top, cu.right, cu.bottom, cu.left];
 
-  //   let traverseFromCircuitUnit = (cu: CircuitUnit, linkedEdge?: Edge) => {
-  //     traversedCircuitUnit.add(cu);
-  //     const edge = linkedEdge || graph.createEdge();
+      spannedUnit.forEach(unit => {
+        if (unit === null) return;
 
-  //     const spannedUnit: Array<[CircuitUnit | IElectronic | null, ConnectableDirection]> = [
-  //       [cu.top, 'top'],
-  //       [cu.right, 'right'],
-  //       [cu.bottom, 'bottom'],
-  //       [cu.left, 'left'],
-  //     ];
+        if (unit instanceof CircuitUnit) {
+          if (!traversedCircuitUnit.has(unit)) {
+            traverseFromCircuitUnit(unit, edge);
+          }
+        } else {
+          const node = electronicNodeMap.get(unit.electronic.id) as Node;
+          node.connect(edge, unit.pinName);
+        }
+      });
+    }
 
-  //     spannedUnit.forEach(([unit, direction]) => {
-  //       if (unit === null) return;
+    const electronicsIter = this.electronics.values();
+    const electronics: Array<IElectronic> = [];
+    let pulled = electronicsIter.next();
 
-  //       if (unit instanceof CircuitUnit) {
-  //         if (!traversedCircuitUnit.has(unit)) {
-  //           traverseFromCircuitUnit(unit, edge);
-  //         }
-  //       } else {
-  //         const node = electronicNodeMap.get(unit.id) as Node;
+    while (!pulled.done) {
+      const electronic = pulled.value;
+      const node = graph.createNode(electronic);
+      electronicNodeMap.set(electronic.id, node);
+      electronics.push(electronic);
 
-  //         node.connect(edge, );
-  //       }
-  //     });
-  //   }
+      pulled = electronicsIter.next();
+    }
 
-  //   const electronicsIter = this.electronics.values();
-  //   const electronics: Array<IElectronic> = [];
-  //   let pulled = electronicsIter.next();
+    /* Start Traverse Each Electronic */
+    electronics.forEach(traverseFromElectronic);
 
-  //   while (!pulled.done) {
-  //     const electronic = pulled.value;
-  //     const node = graph.createNode(electronic);
-  //     electronicNodeMap.set(electronic.id, node);
-  //     electronics.push(electronic);
-
-  //     pulled = electronicsIter.next();
-  //   }
-
-  //   electronics.forEach(traverseFromElectronic);
-
-  //   // console.log(traversedEdges);
-  //   // console.log(traversedElectronics);
-
-  //   console.log('-------------------');
-  //   console.log(graph.edges);
-  //   console.log(graph.nodes);
-
-  //   return graph;
-  // }
+    return graph;
+  }
 
   private mapElectronicUnitWithCircuitUnit(
     e: IElectronic,
