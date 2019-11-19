@@ -283,7 +283,7 @@ describe('Lib: Circuit', () => {
     });
 
     describe('Circuit.Graph', () => {
-      it('creates graph with circuit layout', async () => {
+      it('creates graph with simple circuit layout', async () => {
         const example: { default: CircuitExample } = await import('../examples/01-simple-circuit');
         const { circuit, components: { resistor, source, ground } } = example.default;
 
@@ -300,6 +300,56 @@ describe('Lib: Circuit', () => {
         n1.connect(e2, '2');
         n2.connect(e2, 'NEGATIVE');
         n3.connect(e2);
+
+        expect(circuit.deriveGraph()).toMatchObject(graph);
+      });
+
+      it('creates graph with series circuit layout', async () => {
+        const example: { default: CircuitExample } = await import('../examples/02-linear-series');
+        const { circuit, components: { resistor1, resistor2, source, ground } } = example.default;
+
+        const graph = new Circuit.Graph();
+        const n1 = graph.createNode(resistor1);
+        const n2 = graph.createNode(resistor2);
+        const n3 = graph.createNode(source);
+        const n4 = graph.createNode(ground);
+
+        const e1 = graph.createEdge();
+        n1.connect(e1, '1');
+        n3.connect(e1, 'POSITIVE');
+
+        const e2 = graph.createEdge();
+        n1.connect(e2, '2');
+        n2.connect(e2, '1');
+
+        const e3 = graph.createEdge();
+        n2.connect(e3, '2');
+        n4.connect(e3);
+        n3.connect(e3, 'NEGATIVE');
+
+        expect(circuit.deriveGraph()).toMatchObject(graph);
+      });
+
+      it('creates graph with parallel circuit layout', async () => {
+        const example: { default: CircuitExample } = await import('../examples/03-linear-parallel');
+        const { circuit, components: { resistor1, resistor2, source, ground } } = example.default;
+
+        const graph = new Circuit.Graph();
+        const n1 = graph.createNode(resistor1);
+        const n2 = graph.createNode(resistor2);
+        const n3 = graph.createNode(source);
+        const n4 = graph.createNode(ground);
+
+        const e1 = graph.createEdge();
+        n1.connect(e1, '1');
+        n2.connect(e1, '1');
+        n3.connect(e1, 'POSITIVE');
+
+        const e2 = graph.createEdge();
+        n1.connect(e2, '2');
+        n2.connect(e2, '2');
+        n3.connect(e2, 'NEGATIVE');
+        n4.connect(e2);
 
         expect(circuit.deriveGraph()).toMatchObject(graph);
       });
