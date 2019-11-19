@@ -4,10 +4,10 @@ node_js:
 before_install:
   - npm update
 install:
-  - yarn
+  - npm install
 cache:
   directories:
     - "node_modules"
 script:
-  - yarn test
-  - yarn coveralls
+  - npm run test
+  - npm run coveralls
