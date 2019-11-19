@@ -264,43 +264,82 @@ describe('Lib: Circuit', () => {
   });
 
   describe('Integration', () => {
-    it('creates simple circuit with mixed electronic components', () => {
-      // [ a a a a a ] R: resistor
-      // [ a n R n a ] S: DC Source
-      // [ a S a w a ] G: Ground
-      // [ a n n w a ]
-      // [ a a G a a ]
-      const resistor = createElectronic(EC.Resistor, { coordinate: [2, 1] });
-      const source = createElectronic(EC.DCSource, { coordinate : [1, 2]});
-      source.rotate();
-      const ground = createElectronic(EC.Ground, { coordinate: [2, 4] });
+    describe('Circuit.Electronic', () => {
+      it('creates simple circuit with mixed electronic components', () => {
+        // [ a a a a a ] R: resistor
+        // [ a n R n a ] S: DC Source
+        // [ a S a w a ] G: Ground
+        // [ a n n w a ]
+        // [ a a G a a ]
+        const resistor = createElectronic(EC.Resistor, { coordinate: [2, 1] });
+        const source = createElectronic(EC.DCSource, { coordinate : [1, 2]});
+        source.rotate();
+        const ground = createElectronic(EC.Ground, { coordinate: [2, 4] });
+  
+        circuit.appendElectronics(resistor);
+        circuit.appendElectronics(source);
+        circuit.appendElectronics(ground);
+  
+        circuit.addJoint([3, 1], [3, 2]);
+        circuit.addJoint([3, 2], [3, 3]);
+        circuit.addJoint([3, 3], [2, 3]);
+        circuit.addJoint([2, 3], [1, 3]);
+  
+        result[1][1].connect('right');
+        result[1][1].connect('bottom');
+        result[1][2].setElectronic(resistor.id);
+        result[1][3].connect('left');
+        result[1][3].connect('bottom');
+        result[2][3].connect('top');
+        result[2][3].connect('bottom');
+        result[3][3].connect('top');
+        result[3][3].connect('left');
+        result[3][2].connect('left');
+        result[3][2].connect('right');
+        result[3][2].connect('bottom');
+        result[3][1].connect('right');
+        result[3][1].connect('top');
+        result[2][1].setElectronic(source.id);
+        result[4][2].setElectronic(ground.id);
+        expect(circuit.layout).toMatchObject(result);
+      });  
+    });
 
-      circuit.appendElectronics(resistor);
-      circuit.appendElectronics(source);
-      circuit.appendElectronics(ground);
+    describe('Circuit.Graph', () => {
+      it.todo('creates graph with circuit layout');
+      // it('creates graph with circuit layout', () => {
+      //   // [ a  a  a  a  a ] R: resistor
+      //   // [ a +n  R  n  a ] S: DC Source
+      //   // [ a  S  a  w  a ] G: Ground
+      //   // [ a -n  n  w  a ]
+      //   // [ a  a  G  a  a ]
+      //   const resistor = createElectronic(EC.Resistor, { coordinate: [2, 1] });
+      //   const source = createElectronic(EC.DCSource, { coordinate : [1, 2]});
+      //   source.rotate();
+      //   const ground = createElectronic(EC.Ground, { coordinate: [2, 4] });
 
-      circuit.addJoint([3, 1], [3, 2]);
-      circuit.addJoint([3, 2], [3, 3]);
-      circuit.addJoint([3, 3], [2, 3]);
-      circuit.addJoint([2, 3], [1, 3]);
+      //   const graph = new Circuit.Graph();
+      //   const n1 = graph.createNode(resistor);
+      //   const n2 = graph.createNode(source);
+      //   const n3 = graph.createNode(ground);
 
-      result[1][1].connect('right');
-      result[1][1].connect('bottom');
-      result[1][2].setElectronic(resistor.id);
-      result[1][3].connect('left');
-      result[1][3].connect('bottom');
-      result[2][3].connect('top');
-      result[2][3].connect('bottom');
-      result[3][3].connect('top');
-      result[3][3].connect('left');
-      result[3][2].connect('left');
-      result[3][2].connect('right');
-      result[3][2].connect('bottom');
-      result[3][1].connect('right');
-      result[3][1].connect('top');
-      result[2][1].setElectronic(source.id);
-      result[4][2].setElectronic(ground.id);
-      expect(circuit.layout).toMatchObject(result);
+      //   const e1 = graph.createEdge();
+      //   n1.connect(e1, '1');
+      //   n2.connect(e1, 'POSITIVE');
+
+      //   const e2 = graph.createEdge();
+      //   n1.connect(e2, '2');
+      //   n2.connect(e2, 'NEGATIVE');
+      //   n3.connect(e2);
+
+      //   circuit.appendElectronics(resistor);
+      //   circuit.appendElectronics(source);
+      //   circuit.appendElectronics(ground);
+
+      //   circuit.deriveGraph();
+      //   expect(true).toBe(true);
+      //   // expect(circuit.deriveGraph()).toMatchObject(graph);
+      // });
     });
   });
 });
