@@ -4,28 +4,7 @@ import ElectronicInfos, { ElectronicInfo } from './Electronic.Info';
 
 export type Coordinate = [number, number];
 
-export interface IElectronic {
-  id: string;
-
-  readonly name: string;
-  readonly info: ElectronicInfo,
-  value: number;
-  valueStringified: string;
-
-  /* The occupied state of the component */
-  dimension: Array<Array<ElectronicUnit>>;
-
-  /* Center is the coordinate with respect to dimension */
-  center: Coordinate,
-
-  /* Coordinate according to the workspace corordinate system */
-  coordinate: Coordinate;
-
-  /* Rotate in clockwise */
-  rotate(): void;
-}
-
-export default class Electronic implements IElectronic {
+export default class Electronic {
   public id: string = GUIDGenerator();
 
   constructor(
@@ -108,7 +87,7 @@ type ElectronicArgs = {
   coordinate: Coordinate;
 };
 
-export const createElectronic = (type: EC, args: ElectronicArgs): IElectronic => {
+export const createElectronic = (type: EC, args: ElectronicArgs): Electronic => {
   const { coordinate: c } = args;
 
   switch (type) {

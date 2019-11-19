@@ -1,7 +1,6 @@
 import Circuit from './Circuit';
 import Unit from './Circuit.Unit';
-import { createElectronic, EC, Coordinate, IElectronic } from './Electronic';
-// import { ElectronicUnitType } from './Electronic.Unit';
+import Electronic, { createElectronic, EC, Coordinate } from './Electronic';
 
 let circuit: Circuit;
 let result: Array<Array<Unit>>;
@@ -24,7 +23,7 @@ beforeEach(() => {
 describe('Lib: Circuit', () => {
   it('creates a circuit instance', () => {
     expect(circuit.layout).toMatchObject(result);
-    expect(circuit.electronics).toMatchObject(new Map<string, IElectronic>());
+    expect(circuit.electronics).toMatchObject(new Map<string, Electronic>());
   });
 
   describe('Circuit.canAttachComponent', () => {

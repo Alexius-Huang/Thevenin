@@ -1,4 +1,4 @@
-import { IElectronic, Coordinate } from './Electronic';
+import Electronic, { Coordinate } from './Electronic';
 import Unit, { CircuitUnitType, CircuitConnection } from './Circuit.Unit';
 import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
 import Graph, { Node, Edge } from './Circuit.Graph';
@@ -6,7 +6,7 @@ import CircuitUnit from './Circuit.Unit';
 
 export default class Circuit {
   static Graph = Graph;
-  public electronics = new Map<string, IElectronic>();
+  public electronics = new Map<string, Electronic>();
   public layout: Array<Array<Unit>>;
 
   constructor(public columns: number, public rows: number) {
@@ -44,7 +44,7 @@ export default class Circuit {
     }
   }
 
-  public appendElectronics(e: IElectronic) {
+  public appendElectronics(e: Electronic) {
     this.mapElectronicUnitWithCircuitUnit(e, (eu, cu) => {
       if (eu.type === ElectronicUnitType.Pin) {
         cu.connect(eu.circuitConnectDirection, { electronic: e, pinName: eu.meta });
@@ -58,7 +58,7 @@ export default class Circuit {
     this.electronics.set(e.id, e);
   }
 
-  public canAttachComponent(e: IElectronic): boolean {
+  public canAttachComponent(e: Electronic): boolean {
     try {
       this.mapElectronicUnitWithCircuitUnit(e, (eu, cu, [relX, relY]) => {
         const isOutOfBound = (relX < 0 || relY < 0 || relX >= this.columns || relY >= this.rows);
@@ -89,7 +89,7 @@ export default class Circuit {
     const traversedCircuitUnit = new Set<CircuitUnit>();
     const electronicNodeMap = new Map<string, Node>();
 
-    let traverseFromElectronic = (e: IElectronic) => {
+    let traverseFromElectronic = (e: Electronic) => {
       this.mapElectronicUnitWithCircuitUnit(e, (eu, cu) => {
         const { connectDirection: connectDir } = eu;
 
@@ -120,7 +120,7 @@ export default class Circuit {
     }
 
     const electronicsIter = this.electronics.values();
-    const electronics: Array<IElectronic> = [];
+    const electronics: Array<Electronic> = [];
     let pulled = electronicsIter.next();
 
     while (!pulled.done) {
@@ -139,7 +139,7 @@ export default class Circuit {
   }
 
   private mapElectronicUnitWithCircuitUnit(
-    e: IElectronic,
+    e: Electronic,
     callback: (
       eu: ElectronicUnit,
       cu: CircuitUnit,

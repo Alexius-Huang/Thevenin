@@ -1,4 +1,4 @@
-import Electronic, { IElectronic, EC } from "../lib/Electronic";
+import Electronic, { Electronic, EC } from "../lib/Electronic";
 import Circuit from "../lib/Circuit";
 
 export enum ToolMode {

@@ -1,9 +1,9 @@
-import { IElectronic } from './Electronic';
+import Electronic from './Electronic';
 
 export class Node {
   public pinsMap = new Map<string, Edge | null>();
 
-  constructor(private electronic: IElectronic) {
+  constructor(private electronic: Electronic) {
     this.pins.forEach(pinMeta => {
       this.pinsMap.set(pinMeta, null);
     });
@@ -30,7 +30,7 @@ export default class Graph {
   public nodes: Array<Node> = [];
   public edges: Array<Edge> = [];
 
-  public createNode(electronic: IElectronic) {
+  public createNode(electronic: Electronic) {
     const node = new Graph.Node(electronic);
     this.nodes.push(node);
     return node;

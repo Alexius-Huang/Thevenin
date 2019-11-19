@@ -1,5 +1,5 @@
 import { ConnectableDirection } from './circuit.lib';
-import { IElectronic } from './Electronic';
+import Electronic from './Electronic';
 
 export enum CircuitUnitType {
   Available,             // all direction
@@ -17,7 +17,7 @@ export enum CircuitUnitType {
 }
 
 export type ElectronicConnection = {
-  electronic: IElectronic;
+  electronic: Electronic;
   pinName: string;
 };
 
