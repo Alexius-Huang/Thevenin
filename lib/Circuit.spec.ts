@@ -5,6 +5,11 @@ import Electronic, { createElectronic, EC, Coordinate } from './Electronic';
 let circuit: Circuit;
 let result: Array<Array<Unit>>;
 
+type CircuitExample = {
+  circuit: Circuit;
+  components: { [key: string]: Electronic },
+};
+
 function createCircuitGrid(col: number, row: number) {
   return Array.from(Array(row)).map(() =>
     Array.from(Array(col)).map(() => new Unit())
@@ -256,26 +261,10 @@ describe('Lib: Circuit', () => {
 
   describe('Integration', () => {
     describe('Circuit.Electronic', () => {
-      it('creates simple circuit with mixed electronic components', () => {
-        // [ a a a a a ] R: resistor
-        // [ a n R n a ] S: DC Source
-        // [ a S a w a ] G: Ground
-        // [ a n n w a ]
-        // [ a a G a a ]
-        const resistor = createElectronic(EC.Resistor, { coordinate: [2, 1] });
-        const source = createElectronic(EC.DCSource, { coordinate : [1, 2]});
-        source.rotate();
-        const ground = createElectronic(EC.Ground, { coordinate: [2, 4] });
-  
-        circuit.appendElectronics(resistor);
-        circuit.appendElectronics(source);
-        circuit.appendElectronics(ground);
-  
-        circuit.addJoint([3, 1], [3, 2]);
-        circuit.addJoint([3, 2], [3, 3]);
-        circuit.addJoint([3, 3], [2, 3]);
-        circuit.addJoint([2, 3], [1, 3]);
-  
+      it('creates simple circuit with mixed electronic components', async () => {
+        const example: { default: CircuitExample } = await import('../examples/01-simple-circuit');
+        const { circuit, components: { resistor, source, ground } } = example.default;
+
         result[1][1].connect('right', { electronic: resistor, pinName: '1' });
         result[1][1].connect('bottom', { electronic: source, pinName: 'POSITIVE' });
         result[1][2].setElectronic(resistor.id);
@@ -288,21 +277,15 @@ describe('Lib: Circuit', () => {
         result[3][1].connect('top', { electronic: source, pinName: 'NEGATIVE' });
         result[2][1].setElectronic(source.id);
         result[4][2].setElectronic(ground.id);
+
         expect(circuit.layout).toMatchObject(result);
       });  
     });
 
     describe('Circuit.Graph', () => {
-      it('creates graph with circuit layout', () => {
-        // [ a  a  a  a  a ] R: resistor
-        // [ a +n  R  n  a ] S: DC Source
-        // [ a  S  a  w  a ] G: Ground
-        // [ a -n  n  w  a ]
-        // [ a  a  G  a  a ]
-        const resistor = createElectronic(EC.Resistor, { coordinate: [2, 1] });
-        const source = createElectronic(EC.DCSource, { coordinate : [1, 2]});
-        source.rotate();
-        const ground = createElectronic(EC.Ground, { coordinate: [2, 4] });
+      it('creates graph with circuit layout', async () => {
+        const example: { default: CircuitExample } = await import('../examples/01-simple-circuit');
+        const { circuit, components: { resistor, source, ground } } = example.default;
 
         const graph = new Circuit.Graph();
         const n1 = graph.createNode(resistor);
@@ -317,14 +300,6 @@ describe('Lib: Circuit', () => {
         n1.connect(e2, '2');
         n2.connect(e2, 'NEGATIVE');
         n3.connect(e2);
-
-        circuit.appendElectronics(resistor);
-        circuit.appendElectronics(source);
-        circuit.appendElectronics(ground);
-        circuit.addJoint([3, 1], [3, 2]);
-        circuit.addJoint([3, 2], [3, 3]);
-        circuit.addJoint([3, 3], [2, 3]);
-        circuit.addJoint([2, 3], [1, 3]);
 
         expect(circuit.deriveGraph()).toMatchObject(graph);
       });
