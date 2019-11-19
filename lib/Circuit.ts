@@ -17,28 +17,13 @@ export default class Circuit {
 
   public addJoint(c1: Coordinate, c2: Coordinate) {
     let [[col1, row1], [col2, row2]] = [c1, c2];
-    const [deltaCol, deltaRow] = [col2 - col1, row2 - row1];
-    const [cu1, cu2] = [
-      this.layout[row1][col1],
-      this.layout[row2][col2],
-    ];
+    const [cu1, cu2] = [this.layout[row1][col1], this.layout[row2][col2]];
 
+    const [deltaCol, deltaRow] = [col2 - col1, row2 - row1]; 
     if (Math.abs(deltaCol) === 1 && deltaRow === 0) {
-      if (deltaCol > 0) {
-        cu1.connect('right', cu2);
-        // cu2.connect('left', cu1);
-      } else {
-        cu1.connect('left', cu2);
-        // cu2.connect('right', cu1);
-      }
+      cu1.connect(deltaCol > 0 ? 'right' : 'left', cu2);
     } else if (Math.abs(deltaRow) === 1 && deltaCol === 0) {
-      if (deltaRow > 0) {
-        cu1.connect('bottom', cu2);
-        // cu2.connect('top', cu1);
-      } else {
-        cu1.connect('top', cu2);
-        // cu2.connect('bottom', cu1);
-      }
+      cu1.connect(deltaRow > 0 ? 'bottom' : 'top', cu2);
     } else {
       throw new Error('Invalid circuit joint connection!');
     }
