@@ -1,14 +1,21 @@
 import GUIDGenerator from './GUIDGenerator';
 import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
-import ElectronicInfos, { ElectronicInfo } from './Electronic.Info';
+import ElectronicInfos from './Electronic.Info';
 
 export type Coordinate = [number, number];
+
+/* Electronic Component */
+export enum EC {
+  Ground = 'Ground',
+  DCSource = 'DC Source',
+  Resistor = 'Resistor',
+}
 
 export default class Electronic {
   public id: string = GUIDGenerator();
 
   constructor(
-    public readonly name: string,
+    public readonly name: EC,
     public value: number,
     public dimension: Array<Array<ElectronicUnit>>,
     public center: Coordinate,
@@ -47,17 +54,12 @@ export default class Electronic {
     this.center = [rows - 1 - this.center[1], this.center[0]];
     this.dimension = newDimension;
   }
-}
 
-/* Electronic Component */
-export enum EC {
-  Ground,
-  DCSource,
-  Resistor,
+  public is(type: EC) { return this.name === type; }
 }
 
 const createDCSource = (coord: Coordinate) => new Electronic(
-  'DC Source',
+  EC.DCSource,
   10,
   [[ElectronicUnit.createPin('left', 'POSITIVE'), ElectronicUnit.Occupied, ElectronicUnit.createPin('right', 'NEGATIVE')]],
   [1, 0],
@@ -65,7 +67,7 @@ const createDCSource = (coord: Coordinate) => new Electronic(
 );
 
 const createGround = (coord: Coordinate) => new Electronic(
-  'Ground',
+  EC.Ground,
   NaN,
   [
     [ElectronicUnit.createPin('top')],
@@ -76,7 +78,7 @@ const createGround = (coord: Coordinate) => new Electronic(
 );
 
 const createResistor = (coord: Coordinate) => new Electronic(
-  'Resistor',
+  EC.Resistor,
   1000,
   [[ElectronicUnit.createPin('left', '1'), ElectronicUnit.Occupied, ElectronicUnit.createPin('right', '2')]],
   [1, 0],

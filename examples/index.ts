@@ -13,6 +13,7 @@ type CircuitExample = {
   components: { [key: string]: Electronic },
   expected: {
     graph: Graph;
+    supernodePropagatedGraph?: Graph;
   };
 };
 

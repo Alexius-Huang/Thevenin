@@ -1,9 +1,9 @@
-import Electronic from './Electronic';
+import Electronic, { EC } from './Electronic';
 
 export class Edge {
   public pinsMap = new Map<string, Node | null>();
 
-  constructor(private electronic: Electronic) {
+  constructor(public electronic: Electronic) {
     this.pins.forEach(pinMeta => {
       this.pinsMap.set(pinMeta, null);
     });
@@ -13,14 +13,20 @@ export class Edge {
   get name() { return this.electronic.name; }
   get pins() { return this.electronic.info.pins; }
 
-  public connect(node: Node, pinMeta: string = '') {
+  public connect(node: Node, pinMeta: string = '', bias: number = 0) {
     this.pinsMap.set(pinMeta, node);
-    node.edges.add({ edge: this, pinMeta });
+    node.info.add({ edge: this, pinMeta, bias });
   }
 }
 
+export type NodeInfo = {
+  edge: Edge;
+  pinMeta: string;
+  bias: number;
+}
+
 export class Node {
-  public edges: Set<{ edge: Edge; pinMeta: string }> = new Set();
+  public info = new Set<NodeInfo>();
 }
 
 export default class Graph {

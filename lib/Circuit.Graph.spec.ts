@@ -1,4 +1,4 @@
-import CircuitGraph, { Node, Edge } from './Circuit.Graph';
+import CircuitGraph, { Node, Edge, NodeInfo } from './Circuit.Graph';
 import { EC, createElectronic } from './Electronic';
 
 describe('Lib: Circuit.Graph', () => {
@@ -43,14 +43,14 @@ describe('Lib: Circuit.Graph', () => {
         ['', n2],
       ]));
 
-      expect(n1.edges).toMatchObject(new Set<{ edge: Edge, pinMeta: string }>([
-        { edge: e1, pinMeta: '1' },
-        { edge: e2, pinMeta: 'POSITIVE' },
+      expect(n1.info).toMatchObject(new Set<NodeInfo>([
+        { edge: e1, pinMeta: '1', bias: 0 },
+        { edge: e2, pinMeta: 'POSITIVE', bias: 0 },
       ]));
-      expect(n2.edges).toMatchObject(new Set<{ edge: Edge, pinMeta: string }>([
-        { edge: e1, pinMeta: '2' },
-        { edge: e2, pinMeta: 'NEGATIVE' },
-        { edge: e3, pinMeta: '' },
+      expect(n2.info).toMatchObject(new Set<NodeInfo>([
+        { edge: e1, pinMeta: '2', bias: 0 },
+        { edge: e2, pinMeta: 'NEGATIVE', bias: 0 },
+        { edge: e3, pinMeta: '', bias: 0 },
       ]));
     });
   });
