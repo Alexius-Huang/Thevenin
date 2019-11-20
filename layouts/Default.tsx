@@ -9,7 +9,7 @@ const Layout: NextPage<LayoutProps> = ({ children }) => {
   return (
     <Fragment>
       <Head>
-        <title>Conductor - Circuitry Simulation</title>
+        <title>Thévenin - Circuitry Simulation</title>
         <link href="https://fonts.googleapis.com/css?family=Work+Sans:300,700&display=swap" rel="stylesheet"></link>
         <link rel="icon" href="/favicon.ico" />
       </Head>

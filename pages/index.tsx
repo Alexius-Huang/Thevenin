@@ -7,7 +7,7 @@ type HomePageProps = {};
 const Home: NextPage<HomePageProps> = () => (
   <Fragment>
     <div className="home">
-      <h1 className="title">Welcome to <span className="main">Conductor</span>!</h1>
+      <h1 className="title"><span className="main">Thévenin</span> - Circuitry Simulation</h1>
 
       <Link href="/editor">
         <button className="default">New Circuit Simulation</button>
