@@ -7,6 +7,10 @@ export class Variable {
   ) {}
 }
 
+function round(num: number, precision: number) {
+  return Math.round(num * precision) / precision;
+}
+
 export default class GaussianElimination {
   public readonly variables: Array<Variable> = [];
   public readonly matrix: Array<Array<number>> = [];
@@ -23,7 +27,7 @@ export default class GaussianElimination {
     }
   }
 
-  public solve(): Array<Variable> {
+  public solve(precision: number = 1e6): Array<Variable> {
     const { matrix, variables: vars } = this;
     const m = matrix.map(arr => arr.map(v => v));
     const countOfVars = vars.length;
@@ -46,7 +50,7 @@ export default class GaussianElimination {
         m[row][countOfVars] -= coefficient * vars[solvedColumnIndex].result;
       }
 
-      vars[row].result = m[row][countOfVars] / m[row][row];
+      vars[row].result = round(m[row][countOfVars] / m[row][row], precision);
     }
 
     return this.variables;
