@@ -6,6 +6,7 @@ const files = [
   './01-simple-circuit.ts',
   './02-linear-series.ts',
   './03-linear-parallel.ts',
+  './04-linear-mixed.ts',
 ];
 
 type CircuitExample = {

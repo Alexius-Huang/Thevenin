@@ -283,7 +283,10 @@ describe('Lib: Circuit', () => {
         const examples = (await import('../examples')).default;
         for await (let { default: example } of examples) {
           const { circuit, expected: { graph } } = example;
-          expect(circuit.deriveGraph()).toMatchObject(graph);
+          const derived = circuit.deriveGraph();
+
+          expect(new Set(derived.edges)).toMatchObject(new Set(graph.edges));
+          expect(new Set(derived.nodes)).toMatchObject(new Set(graph.nodes));
         }
       });
     });
