@@ -72,7 +72,7 @@ export default class Circuit {
     const graph = new Circuit.Graph();
 
     const traversedCircuitUnit = new Set<CircuitUnit>();
-    const electronicNodeMap = new Map<string, Node>();
+    const electronicEdgeMap = new Map<string, Edge>();
 
     let traverseFromElectronic = (e: Electronic) => {
       this.mapElectronicUnitWithCircuitUnit(e, (eu, cu) => {
@@ -85,9 +85,9 @@ export default class Circuit {
       });
     }
 
-    let traverseFromCircuitUnit = (cu: CircuitUnit, linkedEdge?: Edge) => {
+    let traverseFromCircuitUnit = (cu: CircuitUnit, linkedNode?: Node) => {
       traversedCircuitUnit.add(cu);
-      const edge = linkedEdge || graph.createEdge();
+      const node = linkedNode || graph.createNode();
       const spannedUnit: Array<CircuitConnection> = [cu.top, cu.right, cu.bottom, cu.left];
 
       spannedUnit.forEach(unit => {
@@ -95,11 +95,11 @@ export default class Circuit {
 
         if (unit instanceof CircuitUnit) {
           if (!traversedCircuitUnit.has(unit)) {
-            traverseFromCircuitUnit(unit, edge);
+            traverseFromCircuitUnit(unit, node);
           }
         } else {
-          const node = electronicNodeMap.get(unit.electronic.id) as Node;
-          node.connect(edge, unit.pinName);
+          const edge = electronicEdgeMap.get(unit.electronic.id) as Edge;
+          edge.connect(node, unit.pinName);
         }
       });
     }
@@ -110,8 +110,8 @@ export default class Circuit {
 
     while (!pulled.done) {
       const electronic = pulled.value;
-      const node = graph.createNode(electronic);
-      electronicNodeMap.set(electronic.id, node);
+      const edge = graph.createEdge(electronic);
+      electronicEdgeMap.set(electronic.id, edge);
       electronics.push(electronic);
 
       pulled = electronicsIter.next();

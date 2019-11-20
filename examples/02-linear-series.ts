@@ -32,23 +32,23 @@ circuit.addJoint([2, 3], [1, 3]);
 
 /* Expectations */
 const graph = new Circuit.Graph();
-const n1 = graph.createNode(resistor1);
-const n2 = graph.createNode(resistor2);
-const n3 = graph.createNode(source);
-const n4 = graph.createNode(ground);
+const e1 = graph.createEdge(resistor1);
+const e2 = graph.createEdge(resistor2);
+const e3 = graph.createEdge(source);
+const e4 = graph.createEdge(ground);
 
-const e1 = graph.createEdge();
-n1.connect(e1, '1');
-n3.connect(e1, 'POSITIVE');
+const n1 = graph.createNode();
+e1.connect(n1, '1');
+e3.connect(n1, 'POSITIVE');
 
-const e2 = graph.createEdge();
-n1.connect(e2, '2');
-n2.connect(e2, '1');
+const n2 = graph.createNode();
+e1.connect(n2, '2');
+e2.connect(n2, '1');
 
-const e3 = graph.createEdge();
-n2.connect(e3, '2');
-n4.connect(e3);
-n3.connect(e3, 'NEGATIVE');
+const n3 = graph.createNode();
+e2.connect(n3, '2');
+e4.connect(n3);
+e3.connect(n3, 'NEGATIVE');
 
 export default {
   circuit,

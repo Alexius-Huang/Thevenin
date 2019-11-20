@@ -1,7 +1,7 @@
 import Electronic from './Electronic';
 
-export class Node {
-  public pinsMap = new Map<string, Edge | null>();
+export class Edge {
+  public pinsMap = new Map<string, Node | null>();
 
   constructor(private electronic: Electronic) {
     this.pins.forEach(pinMeta => {
@@ -13,14 +13,14 @@ export class Node {
   get name() { return this.electronic.name; }
   get pins() { return this.electronic.info.pins; }
 
-  public connect(edge: Edge, pinMeta: string = '') {
-    this.pinsMap.set(pinMeta, edge);
-    edge.nodes.add({ node: this, pinMeta });
+  public connect(node: Node, pinMeta: string = '') {
+    this.pinsMap.set(pinMeta, node);
+    node.edges.add({ edge: this, pinMeta });
   }
 }
 
-export class Edge {
-  public nodes: Set<{ node: Node; pinMeta: string }> = new Set();
+export class Node {
+  public edges: Set<{ edge: Edge; pinMeta: string }> = new Set();
 }
 
 export default class Graph {
@@ -30,15 +30,15 @@ export default class Graph {
   public nodes: Array<Node> = [];
   public edges: Array<Edge> = [];
 
-  public createNode(electronic: Electronic) {
-    const node = new Graph.Node(electronic);
-    this.nodes.push(node);
-    return node;
-  }
-
-  public createEdge() {
-    const edge = new Graph.Edge();
+  public createEdge(electronic: Electronic) {
+    const edge = new Graph.Edge(electronic);
     this.edges.push(edge);
     return edge;
+  }
+
+  public createNode() {
+    const node = new Graph.Node();
+    this.nodes.push(node);
+    return node;
   }
 };

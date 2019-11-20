@@ -15,42 +15,42 @@ describe('Lib: Circuit.Graph', () => {
       const ground = createElectronic(EC.Ground, { coordinate: [2, 4] });
 
       const graph = new CircuitGraph();
-      const n1 = graph.createNode(resistor);
-      const n2 = graph.createNode(source);
-      const n3 = graph.createNode(ground);
+      const e1 = graph.createEdge(resistor);
+      const e2 = graph.createEdge(source);
+      const e3 = graph.createEdge(ground);
 
-      const e1 = graph.createEdge();
-      n1.connect(e1, '1');
-      n2.connect(e1, 'POSITIVE');
+      const n1 = graph.createNode();
+      e1.connect(n1, '1');
+      e2.connect(n1, 'POSITIVE');
 
-      const e2 = graph.createEdge();
-      n1.connect(e2, '2');
-      n2.connect(e2, 'NEGATIVE');
-      n3.connect(e2);
+      const n2 = graph.createNode();
+      e1.connect(n2, '2');
+      e2.connect(n2, 'NEGATIVE');
+      e3.connect(n2);
 
-      expect(graph.nodes.length).toBe(3);
-      expect(graph.edges.length).toBe(2);
+      expect(graph.edges.length).toBe(3);
+      expect(graph.nodes.length).toBe(2);
 
-      expect(n1.pinsMap).toMatchObject(new Map<string, Edge | null>([
-        ['1', e1],
-        ['2', e2],
+      expect(e1.pinsMap).toMatchObject(new Map<string, Node | null>([
+        ['1', n1],
+        ['2', n2],
       ]));
-      expect(n2.pinsMap).toMatchObject(new Map<string, Edge | null>([
-        ['POSITIVE', e1],
-        ['NEGATIVE', e2],
+      expect(e2.pinsMap).toMatchObject(new Map<string, Node | null>([
+        ['POSITIVE', n1],
+        ['NEGATIVE', n2],
       ]));
-      expect(n3.pinsMap).toMatchObject(new Map<string, Edge | null>([
-        ['', e2],
+      expect(e3.pinsMap).toMatchObject(new Map<string, Node | null>([
+        ['', n2],
       ]));
 
-      expect(e1.nodes).toMatchObject(new Set<{ node: Node, pinMeta: string }>([
-        { node: n1, pinMeta: '1' },
-        { node: n2, pinMeta: 'POSITIVE' },
+      expect(n1.edges).toMatchObject(new Set<{ edge: Edge, pinMeta: string }>([
+        { edge: e1, pinMeta: '1' },
+        { edge: e2, pinMeta: 'POSITIVE' },
       ]));
-      expect(e2.nodes).toMatchObject(new Set<{ node: Node, pinMeta: string }>([
-        { node: n1, pinMeta: '2' },
-        { node: n2, pinMeta: 'NEGATIVE' },
-        { node: n3, pinMeta: '' },
+      expect(n2.edges).toMatchObject(new Set<{ edge: Edge, pinMeta: string }>([
+        { edge: e1, pinMeta: '2' },
+        { edge: e2, pinMeta: 'NEGATIVE' },
+        { edge: e3, pinMeta: '' },
       ]));
     });
   });
