@@ -4,8 +4,8 @@ export class Edge {
   public pinsMap = new Map<string, Node | null>();
 
   constructor(public electronic: Electronic) {
-    this.pins.forEach(pinMeta => {
-      this.pinsMap.set(pinMeta, null);
+    this.pins.forEach(pinName => {
+      this.pinsMap.set(pinName, null);
     });
   }
 
@@ -13,15 +13,15 @@ export class Edge {
   get name() { return this.electronic.name; }
   get pins() { return this.electronic.info.pins; }
 
-  public connect(node: Node, pinMeta: string = '', bias: number = 0) {
-    this.pinsMap.set(pinMeta, node);
-    node.info.add({ edge: this, pinMeta, bias });
+  public connect(node: Node, pinName: string = '', bias: number = 0) {
+    this.pinsMap.set(pinName, node);
+    node.info.add({ edge: this, pinName, bias });
   }
 }
 
 export type NodeInfo = {
   edge: Edge;
-  pinMeta: string;
+  pinName: string;
   bias: number;
 }
 

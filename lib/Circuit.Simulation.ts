@@ -11,11 +11,11 @@ export default class CircuitSimulation {
     let traverseFromNode = (node: Node) => {
       const infos = Array.from(node.info);
 
-      for (let { edge, pinMeta } of infos) {
+      for (let { edge, pinName } of infos) {
         const { electronic, pinsMap } = edge;
 
         if (electronic.is(EC.DCSource)) {
-          const positivelyPinned = pinMeta === 'POSITIVE';
+          const positivelyPinned = pinName === 'POSITIVE';
           const negativePinName = positivelyPinned ? 'NEGATIVE' : 'POSITIVE';
           const bias = positivelyPinned ? electronic.value : -electronic.value;
           const linkedNode = pinsMap.get(negativePinName);
@@ -28,7 +28,7 @@ export default class CircuitSimulation {
             supernodeInfo.add({ ...info });
 
             if (info.edge.electronic.is(EC.DCSource)) {
-              info.edge.pinsMap.set(pinMeta, node);
+              info.edge.pinsMap.set(pinName, node);
             }
           });
 
