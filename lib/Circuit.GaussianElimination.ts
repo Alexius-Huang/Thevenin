@@ -3,7 +3,7 @@ export class Variable {
 
   constructor(
     public name: string,
-    public index: number,
+    public column: number,
   ) {}
 }
 
@@ -21,5 +21,34 @@ export default class GaussianElimination {
     for (let i = 0; i < countOfVars - 1; i += 1) {
       this.matrix[i].push(0, this.matrix[i].pop() as number);
     }
+  }
+
+  public solve(): Array<Variable> {
+    const { matrix, variables: vars } = this;
+    const m = matrix.map(arr => arr.map(v => v));
+    const countOfVars = vars.length;
+
+    /* Lower Triangularization */
+    for (let row = 0; row < m.length - 1; row += 1) {
+      for (let targetRow = row + 1; targetRow < m.length; targetRow += 1) {
+        const multipler = m[targetRow][row] / m[row][row];
+
+        for (let col = row; col <= countOfVars; col += 1) {
+          m[targetRow][col] -= m[row][col] * multipler;
+        }
+      }
+    }
+
+    /* Bottom-to-Top Propagated Solution */
+    for (let row = countOfVars - 1; row >= 0; row -= 1) {
+      for (let solvedColumnIndex = countOfVars - 1; solvedColumnIndex > row; solvedColumnIndex -= 1) {
+        const coefficient = m[row][solvedColumnIndex];
+        m[row][countOfVars] -= coefficient * vars[solvedColumnIndex].result;
+      }
+
+      vars[row].result = m[row][countOfVars] / m[row][row];
+    }
+
+    return this.variables;
   }
 }
