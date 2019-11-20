@@ -1,20 +1,22 @@
 import Simulation from './Circuit.Simulation';
-import { EC } from './Electronic';
 
-describe.only('Lib: Circuit.Simulation', () => {
+describe('Lib: Circuit.Simulation', () => {
   describe('Supernode Propagation', () => {
     it('creates supernode whenever linked to the DCSource edge', async () => {
-      const example = (await import('../examples/01-simple-circuit')).default;
-      const {
-        graph: input,
-        supernodePropagatedGraph: output,
-      } = example.expected;
+      const examples = (await import('../examples')).default;
+      for await (let { default: example } of examples) {
+        const {
+          graph: input,
+          supernodePropagatedGraph: output,
+        } = example.expected;
 
-      const simulation = new Simulation(input);
-      simulation.supernodePropagation();
-      const { graph: result } = simulation;
+        const simulation = new Simulation(input);
+        simulation.supernodePropagation();
+        const { graph: result } = simulation;
 
-      expect(output).toMatchObject(result);
+        expect(output.nodes).toMatchObject(result.nodes);
+        expect(output.edges).toMatchObject(result.edges);
+      }
     });
   });
 });

@@ -53,7 +53,7 @@ supe1.connect(supn1, '1', +10);
 supe1.connect(supn1, '2');
 supe2.connect(supn1, 'POSITIVE', +10);
 supe2.connect(supn1, 'NEGATIVE');
-supe3.connect(supn1, '');
+supe3.connect(supn1);
 
 export default {
   circuit,

@@ -281,8 +281,8 @@ describe('Lib: Circuit', () => {
     describe('Circuit.Graph', () => {
       it('creates graph according to the circuit layout', async () => {
         const examples = (await import('../examples')).default;
-        for await (let example of examples) {
-          const { circuit, expected: { graph } } = example.default;
+        for await (let { default: example } of examples) {
+          const { circuit, expected: { graph } } = example;
           expect(circuit.deriveGraph()).toMatchObject(graph);
         }
       });

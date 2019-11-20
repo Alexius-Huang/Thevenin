@@ -37,6 +37,7 @@ circuit.addJoint([3, 3], [4, 3]);
 circuit.addJoint([4, 3], [5, 3]);
 
 /* Expectations */
+// Phase 1. Graph Creation
 const graph = new Circuit.Graph();
 const e1 = graph.createEdge(resistor1);
 const e2 = graph.createEdge(resistor2);
@@ -54,6 +55,22 @@ e2.connect(n2, '2');
 e3.connect(n2, 'NEGATIVE');
 e4.connect(n2);
 
+// Phase 2. Simulation - Supernode Propagation
+const supernodePropagatedGraph = new Circuit.Graph();
+const supe1 = supernodePropagatedGraph.createEdge(resistor1);
+const supe2 = supernodePropagatedGraph.createEdge(resistor2);
+const supe3 = supernodePropagatedGraph.createEdge(source);
+const supe4 = supernodePropagatedGraph.createEdge(ground);
+
+const supn1 = supernodePropagatedGraph.createNode();
+supe1.connect(supn1, '1', +10);
+supe1.connect(supn1, '2');
+supe2.connect(supn1, '1', +10);
+supe2.connect(supn1, '2');
+supe3.connect(supn1, 'POSITIVE', +10);
+supe3.connect(supn1, 'NEGATIVE');
+supe4.connect(supn1);
+
 export default {
   circuit,
   components: {
@@ -62,5 +79,8 @@ export default {
     source,
     ground,
   },
-  expected: { graph }
+  expected: {
+    graph,
+    supernodePropagatedGraph,
+  },
 };
