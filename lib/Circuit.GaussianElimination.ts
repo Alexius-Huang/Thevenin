@@ -1,3 +1,5 @@
+import { round } from './Circuit.Util';
+
 export class Variable {
   public result: number = NaN;
 
@@ -5,10 +7,6 @@ export class Variable {
     public name: string,
     public column: number,
   ) {}
-}
-
-function round(num: number, precision: number) {
-  return Math.round(num * precision) / precision;
 }
 
 export default class GaussianElimination {

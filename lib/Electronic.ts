@@ -1,4 +1,4 @@
-import GUIDGenerator from './GUIDGenerator';
+import { GUIDGenerator } from './Circuit.Util';
 import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
 import ElectronicInfos, { PinName } from './Electronic.Info';
 
