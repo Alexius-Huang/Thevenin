@@ -1,4 +1,4 @@
-import CircuitGraph, { Node, NodeInfo, EdgeID, PinInfoMap, CurrentFlow } from './Circuit.Graph';
+import CircuitGraph, { Node, EdgeID, PinInfo, PinInfoMap, CurrentFlow } from './Circuit.Graph';
 import { EC, createElectronic } from './Electronic';
 
 describe('Lib: Circuit.Graph', () => {
@@ -43,24 +43,30 @@ describe('Lib: Circuit.Graph', () => {
         ['', n2],
       ]));
 
-      expect(n1.info).toMatchObject(new Set<NodeInfo>([
-        { edgeID: e1.id, pinName: '1', bias: 0, currentFlow: CurrentFlow.NEUTRAL },
-        { edgeID: e2.id, pinName: 'POSITIVE', bias: 0, currentFlow: CurrentFlow.NEUTRAL },
+      const pinInfo11 = { edgeID: e1.id, pinName: '1', bias: 0, currentFlow: CurrentFlow.NEUTRAL };
+      const pinInfo2Positive = { edgeID: e2.id, pinName: 'POSITIVE', bias: 0, currentFlow: CurrentFlow.NEUTRAL };
+      expect(n1.info).toMatchObject(new Set<PinInfo>([
+        pinInfo11,
+        pinInfo2Positive,
       ]));
-      expect(n2.info).toMatchObject(new Set<NodeInfo>([
-        { edgeID: e1.id, pinName: '2', bias: 0, currentFlow: CurrentFlow.NEUTRAL },
-        { edgeID: e2.id, pinName: 'NEGATIVE', bias: 0, currentFlow: CurrentFlow.NEUTRAL },
-        { edgeID: e3.id, pinName: '', bias: 0, currentFlow: CurrentFlow.NEUTRAL },
+
+      const pinInfo12 = { edgeID: e1.id, pinName: '2', bias: 0, currentFlow: CurrentFlow.NEUTRAL };
+      const pinInfo2Negative = { edgeID: e2.id, pinName: 'NEGATIVE', bias: 0, currentFlow: CurrentFlow.NEUTRAL };
+      const pinInfo3 = { edgeID: e3.id, pinName: '', bias: 0, currentFlow: CurrentFlow.NEUTRAL };
+      expect(n2.info).toMatchObject(new Set<PinInfo>([
+        pinInfo12,
+        pinInfo2Negative,
+        pinInfo3,
       ]));
 
       expect(n1.edgeMap).toMatchObject(new Map<EdgeID, PinInfoMap>([
-        [e1.id, new Map([['1', { bias: 0, currentFlow: CurrentFlow.NEUTRAL } ]])],
-        [e2.id, new Map([['POSITIVE', { bias: 0, currentFlow: CurrentFlow.NEUTRAL } ]])],
+        [e1.id, new Map([['1', pinInfo11]])],
+        [e2.id, new Map([['POSITIVE', pinInfo2Positive]])],
       ]));
       expect(n2.edgeMap).toMatchObject(new Map<EdgeID, PinInfoMap>([
-        [e1.id, new Map([['2', { bias: 0, currentFlow: CurrentFlow.NEUTRAL } ]])],
-        [e2.id, new Map([['NEGATIVE', { bias: 0, currentFlow: CurrentFlow.NEUTRAL } ]])],
-        [e3.id, new Map([['', { bias: 0, currentFlow: CurrentFlow.NEUTRAL } ]])],
+        [e1.id, new Map([['2', pinInfo12]])],
+        [e2.id, new Map([['NEGATIVE', pinInfo2Negative]])],
+        [e3.id, new Map([['', pinInfo3]])],
       ]));
     });
   });

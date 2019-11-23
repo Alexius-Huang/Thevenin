@@ -63,6 +63,7 @@ const supe3 = supernodePropagatedGraph.createEdge(source);
 const supe4 = supernodePropagatedGraph.createEdge(ground);
 
 const supn1 = supernodePropagatedGraph.createNode();
+supn1.isSupernode = true;
 supe1.connect(supn1, '1', +10);
 supe1.connect(supn1, '2');
 supe2.connect(supn1, '1', +10);

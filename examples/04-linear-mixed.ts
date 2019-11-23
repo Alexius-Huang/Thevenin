@@ -79,6 +79,7 @@ const supe5 = supernodePropagatedGraph.createEdge(source);
 const supe6 = supernodePropagatedGraph.createEdge(ground);
 
 const supn1 = supernodePropagatedGraph.createNode();
+supn1.isSupernode = true;
 supe1.connect(supn1, '1', +10);
 supe5.connect(supn1, 'POSITIVE', +10);
 supe5.connect(supn1, 'NEGATIVE');

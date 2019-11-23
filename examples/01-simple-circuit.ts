@@ -1,5 +1,6 @@
 import Circuit from '../lib/Circuit';
 import { createElectronic, EC } from '../lib/Electronic';
+import { CurrentFlow } from '../lib/Circuit.Graph';
 
 /*
  *  Circuit Layout:
@@ -49,11 +50,31 @@ const supe2 = supernodePropagatedGraph.createEdge(source);
 const supe3 = supernodePropagatedGraph.createEdge(ground);
 
 const supn1 = supernodePropagatedGraph.createNode();
+supn1.isSupernode = true;
+
 supe1.connect(supn1, '1', +10);
 supe1.connect(supn1, '2');
 supe2.connect(supn1, 'POSITIVE', +10);
 supe2.connect(supn1, 'NEGATIVE');
 supe3.connect(supn1);
+
+// Phase 3. Simulation - DC Propagation
+const DCPropagatedGraph = new Circuit.Graph();
+const dcpe1 = DCPropagatedGraph.createEdge(resistor);
+const dcpe2 = DCPropagatedGraph.createEdge(source);
+const dcpe3 = DCPropagatedGraph.createEdge(ground);
+dcpe1.current = dcpe2.current = 0.01;
+dcpe3.current = 0;
+
+const dcpn1 = DCPropagatedGraph.createNode();
+dcpn1.voltage = 0;
+dcpn1.isSupernode = true;
+
+dcpe1.connect(dcpn1, '1', +10, CurrentFlow.INWARD);
+dcpe1.connect(dcpn1, '2', 0, CurrentFlow.OUTWARD);
+dcpe2.connect(dcpn1, 'POSITIVE', +10, CurrentFlow.OUTWARD);
+dcpe2.connect(dcpn1, 'NEGATIVE', 0, CurrentFlow.INWARD);
+dcpe3.connect(dcpn1);
 
 export default {
   circuit,
@@ -65,5 +86,6 @@ export default {
   expected: {
     graph,
     supernodePropagatedGraph,
+    DCPropagatedGraph,
   },
 };

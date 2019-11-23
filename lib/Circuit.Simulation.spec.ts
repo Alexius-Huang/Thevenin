@@ -21,7 +21,20 @@ describe('Lib: Circuit.Simulation', () => {
   });
 
   describe('DC Propagation', () => {
-    it.todo('propagates through the circuit and assign electrical infos to the nodes and edges');
-    // it('propagates through the circuit and assign electrical infos to the nodes and edges', () => {});
+    it('propagates through the circuit and assign electrical infos to the nodes and edges', async () => {
+      const example = (await import('../examples/01-simple-circuit')).default;
+      const {
+        supernodePropagatedGraph: input,
+        DCPropagatedGraph: expected,
+      } = example.expected;
+
+      const simulation = new Simulation(input);
+      simulation.DCPropagation();
+      const { graph: result } = simulation;
+
+      expect(result.nodes).toMatchObject(expected.nodes);
+      expect(result.edges).toMatchObject(expected.edges);
+      expect(true).toBe(true);
+    });
   });
 });

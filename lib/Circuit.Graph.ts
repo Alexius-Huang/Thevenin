@@ -32,18 +32,19 @@ export class Edge {
     currentFlow: CurrentFlow = CurrentFlow.NEUTRAL,
   ) {
     this.pinsMap.set(pinName, node);
-    node.info.add({ edgeID: this.id, pinName, bias, currentFlow });
+    const pinInfo = { edgeID: this.id, pinName, bias, currentFlow };
+    node.info.add(pinInfo);
 
     if (node.edgeMap.has(this.id)) {
       const pinInfoMap = node.edgeMap.get(this.id) as Map<string, PinInfo>;
-      pinInfoMap.set(pinName, { bias, currentFlow });
+      pinInfoMap.set(pinName, pinInfo);
     } else {
-      node.edgeMap.set(this.id, new Map([[pinName, { bias, currentFlow }]]));
+      node.edgeMap.set(this.id, new Map([[pinName, pinInfo]]));
     }
   }
 }
 
-export type NodeInfo = {
+export type PinInfo = {
   edgeID: EdgeID;
   pinName: PinName;
   bias: number;
@@ -52,26 +53,15 @@ export type NodeInfo = {
 
 export type PinInfoMap = Map<PinName, PinInfo>;
 
-export type PinInfo = {
-  bias: number;
-  currentFlow: CurrentFlow;
-};
-
 export class Node {
-  public info = new Set<NodeInfo>();
+  public info = new Set<PinInfo>();
   public edgeMap = new Map<EdgeID, PinInfoMap>();
   public voltage: number = NaN;
+  public isSupernode = false;
 
   public boostVoltageBias(bias: number) {
     this.info.forEach(info => {
       info.bias += bias;
-    });
-
-    Array.from(this.edgeMap.keys()).forEach(edgeID => {
-      const pinInfoMap = this.edgeMap.get(edgeID) as PinInfoMap;
-      Array.from(pinInfoMap.keys()).forEach(i => {
-        (pinInfoMap.get(i) as PinInfo).bias += bias;
-      });
     });
   }
 }

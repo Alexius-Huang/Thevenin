@@ -15,6 +15,7 @@ type CircuitExample = {
   expected: {
     graph: Graph;
     supernodePropagatedGraph: Graph;
+    DCPropagatedGraph?: Graph;
   };
 };
 
