@@ -44,13 +44,13 @@ describe('Lib: Circuit.Graph', () => {
       ]));
 
       expect(n1.info).toMatchObject(new Set<NodeInfo>([
-        { edge: e1, pinName: '1', bias: 0 },
-        { edge: e2, pinName: 'POSITIVE', bias: 0 },
+        { edgeID: e1.id, pinName: '1', bias: 0 },
+        { edgeID: e2.id, pinName: 'POSITIVE', bias: 0 },
       ]));
       expect(n2.info).toMatchObject(new Set<NodeInfo>([
-        { edge: e1, pinName: '2', bias: 0 },
-        { edge: e2, pinName: 'NEGATIVE', bias: 0 },
-        { edge: e3, pinName: '', bias: 0 },
+        { edgeID: e1.id, pinName: '2', bias: 0 },
+        { edgeID: e2.id, pinName: 'NEGATIVE', bias: 0 },
+        { edgeID: e3.id, pinName: '', bias: 0 },
       ]));
     });
   });

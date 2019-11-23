@@ -20,12 +20,12 @@ export class Edge {
 
   public connect(node: Node, pinName: string = '', bias: number = 0) {
     this.pinsMap.set(pinName, node);
-    node.info.add({ edge: this, pinName, bias });
+    node.info.add({ edgeID: this.id, pinName, bias });
   }
 }
 
 export type NodeInfo = {
-  edge: Edge;
+  edgeID: EdgeID;
   pinName: string;
   bias: number;
 }
@@ -46,6 +46,12 @@ export default class Graph {
 
   public nodes = new Set<Node>([]);
   public edges = new Map<EdgeID, Edge>();
+
+  public findEdge(id: EdgeID): Edge {
+    if (this.edges.has(id))
+      return this.edges.get(id) as Edge;
+    throw new Error('Edge is not found!');
+  }
 
   public createEdge(electronic: Electronic) {
     const edge = new Graph.Edge(electronic);

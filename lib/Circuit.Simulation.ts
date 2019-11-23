@@ -1,4 +1,4 @@
-import Graph, { Node, Edge, NodeInfo } from "./Circuit.Graph";
+import Graph, { Node, NodeInfo } from "./Circuit.Graph";
 import { EC } from "./Electronic";
 
 export default class CircuitSimulation {
@@ -11,7 +11,8 @@ export default class CircuitSimulation {
     let traverseFromNode = (node: Node) => {
       const infos = Array.from(node.info);
 
-      for (let { edge, pinName } of infos) {
+      for (let { edgeID, pinName } of infos) {
+        const edge = this.graph.findEdge(edgeID);
         const { electronic, pinsMap } = edge;
 
         if (electronic.is(EC.DCSource)) {
@@ -26,8 +27,8 @@ export default class CircuitSimulation {
           linkedNode.info.forEach(info => {
             node.info.add({ ...info });
 
-            if (info.edge.electronic.is(EC.DCSource)) {
-              info.edge.pinsMap.set(pinName, node);
+            if (edge.electronic.is(EC.DCSource)) {
+              edge.pinsMap.set(pinName, node);
             }
           });
 
