@@ -21,34 +21,27 @@ export default class CircuitSimulation {
           const linkedNode = pinsMap.get(negativePinName);
           if (!linkedNode) throw new Error(`DC Source isn't connected correctly!`);
 
-          const biasedNodeInfo = infos.map(info => ({ ...info, bias: info.bias + bias }));
-          const supernodeInfo = new Set(biasedNodeInfo);
-          const linkedNodeInfo = Array.from(linkedNode.info);
-          linkedNodeInfo.forEach(info => {
-            supernodeInfo.add({ ...info });
+          node.boostVoltageBias(bias);
+
+          linkedNode.info.forEach(info => {
+            node.info.add({ ...info });
 
             if (info.edge.electronic.is(EC.DCSource)) {
               info.edge.pinsMap.set(pinName, node);
             }
           });
 
-          node.info = supernodeInfo;
-          linkedNode.info = supernodeInfo;
+          linkedNode.info = node.info;
 
           mergedNodes.add(linkedNode);
         }
       }
     };
 
-    const nodesIter = nodes.values();
-    let pulled = nodesIter.next();
-
-    while (!pulled.done) {
-      const node = pulled.value as Node;
-      if (!mergedNodes.has(node)) traverseFromNode(node);
-
-      pulled = nodesIter.next();
-    }
+    nodes.forEach(node => {
+      if (mergedNodes.has(node)) return;
+      traverseFromNode(node);
+    });
 
     mergedNodes.forEach(node => {
       this.graph.nodes.delete(node);

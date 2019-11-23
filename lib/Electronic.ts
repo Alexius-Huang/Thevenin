@@ -3,6 +3,7 @@ import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
 import ElectronicInfos from './Electronic.Info';
 
 export type Coordinate = [number, number];
+export type ElectronicID = string;
 
 /* Electronic Component */
 export enum EC {
@@ -12,7 +13,7 @@ export enum EC {
 }
 
 export default class Electronic {
-  public id: string = GUIDGenerator();
+  public id: ElectronicID = GUIDGenerator();
 
   constructor(
     public readonly name: EC,

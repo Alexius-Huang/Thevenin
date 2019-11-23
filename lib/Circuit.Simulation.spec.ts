@@ -16,7 +16,6 @@ describe('Lib: Circuit.Simulation', () => {
 
         expect(new Set(output.nodes)).toMatchObject(new Set(result.nodes));
         expect(new Set(output.edges)).toMatchObject(new Set(result.edges));
-        expect(true).toBe(true);
       }
     });
   });

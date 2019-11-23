@@ -1,5 +1,7 @@
 import Electronic, { EC } from './Electronic';
 
+export type EdgeID = string;
+
 export class Edge {
   public pinsMap = new Map<string, Node | null>();
 
@@ -9,7 +11,7 @@ export class Edge {
     });
   }
 
-  get id() { return this.electronic.id; }
+  get id(): EdgeID { return this.electronic.id; }
   get name() { return this.electronic.name; }
   get pins() { return this.electronic.info.pins; }
 
@@ -27,6 +29,12 @@ export type NodeInfo = {
 
 export class Node {
   public info = new Set<NodeInfo>();
+
+  public boostVoltageBias(bias: number) {
+    this.info.forEach(info => {
+      info.bias += bias;
+    });
+  }
 }
 
 export default class Graph {
@@ -34,11 +42,11 @@ export default class Graph {
   static Node = Node;
 
   public nodes = new Set<Node>([]);
-  public edges = new Set<Edge>([]);
+  public edges = new Map<EdgeID, Edge>();
 
   public createEdge(electronic: Electronic) {
     const edge = new Graph.Edge(electronic);
-    this.edges.add(edge);
+    this.edges.set(edge.id, edge);
     return edge;
   }
 
