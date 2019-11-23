@@ -20,23 +20,29 @@ describe('Lib: Circuit.Simulation', () => {
     });
   });
 
-  describe('DC Propagation', () => {
-    it('propagates through the circuit and assign electrical infos to the nodes and edges', async () => {
-      const examples = (await import('../examples')).directDCPropagationExamples;
-      for await (let { default: example } of examples) {
-        const {
-          supernodePropagatedGraph: input,
-          DCPropagatedGraph: expected,
-        } = example.expected;
+  describe('DC Analysis', () => {
+    describe('Nodal Analysis', () => {
+      it.todo('uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit');
+      // it('uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit', async () => {});
+    });
   
-        const simulation = new Simulation(input);
-        simulation.DCPropagation();
-        const { graph: result } = simulation;
-  
-        expect(result.nodes).toMatchObject(expected.nodes);
-        expect(result.edges).toMatchObject(expected.edges);
-        expect(true).toBe(true);  
-      }
+    describe('DC Propagation', () => {
+      it('propagates through the circuit and assign electrical infos to the nodes and edges [<= 2 node cases]', async () => {
+        const examples = (await import('../examples')).directDCPropagationExamples;
+        for await (let { default: example } of examples) {
+          const {
+            supernodePropagatedGraph: input,
+            DCPropagatedGraph: expected,
+          } = example.expected;
+    
+          const simulation = new Simulation(input);
+          simulation.DCPropagation();
+          const { graph: result } = simulation;
+    
+          expect(result.nodes).toMatchObject(expected.nodes);
+          expect(result.edges).toMatchObject(expected.edges);
+        }
+      });
     });
   });
 });

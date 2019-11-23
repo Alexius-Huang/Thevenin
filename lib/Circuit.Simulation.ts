@@ -1,5 +1,6 @@
-import Graph, { Node, Edge, PinInfoMap, PinInfo, CurrentFlow } from "./Circuit.Graph";
-import { EC } from "./Electronic";
+import Graph, { Node, Edge, PinInfoMap, PinInfo, CurrentFlow } from './Circuit.Graph';
+import { EC } from './Electronic';
+import * as E from './electronics';
 
 export default class CircuitSimulation {
   constructor(public graph: Graph) {}
@@ -67,10 +68,8 @@ export default class CircuitSimulation {
       if (!Number.isNaN(edge.current)) return;
 
       if (edge.electronic.is(EC.Ground)) {
-        edge.current = 0;
-
         const node = edge.pinsMap.get('') as Node;
-        node.voltage = 0;
+        E.Ground.deriveCurrent(edge, { '': node });
       }
 
       else if (edge.electronic.is(EC.Resistor)) {
@@ -81,25 +80,7 @@ export default class CircuitSimulation {
           return;
         }
 
-        const pinInfoMap1 = node1.edgeMap.get(edge.id) as PinInfoMap;
-        const pinInfo1 = pinInfoMap1.get('1') as PinInfo;
-        const bias1 = pinInfo1.bias;
-        const emf1 = node1.voltage + bias1;
-
-        const pinInfoMap2 = node2.edgeMap.get(edge.id) as PinInfoMap;
-        const pinInfo2 = pinInfoMap2.get('2') as PinInfo;
-        const bias2 = pinInfo2.bias;
-        const emf2 = node2.voltage + bias2;
-
-        edge.current = (emf1 - emf2) / edge.electronic.value;
-
-        if (edge.current > 0) {
-          pinInfo1.currentFlow = CurrentFlow.INWARD;
-          pinInfo2.currentFlow = CurrentFlow.OUTWARD;
-        } else if (edge.current < 0) {
-          pinInfo1.currentFlow = CurrentFlow.OUTWARD;
-          pinInfo2.currentFlow = CurrentFlow.INWARD;
-        }
+        E.Resistor.deriveCurrent(edge, { '1': node1, '2': node2 });
       }
 
       else if (edge.electronic.is(EC.DCSource)) {
