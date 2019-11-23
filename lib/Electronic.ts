@@ -1,6 +1,6 @@
 import GUIDGenerator from './GUIDGenerator';
 import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
-import ElectronicInfos from './Electronic.Info';
+import ElectronicInfos, { PinName } from './Electronic.Info';
 
 export type Coordinate = [number, number];
 export type ElectronicID = string;
@@ -32,7 +32,7 @@ export default class Electronic {
   get type() { return this.info.type; }
   get unit() { return this.info.unit; }
   get unitPostfix() { return this.info.unitPostfix; }
-  get pins() { return this.info.pins; }
+  get pins(): Set<PinName> { return this.info.pins; }
 
   // Rotate clockwise
   public rotate() {

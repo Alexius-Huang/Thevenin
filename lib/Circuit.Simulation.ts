@@ -1,4 +1,4 @@
-import Graph, { Node, NodeInfo } from "./Circuit.Graph";
+import Graph, { Node, NodeInfo, PinInfoMap } from "./Circuit.Graph";
 import { EC } from "./Electronic";
 
 export default class CircuitSimulation {
@@ -30,10 +30,18 @@ export default class CircuitSimulation {
             if (edge.electronic.is(EC.DCSource)) {
               edge.pinsMap.set(pinName, node);
             }
+
+            if (node.edgeMap.has(info.edgeID)) {
+              const pinInfoMap = node.edgeMap.get(info.edgeID) as PinInfoMap;
+              pinInfoMap.set(info.pinName, { bias: info.bias });
+            } else {
+              node.edgeMap.set(info.edgeID, new Map([[info.pinName, { bias: info.bias }]]));
+            }
           });
 
+          // Making sure that 'linkedNode' is the same as 'node'
           linkedNode.info = node.info;
-
+          linkedNode.edgeMap = node.edgeMap;
           mergedNodes.add(linkedNode);
         }
       }

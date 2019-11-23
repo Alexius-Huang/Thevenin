@@ -1,4 +1,4 @@
-import CircuitGraph, { Node, Edge, NodeInfo } from './Circuit.Graph';
+import CircuitGraph, { Node, Edge, NodeInfo, EdgeID, PinInfoMap } from './Circuit.Graph';
 import { EC, createElectronic } from './Electronic';
 
 describe('Lib: Circuit.Graph', () => {
@@ -51,6 +51,16 @@ describe('Lib: Circuit.Graph', () => {
         { edgeID: e1.id, pinName: '2', bias: 0 },
         { edgeID: e2.id, pinName: 'NEGATIVE', bias: 0 },
         { edgeID: e3.id, pinName: '', bias: 0 },
+      ]));
+
+      expect(n1.edgeMap).toMatchObject(new Map<EdgeID, PinInfoMap>([
+        [e1.id, new Map([['1', { bias: 0 }]])],
+        [e2.id, new Map([['POSITIVE', { bias: 0 }]])],
+      ]));
+      expect(n2.edgeMap).toMatchObject(new Map<EdgeID, PinInfoMap>([
+        [e1.id, new Map([['2', { bias: 0 }]])],
+        [e2.id, new Map([['NEGATIVE', { bias: 0 }]])],
+        [e3.id, new Map([['', { bias: 0 }]])],
       ]));
     });
   });

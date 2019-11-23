@@ -4,11 +4,13 @@ export enum ElectronicType {
   Other,
 }
 
+export type PinName = string;
+
 export type ElectronicInfo = {
   type: ElectronicType;
   unit: string | null | 'Unit';
   unitPostfix: string | null | 'unit';
-  pins: Set<string>;
+  pins: Set<PinName>;
 }
 
 export default {

@@ -7,15 +7,15 @@ describe('Lib: Circuit.Simulation', () => {
       for await (let { default: example } of examples) {
         const {
           graph: input,
-          supernodePropagatedGraph: output,
+          supernodePropagatedGraph: expected,
         } = example.expected;
 
         const simulation = new Simulation(input);
         simulation.supernodePropagation();
         const { graph: result } = simulation;
 
-        expect(new Set(output.nodes)).toMatchObject(new Set(result.nodes));
-        expect(new Set(output.edges)).toMatchObject(new Set(result.edges));
+        expect(result.nodes).toMatchObject(expected.nodes);
+        expect(result.edges).toMatchObject(expected.edges);
       }
     });
   });
