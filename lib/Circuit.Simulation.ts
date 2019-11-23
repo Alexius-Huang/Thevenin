@@ -31,11 +31,12 @@ export default class CircuitSimulation {
               edge.pinsMap.set(pinName, node);
             }
 
+            const pinInfo = { bias: info.bias, currentFlow: info.currentFlow };
             if (node.edgeMap.has(info.edgeID)) {
               const pinInfoMap = node.edgeMap.get(info.edgeID) as PinInfoMap;
-              pinInfoMap.set(info.pinName, { bias: info.bias });
+              pinInfoMap.set(info.pinName, pinInfo);
             } else {
-              node.edgeMap.set(info.edgeID, new Map([[info.pinName, { bias: info.bias }]]));
+              node.edgeMap.set(info.edgeID, new Map([[info.pinName, pinInfo]]));
             }
           });
 
@@ -55,5 +56,9 @@ export default class CircuitSimulation {
     mergedNodes.forEach(node => {
       this.graph.nodes.delete(node);
     });
+  }
+
+  public DCPropagation() {
+    console.log('TO BE IMPLEMENTED!');
   }
 }

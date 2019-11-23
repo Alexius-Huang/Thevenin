@@ -19,4 +19,9 @@ describe('Lib: Circuit.Simulation', () => {
       }
     });
   });
+
+  describe('DC Propagation', () => {
+    it.todo('propagates through the circuit and assign electrical infos to the nodes and edges');
+    // it('propagates through the circuit and assign electrical infos to the nodes and edges', () => {});
+  });
 });
