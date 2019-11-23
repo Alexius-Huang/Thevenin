@@ -1,6 +1,6 @@
 import Graph, { Node, Edge, PinInfoMap, PinInfo, CurrentFlow } from './Circuit.Graph';
 import { EC } from './Electronic';
-import * as E from './electronics';
+import E from './electronics';
 
 export default class CircuitSimulation {
   constructor(public graph: Graph) {}
@@ -14,7 +14,7 @@ export default class CircuitSimulation {
 
       for (let { edgeID, pinName } of infos) {
         const edge = this.graph.findEdge(edgeID);
-        const { electronic, pinsMap } = edge;
+        const { electronic, nodesMap } = edge;
 
         if (electronic.is(EC.DCSource)) {
           node.isSupernode = true;
@@ -22,7 +22,7 @@ export default class CircuitSimulation {
           const positivelyPinned = pinName === 'POSITIVE';
           const negativePinName = positivelyPinned ? 'NEGATIVE' : 'POSITIVE';
           const bias = positivelyPinned ? electronic.value : -electronic.value;
-          const linkedNode = pinsMap.get(negativePinName);
+          const linkedNode = nodesMap.get(negativePinName);
           if (!linkedNode) throw new Error(`DC Source isn't connected correctly!`);
 
           node.boostVoltageBias(bias);
@@ -31,7 +31,7 @@ export default class CircuitSimulation {
             node.info.add({ ...info });
 
             if (edge.electronic.is(EC.DCSource)) {
-              edge.pinsMap.set(pinName, node);
+              edge.nodesMap.set(pinName, node);
             }
 
             if (node.edgeMap.has(info.edgeID)) {
@@ -66,52 +66,29 @@ export default class CircuitSimulation {
 
     let traverseFromEdge = (edge: Edge) => {
       if (!Number.isNaN(edge.current)) return;
+      const { electronic: e } = edge;
 
-      if (edge.electronic.is(EC.Ground)) {
-        const node = edge.pinsMap.get('') as Node;
-        E.Ground.deriveCurrent(edge, { '': node });
+      if (e.is(EC.Ground) || e.is(EC.Resistor)) {
+        const ok = E[e.name].deriveCurrent(edge);
+        if (!ok) isConverged = false;
+        return;
       }
 
-      else if (edge.electronic.is(EC.Resistor)) {
-        const node1 = edge.pinsMap.get('1') as Node;
-        const node2 = edge.pinsMap.get('2') as Node;
-        if (Number.isNaN(node1.voltage) || Number.isNaN(node2.voltage)) {
-          isConverged = false;
-          return;
-        }
-
-        E.Resistor.deriveCurrent(edge, { '1': node1, '2': node2 });
-      }
-
-      else if (edge.electronic.is(EC.DCSource)) {
+      else if (e.is(EC.DCSource)) {
         isConverged = false;
-        const node = edge.pinsMap.get('POSITIVE') as Node;
+        const node = edge.nodesMap.get('POSITIVE') as Node;
         if (Number.isNaN(node.voltage)) {
           isConverged = false;
           return;
         }
 
-        const targetBiasValue = (
-          (node.edgeMap.get(edge.id) as PinInfoMap).get('POSITIVE') as PinInfo
-        ).bias;
+        const positivePin = edge.pinsMap.get('POSITIVE') as PinInfo;
+        const negativePin = edge.pinsMap.get('NEGATIVE') as PinInfo;
 
-        let positivePin: PinInfo, negativePin: PinInfo;
-        positivePin = negativePin = { edgeID: '', pinName: '', bias: NaN, currentFlow: CurrentFlow.NEUTRAL };
-
-        const equipotentialPins = Array.from(node.info)
-          .filter(pinInfo => {
-            /* Find the pins of the DC source */
-            if (pinInfo.edgeID === edge.id) {
-              if (pinInfo.pinName === 'POSITIVE') {
-                positivePin = pinInfo;
-              } else {
-                negativePin = pinInfo;
-              }
-              return false;
-            }
-
-            return pinInfo.bias === targetBiasValue;
-          });
+        const equipotentialPins =
+          Array.from(node.info).filter(({ bias, edgeID }) =>
+            bias === positivePin.bias && edgeID !== edge.id
+          );
 
         /* Apply KCL */
         let sourceCurrent = 0;
@@ -136,6 +113,8 @@ export default class CircuitSimulation {
           negativePin.currentFlow = CurrentFlow.OUTWARD;
         }
       }
+
+      else throw new Error(`${e.name} isn't handled in DC Propagation!`);
     };
 
     while (!isConverged) {

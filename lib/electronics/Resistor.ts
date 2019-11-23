@@ -1,20 +1,18 @@
-import { Node, Edge, PinInfoMap, PinInfo, CurrentFlow } from "../Circuit.Graph";
+import { Node, Edge, PinInfo, CurrentFlow } from "../Circuit.Graph";
 
-function deriveCurrent(
-  edge: Edge,
-  nodes: { '1': Node, '2': Node },
-) {
-  const { '1': node1, '2': node2 } = nodes;
+function deriveCurrent(edge: Edge): boolean {
+  const node1 = edge.nodesMap.get('1') as Node;
+  const node2 = edge.nodesMap.get('2') as Node;
 
-  const pinInfoMap1 = node1.edgeMap.get(edge.id) as PinInfoMap;
-  const pinInfo1 = pinInfoMap1.get('1') as PinInfo;
-  const bias1 = pinInfo1.bias;
-  const emf1 = node1.voltage + bias1;
+  if (Number.isNaN(node1.voltage) && Number.isNaN(node2.voltage)) {
+    return false;
+  }
 
-  const pinInfoMap2 = node2.edgeMap.get(edge.id) as PinInfoMap;
-  const pinInfo2 = pinInfoMap2.get('2') as PinInfo;
-  const bias2 = pinInfo2.bias;
-  const emf2 = node2.voltage + bias2;
+  const pinInfo1 = edge.pinsMap.get('1') as PinInfo;
+  const pinInfo2 = edge.pinsMap.get('2') as PinInfo;
+
+  const emf1 = node1.voltage + pinInfo1.bias;
+  const emf2 = node2.voltage + pinInfo2.bias;
 
   edge.current = (emf1 - emf2) / edge.electronic.value;
 
@@ -25,6 +23,8 @@ function deriveCurrent(
     pinInfo1.currentFlow = CurrentFlow.OUTWARD;
     pinInfo2.currentFlow = CurrentFlow.INWARD;
   }
+
+  return true;
 };
 
 export const Resistor = {

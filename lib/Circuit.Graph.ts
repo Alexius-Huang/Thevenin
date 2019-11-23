@@ -1,4 +1,4 @@
-import Electronic, { EC } from './Electronic';
+import Electronic from './Electronic';
 import { PinName } from './Electronic.Info';
 
 export type EdgeID = string;
@@ -9,7 +9,8 @@ export enum CurrentFlow {
 };
 
 export class Edge {
-  public pinsMap = new Map<string, Node | null>();
+  public nodesMap = new Map<PinName, Node | null>();
+  public pinsMap = new Map<PinName, PinInfo | null>();
   public id: EdgeID;
   public current: number = NaN;
 
@@ -17,6 +18,7 @@ export class Edge {
     this.id = _electronic.id;
 
     this.pins.forEach(pinName => {
+      this.nodesMap.set(pinName, null);
       this.pinsMap.set(pinName, null);
     });
   }
@@ -31,8 +33,10 @@ export class Edge {
     bias: number = 0,
     currentFlow: CurrentFlow = CurrentFlow.NEUTRAL,
   ) {
-    this.pinsMap.set(pinName, node);
     const pinInfo = { edgeID: this.id, pinName, bias, currentFlow };
+
+    this.nodesMap.set(pinName, node);
+    this.pinsMap.set(pinName, pinInfo);
     node.info.add(pinInfo);
 
     if (node.edgeMap.has(this.id)) {

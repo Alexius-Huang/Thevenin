@@ -1,5 +1,6 @@
 import CircuitGraph, { Node, EdgeID, PinInfo, PinInfoMap, CurrentFlow } from './Circuit.Graph';
 import { EC, createElectronic } from './Electronic';
+import { PinName } from './Electronic.Info';
 
 describe('Lib: Circuit.Graph', () => {
   describe('Initialization', () => {
@@ -31,15 +32,15 @@ describe('Lib: Circuit.Graph', () => {
       expect(graph.edges.size).toBe(3);
       expect(graph.nodes.size).toBe(2);
 
-      expect(e1.pinsMap).toMatchObject(new Map<string, Node | null>([
+      expect(e1.nodesMap).toMatchObject(new Map<PinName, Node | null>([
         ['1', n1],
         ['2', n2],
       ]));
-      expect(e2.pinsMap).toMatchObject(new Map<string, Node | null>([
+      expect(e2.nodesMap).toMatchObject(new Map<PinName, Node | null>([
         ['POSITIVE', n1],
         ['NEGATIVE', n2],
       ]));
-      expect(e3.pinsMap).toMatchObject(new Map<string, Node | null>([
+      expect(e3.nodesMap).toMatchObject(new Map<PinName, Node | null>([
         ['', n2],
       ]));
 
@@ -57,6 +58,18 @@ describe('Lib: Circuit.Graph', () => {
         pinInfo12,
         pinInfo2Negative,
         pinInfo3,
+      ]));
+
+      expect(e1.pinsMap).toMatchObject(new Map<PinName, PinInfo>([
+        ['1', pinInfo11],
+        ['2', pinInfo12],
+      ]));
+      expect(e2.pinsMap).toMatchObject(new Map<PinName, PinInfo>([
+        ['POSITIVE', pinInfo2Positive],
+        ['NEGATIVE', pinInfo2Negative],
+      ]));
+      expect(e3.pinsMap).toMatchObject(new Map<PinName, PinInfo>([
+        ['', pinInfo3],
       ]));
 
       expect(n1.edgeMap).toMatchObject(new Map<EdgeID, PinInfoMap>([
