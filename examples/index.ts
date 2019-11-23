@@ -19,6 +19,26 @@ type CircuitExample = {
   };
 };
 
-const importExamples = files.map(path => import(path));
+const importExamples: Array<Promise<{ default: CircuitExample }>> =
+  files.map(path => import(path));
 
-export default importExamples as Array<Promise<{ default: CircuitExample }>>;
+export default importExamples;
+
+/* Specifically for Direct DC propagation tests */
+type DirectDCPropagationExample = {
+  circuit: Circuit;
+  components: { [key: string]: Electronic },
+  expected: {
+    graph: Graph;
+    supernodePropagatedGraph: Graph;
+    DCPropagatedGraph: Graph;
+  };
+}
+
+const directDCPropagationFiles = [
+  './01-simple-circuit.ts',
+  './03-linear-parallel.ts',
+];
+
+export const directDCPropagationExamples: Array<Promise<{ default: DirectDCPropagationExample }>> =
+  directDCPropagationFiles.map(path => import(path));
