@@ -4,14 +4,17 @@ export type EdgeID = string;
 
 export class Edge {
   public pinsMap = new Map<string, Node | null>();
+  public id: EdgeID;
 
-  constructor(public electronic: Electronic) {
+  constructor(private _electronic: Electronic) {
+    this.id = _electronic.id;
+
     this.pins.forEach(pinName => {
       this.pinsMap.set(pinName, null);
     });
   }
 
-  get id(): EdgeID { return this.electronic.id; }
+  get electronic(): Electronic { return this._electronic; }
   get name() { return this.electronic.name; }
   get pins() { return this.electronic.info.pins; }
 
