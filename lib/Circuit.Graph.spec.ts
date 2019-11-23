@@ -28,8 +28,8 @@ describe('Lib: Circuit.Graph', () => {
       e2.connect(n2, 'NEGATIVE');
       e3.connect(n2);
 
-      expect(graph.edges.length).toBe(3);
-      expect(graph.nodes.length).toBe(2);
+      expect(graph.edges.size).toBe(3);
+      expect(graph.nodes.size).toBe(2);
 
       expect(e1.pinsMap).toMatchObject(new Map<string, Node | null>([
         ['1', n1],

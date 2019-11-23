@@ -33,18 +33,18 @@ export default class Graph {
   static Edge = Edge;
   static Node = Node;
 
-  public nodes: Array<Node> = [];
-  public edges: Array<Edge> = [];
+  public nodes = new Set<Node>([]);
+  public edges = new Set<Edge>([]);
 
   public createEdge(electronic: Electronic) {
     const edge = new Graph.Edge(electronic);
-    this.edges.push(edge);
+    this.edges.add(edge);
     return edge;
   }
 
   public createNode() {
     const node = new Graph.Node();
-    this.nodes.push(node);
+    this.nodes.add(node);
     return node;
   }
 };

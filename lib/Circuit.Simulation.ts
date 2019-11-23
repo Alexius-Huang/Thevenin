@@ -50,6 +50,8 @@ export default class CircuitSimulation {
       pulled = nodesIter.next();
     }
 
-    this.graph.nodes = this.graph.nodes.filter(node => !mergedNodes.has(node));
+    mergedNodes.forEach(node => {
+      this.graph.nodes.delete(node);
+    });
   }
 }
