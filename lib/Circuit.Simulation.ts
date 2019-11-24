@@ -1,6 +1,7 @@
 import Graph, { Node, Edge, PinInfoMap, PinInfo, CurrentFlow } from './Circuit.Graph';
-import { EC } from './Electronic';
+import Equation from './Circuit.Equation';
 import E from './electronics';
+import { EC } from './Electronic';
 
 export default class CircuitSimulation {
   constructor(public graph: Graph) {}
@@ -132,13 +133,57 @@ export default class CircuitSimulation {
   }
 
   private deriveSingleNodeEquation() {
-    // 1. Derive node equation based on one of the two node
-    const node = Array.from(this.graph.nodes)[0];
+    let conductance1 = 0, conductance2 = 0, constant = 0;
+    let groundNodeLabel: string = 'V1';
 
-    console.log(node);
+    const [node1, node2] = Array.from(this.graph.nodes);
+    const labelNodeMap = new Map<string, Node>([
+      ['V1', node1],
+      ['V2', node2],
+    ]);
 
-    // 2. Plug in the ground value
-    // 3. Construct the equation and solve it 
+    node1.info.forEach(info => {
+      const edge = this.graph.findEdge(info.edgeID);
+      const { electronic: e } = edge;
+
+      if (e.is(EC.Resistor)) {
+        const conductance = (1 / e.value);
+        conductance1 += conductance;
+        constant -= info.bias * conductance;
+      } else if (e.is(EC.Ground)) {
+        node1.voltage = 0;
+        groundNodeLabel = 'V1';
+      }
+    });
+
+    node2.info.forEach(info => {
+      const edge = this.graph.findEdge(info.edgeID);
+      const { electronic: e } = edge;
+
+      if (e.is(EC.Resistor)) {
+        const conductance = (1 / e.value);
+        conductance2 += conductance;
+        constant -= info.bias * conductance;
+      }
+      else if (e.is(EC.Ground)) {
+        node1.voltage = 0;
+        groundNodeLabel = 'V2';
+      }
+    });
+    // Set node1 as 'reference node'
+    conductance2 = -conductance2;
+
+    // Create simple nodal equation
+    const eq = new Equation();
+    eq.unknown('V1', conductance1)
+      .unknown('V2', conductance2)
+      .constant(constant);
+
+    const knownInfo = { [groundNodeLabel]: 0 };
+    const solutions = Object.assign(eq.solve(knownInfo), knownInfo);
+    Object.keys(solutions).forEach(label => {
+      (labelNodeMap.get(label) as Node).voltage = solutions[label];
+    });
   }
 
   private deriveNodeEquations() {

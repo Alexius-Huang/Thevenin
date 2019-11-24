@@ -21,21 +21,34 @@ describe('Lib: Circuit.Simulation', () => {
   });
 
   describe('DC Analysis', () => {
-    describe.skip('Nodal Analysis', () => {
-      // it.todo('[Single Node Equation] uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit');
+    describe('Nodal Analysis', () => {
+    // TODO: Make these general cases
       it('[Single Node Equation] uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit', async () => {
         const example = (await import('../examples/02-linear-series')).default;
         const {
-          supernodePropagatedGraph: input
+          supernodePropagatedGraph: input,
+          nodalAnalyzedGraph: expected,
         } = example.expected;
 
-        const sim = new Simulation(input);
-        sim.nodalAnalysis();
-        
-        const { graph: result } = sim;
+        const simulation = new Simulation(input);
+        simulation.nodalAnalysis();
+        const { graph: result } = simulation;
 
-        console.log(result.nodes);
-        console.log(result.edges);
+        expect(result.nodes).toMatchObject(expected.nodes);
+        expect(result.edges).toMatchObject(expected.edges);
+
+        const example2 = (await import('../examples/05-linear-series-differed-ground-location')).default;
+        const {
+          supernodePropagatedGraph: input2,
+          nodalAnalyzedGraph: expected2,
+        } = example2.expected;
+
+        const simulation2 = new Simulation(input2);
+        simulation2.nodalAnalysis();
+        const { graph: result2 } = simulation2;
+
+        expect(result2.nodes).toMatchObject(expected2.nodes);
+        expect(result2.edges).toMatchObject(expected2.edges);
       });
 
       it.todo('[Multi-Nodes Equation] uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit using Gaussian Elimination');
@@ -57,6 +70,36 @@ describe('Lib: Circuit.Simulation', () => {
           expect(result.nodes).toMatchObject(expected.nodes);
           expect(result.edges).toMatchObject(expected.edges);
         }
+      });
+    });
+
+    describe('Integration', () => {
+      it('uses Nodal Analysis to derive the node-voltage result and then uses DC propagation to derive the current flow result', async () => {
+        const example = (await import('../examples/02-linear-series')).default;
+        const {
+          nodalAnalyzedGraph: input,
+          DCPropagatedGraph: expected,
+        } = example.expected;
+
+        const simulation = new Simulation(input);
+        simulation.DCPropagation();
+        const { graph: result } = simulation;
+
+        expect(result.nodes).toMatchObject(expected.nodes);
+        expect(result.edges).toMatchObject(expected.edges);
+
+        const example2 = (await import('../examples/05-linear-series-differed-ground-location')).default;
+        const {
+          supernodePropagatedGraph: input2,
+          DCPropagatedGraph: expected2,
+        } = example2.expected;
+
+        const simulation2 = new Simulation(input2);
+        simulation2.DCPropagation();
+        const { graph: result2 } = simulation2;
+
+        expect(result2.nodes).toMatchObject(expected2.nodes);
+        expect(result2.edges).toMatchObject(expected2.edges);
       });
     });
   });

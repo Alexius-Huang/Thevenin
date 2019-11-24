@@ -7,6 +7,7 @@ const files = [
   './02-linear-series.ts',
   './03-linear-parallel.ts',
   './04-linear-mixed.ts',
+  './05-linear-series-differed-ground-location.ts',
 ];
 
 type CircuitExample = {
@@ -15,6 +16,7 @@ type CircuitExample = {
   expected: {
     graph: Graph;
     supernodePropagatedGraph: Graph;
+    nodalAnalyzedGraph?: Graph;
     DCPropagatedGraph?: Graph;
   };
 };

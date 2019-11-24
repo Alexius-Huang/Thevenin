@@ -58,7 +58,9 @@ supe2.connect(supn1, 'POSITIVE', +10);
 supe2.connect(supn1, 'NEGATIVE');
 supe3.connect(supn1);
 
-// Phase 3. Simulation - DC Propagation
+// Phase 3. Simulation - Nodal Analysis [SKIPPABLE]
+
+// Phase 4. Simulation - DC Propagation
 const DCPropagatedGraph = new Circuit.Graph();
 const dcpe1 = DCPropagatedGraph.createEdge(resistor);
 const dcpe2 = DCPropagatedGraph.createEdge(source);

@@ -1,5 +1,6 @@
 import Circuit from '../lib/Circuit';
 import { createElectronic, EC } from '../lib/Electronic';
+import { CurrentFlow } from '../lib/Circuit.Graph';
 
 /*
  *  Circuit Layout:
@@ -70,6 +71,50 @@ const supn2 = supernodePropagatedGraph.createNode();
 supe1.connect(supn2, '2');
 supe2.connect(supn2, '1');
 
+// Phase 3. Simulation - Nodal Analysis (== 2 node case)
+const nodalAnalyzedGraph = new Circuit.Graph();
+const nae1 = nodalAnalyzedGraph.createEdge(resistor1);
+const nae2 = nodalAnalyzedGraph.createEdge(resistor2);
+const nae3 = nodalAnalyzedGraph.createEdge(source);
+const nae4 = nodalAnalyzedGraph.createEdge(ground);
+
+const nan1 = nodalAnalyzedGraph.createNode();
+nan1.isSupernode = true;
+nan1.voltage = 0;
+nae1.connect(nan1, '1', +10);
+nae2.connect(nan1, '2');
+nae3.connect(nan1, 'POSITIVE', +10);
+nae3.connect(nan1, 'NEGATIVE');
+nae4.connect(nan1);
+
+const nan2 = nodalAnalyzedGraph.createNode();
+nan2.voltage = 5;
+nae1.connect(nan2, '2');
+nae2.connect(nan2, '1');
+
+// Phase 4. Simulation - DC Propagation
+const DCPropagatedGraph = new Circuit.Graph();
+const dcpe1 = DCPropagatedGraph.createEdge(resistor1);
+const dcpe2 = DCPropagatedGraph.createEdge(resistor2);
+const dcpe3 = DCPropagatedGraph.createEdge(source);
+const dcpe4 = DCPropagatedGraph.createEdge(ground);
+dcpe1.current = dcpe2.current = dcpe3.current = 0.005;
+dcpe4.current = 0;
+
+const dcpn1 = DCPropagatedGraph.createNode();
+dcpn1.isSupernode = true;
+dcpn1.voltage = 0;
+dcpe1.connect(dcpn1, '1', +10, CurrentFlow.INWARD);
+dcpe2.connect(dcpn1, '2', 0, CurrentFlow.OUTWARD);
+dcpe3.connect(dcpn1, 'POSITIVE', +10, CurrentFlow.OUTWARD);
+dcpe3.connect(dcpn1, 'NEGATIVE', 0, CurrentFlow.INWARD);
+dcpe4.connect(dcpn1);
+
+const dcpn2 = DCPropagatedGraph.createNode();
+dcpn2.voltage = 5;
+dcpe1.connect(dcpn2, '2', 0, CurrentFlow.OUTWARD);
+dcpe2.connect(dcpn2, '1', 0, CurrentFlow.INWARD);
+
 export default {
   circuit,
   components: {
@@ -81,5 +126,7 @@ export default {
   expected: {
     graph,
     supernodePropagatedGraph,
+    nodalAnalyzedGraph,
+    DCPropagatedGraph,
   },
 };
