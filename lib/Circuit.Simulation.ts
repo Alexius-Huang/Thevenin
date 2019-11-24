@@ -132,8 +132,11 @@ export default class CircuitSimulation {
   }
 
   private deriveSingleNodeEquation() {
-    console.log('TODO: implement this!');
     // 1. Derive node equation based on one of the two node
+    const node = Array.from(this.graph.nodes)[0];
+
+    console.log(node);
+
     // 2. Plug in the ground value
     // 3. Construct the equation and solve it 
   }

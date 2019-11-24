@@ -21,8 +21,23 @@ describe('Lib: Circuit.Simulation', () => {
   });
 
   describe('DC Analysis', () => {
-    describe('Nodal Analysis', () => {
-      it.todo('[Single Node Equation] uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit');
+    describe.skip('Nodal Analysis', () => {
+      // it.todo('[Single Node Equation] uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit');
+      it('[Single Node Equation] uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit', async () => {
+        const example = (await import('../examples/02-linear-series')).default;
+        const {
+          supernodePropagatedGraph: input
+        } = example.expected;
+
+        const sim = new Simulation(input);
+        sim.nodalAnalysis();
+        
+        const { graph: result } = sim;
+
+        console.log(result.nodes);
+        console.log(result.edges);
+      });
+
       it.todo('[Multi-Nodes Equation] uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit using Gaussian Elimination');
     });
   
