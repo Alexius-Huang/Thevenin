@@ -22,12 +22,12 @@ describe('Lib: Circuit.Simulation', () => {
 
   describe('DC Analysis', () => {
     describe('Nodal Analysis', () => {
-      it.todo('uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit');
-      // it('uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit', async () => {});
+      it.todo('[Single Node Equation] uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit');
+      it.todo('[Multi-Nodes Equation] uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit using Gaussian Elimination');
     });
   
     describe('DC Propagation', () => {
-      it('propagates through the circuit and assign electrical infos to the nodes and edges [<= 2 node cases]', async () => {
+      it('propagates through the one node/supernode case of circuit and assign electrical infos to the nodes and edges', async () => {
         const examples = (await import('../examples')).directDCPropagationExamples;
         for await (let { default: example } of examples) {
           const {

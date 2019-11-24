@@ -122,4 +122,25 @@ export default class CircuitSimulation {
       this.graph.edges.forEach(traverseFromEdge);
     }
   }
+
+  public nodalAnalysis() {
+    if (this.graph.nodes.size === 2) {
+      this.deriveSingleNodeEquation();
+    } else {
+      this.deriveNodeEquations();
+    }
+  }
+
+  private deriveSingleNodeEquation() {
+    console.log('TODO: implement this!');
+    // 1. Derive node equation based on one of the two node
+    // 2. Plug in the ground value
+    // 3. Construct the equation and solve it 
+  }
+
+  private deriveNodeEquations() {
+    console.log('TODO: implement this!');
+    // 1. Derive node equations based on each node
+    // 2. Construct the equation and solve it
+  }
 }
