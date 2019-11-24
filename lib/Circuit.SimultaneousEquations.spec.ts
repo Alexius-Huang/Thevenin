@@ -77,11 +77,11 @@ describe('Lib: Circuit.SimultaneousEquations', () => {
   
       it('throws error when there aren\'t enough equations to solve', () => {
         expect(() => new SimultaneousEquations([eq11]).solve())
-          .toThrowError('Only 1 equation(s) to solve for 2 unknowns is impossible!');
+          .toThrowError('1 equation(s) to solve for 2 unknowns is impossible!');
         expect(() => new SimultaneousEquations([eq21]).solve())
-          .toThrowError('Only 1 equation(s) to solve for 3 unknowns is impossible!');
+          .toThrowError('1 equation(s) to solve for 3 unknowns is impossible!');
         expect(() => new SimultaneousEquations([eq21, eq23]).solve())
-          .toThrowError('Only 2 equation(s) to solve for 3 unknowns is impossible!');
+          .toThrowError('2 equation(s) to solve for 3 unknowns is impossible!');
       });
     });
 
@@ -116,8 +116,30 @@ describe('Lib: Circuit.SimultaneousEquations', () => {
     });
 
     describe('Throws Error When...', () => {
-      it.todo('provided known values aren\'t matching the name of the unknowns in simultaneous equations');
-      it.todo('provided known values still not enough to solve the simultaneous equations');  
+      let eq1: Equation, eq2: Equation;
+      beforeAll(() => {
+        [eq1, eq2] = Array.from(Array(2)).map(() => new Equation());
+        eq1.unknown('x', 1).unknown('y', -1).unknown('z', 4).constant(15);
+        eq2.unknown('x', 2).unknown('y', 1).unknown('z', -1).constant(-3);
+      });
+
+      it('provided known values aren\'t matching the name of the unknowns in simultaneous equations', () => {
+        const se1 = new SimultaneousEquations([eq1]);
+        expect(() => se1.solve({ 'x': 1, 'w': 3 }))
+          .toThrowError('`w` is not defined as an unknown in simultaneous equations!');
+        expect(() => se1.solve({ 'w': 1, 'a': 3 }))
+          .toThrowError('`w` is not defined as an unknown in simultaneous equations!');
+
+        const se2 = new SimultaneousEquations([eq1, eq2]);
+        expect(() => se2.solve({ 'a': 1 }))
+          .toThrowError('`a` is not defined as an unknown in simultaneous equations!');
+      });
+
+      it('provided known values still not enough to solve the simultaneous equations', () => {
+        const se1 = new SimultaneousEquations([eq1]);
+        expect(() => se1.solve({ 'x': 1 }))
+          .toThrowError('1 equation(s) with 1 known value(s) to solve for 2 unknowns is impossible!');
+      });
     });
   });
 

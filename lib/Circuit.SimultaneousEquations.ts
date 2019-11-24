@@ -39,14 +39,22 @@ export default class SimultaneousEquations {
     const knowns = Object.keys(knownObj);
     const countOfKnowns = knowns.length;
     if (countOfEquations !== countOfUnknowns - countOfKnowns)
-      throw new Error(`Only ${countOfEquations} equation(s) to solve for ${countOfUnknowns - countOfKnowns} unknowns is impossible!`);
+      if (countOfKnowns === 0)
+        throw new Error(`${countOfEquations} equation(s) to solve for ${countOfUnknowns} unknowns is impossible!`);
+      else
+        throw new Error(`${countOfEquations} equation(s) with ${countOfKnowns} known value(s) to solve for ${countOfUnknowns - countOfKnowns} unknowns is impossible!`);
+
+    /* Validate known object */
+    knowns.forEach(key => {
+      if (!this.unknowns.has(key))
+        throw new Error(`\`${key}\` is not defined as an unknown in simultaneous equations!`);
+    });
 
     // Directly solved by original Equation provided mechanism
     if (countOfUnknowns - countOfKnowns === 1)
       return Array.from(this.equations)[0].solve(knownObj);
 
     const ge = new GaussianElimination();
-
     const restUnknownArr = Array.from(this.unknowns).filter(uk => knowns.indexOf(uk) === -1)
     const restUnknowns = new Set(restUnknownArr);
     restUnknownArr.forEach(ruk => ge.registerVariable(ruk));
