@@ -1,4 +1,5 @@
 import Equation from './Circuit.Equation';
+import GaussianElimination from './Circuit.GaussianElimination';
 
 export default class SimultaneousEquations {
   public readonly unknowns = new Set<string>();
@@ -29,5 +30,33 @@ export default class SimultaneousEquations {
     });
 
     this.equations.add(eq);
+  }
+
+  public solve(): { [key: string]: number } {
+    const countOfEquations = this.equations.size;
+    const countOfUnknowns = this.unknowns.size;
+    if (countOfEquations !== countOfUnknowns)
+      throw new Error(`Only ${countOfEquations} equation(s) to solve for ${countOfUnknowns} unknowns is impossible!`);
+
+    const ge = new GaussianElimination();
+    this.unknowns.forEach(uk => ge.registerVariable(uk));
+
+    Array.from(this.equations).forEach((eq, i) => {
+      Array.from(this.unknowns).forEach((uk, j) => {
+        ge.assignCoefficient({
+          equationIndex: i,
+          variableName: uk,
+          value: eq.coefficientMap.get(uk) as number,
+        });
+      });
+
+      ge.assignCoefficient({
+        equationIndex: i,
+        variableName: 'constant',
+        value: eq.constantValue
+      });
+    });
+
+    return ge.solve().reduce((obj, v) => Object.assign(obj, { [v.name]: v.result }), {});
   }
 }

@@ -12,9 +12,12 @@ export class Variable {
 export default class GaussianElimination {
   public readonly variables: Array<Variable> = [];
   public readonly matrix: Array<Array<number>> = [];
+  public readonly variableNameColumnMap = new Map<string, number>();
 
   public registerVariable(name: string) {
-    const v = new Variable(name, this.variables.length);
+    const column = this.variables.length;
+    const v = new Variable(name, column);
+    this.variableNameColumnMap.set(name, column)
     this.variables.push(v);
 
     const countOfVars = this.variables.length;
@@ -22,6 +25,23 @@ export default class GaussianElimination {
 
     for (let i = 0; i < countOfVars - 1; i += 1) {
       this.matrix[i].push(0, this.matrix[i].pop() as number);
+    }
+  }
+
+  public assignCoefficient(
+    payload: {
+      equationIndex: number,
+      variableName: string,
+      value: number
+    })
+  {
+    const { equationIndex: i, variableName, value } = payload;
+
+    if (variableName === 'constant') {
+      this.matrix[i][this.variables.length] = value;
+    } else {
+      const column = this.variableNameColumnMap.get(variableName) as number;
+      this.matrix[i][column] = value;  
     }
   }
 

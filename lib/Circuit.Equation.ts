@@ -42,7 +42,7 @@ export default class Equation {
     if (count === 1) {
       const key = Array.from(this.unknowns)[0];
       const coeff = this.coefficientMap.get(key) as number;
-      this.cacheSolution = { [key]: -(this.constantValue / coeff) };
+      this.cacheSolution = { [key]: (this.constantValue / coeff) };
     } else {
       const keys = Object.keys(known);
       if (keys.length !== count - 1)
@@ -50,7 +50,7 @@ export default class Equation {
       
       const clonedUnknowns = new Set<string>(this.unknowns);
       const cm = this.coefficientMap;
-      let cumulation = -this.constantValue;
+      let cumulation = this.constantValue;
       keys.forEach(key => {
         if (cm.has(key)) {
           const knownValue = known[key] as number;

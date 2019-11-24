@@ -6,7 +6,7 @@ describe('Lib: Circuit.Equation', () => {
       const eq = new Equation();
       eq.unknown('x');
       eq.coefficient('x', 3);
-      eq.constant(-6);
+      eq.constant(6);
 
       expect(eq.unknowns).toMatchObject(new Set(['x']));
       expect(eq.coefficientMap).toMatchObject(new Map<string, number>([
@@ -29,7 +29,7 @@ describe('Lib: Circuit.Equation', () => {
       eq.with
         .unknown('x')
         .coefficient('x', 3)
-        .constant(-6);
+        .constant(6);
 
       expect(eq.unknowns).toMatchObject(new Set(['x']));
       expect(eq.solution).toBe(null);
@@ -42,7 +42,7 @@ describe('Lib: Circuit.Equation', () => {
       const eq = new Equation();
       eq.with
         .unknown('x', 3)
-        .constant(6);
+        .constant(-6);
 
       eq.solve();
       expect(eq.solution).toMatchObject({ 'x': -2 });
@@ -56,7 +56,7 @@ describe('Lib: Circuit.Equation', () => {
       sampleEq
         .with.unknown('x', 1)
         .with.unknown('y', 2)
-        .with.constant(-6);
+        .with.constant(6);
     });
 
     it('sets up multi-unknowns equation with more than one variable', () => {
@@ -93,7 +93,7 @@ describe('Lib: Circuit.Equation', () => {
       eq.with.unknown('x', 3)
         .with.unknown('y', -2)
         .with.unknown('z', 5)
-        .with.constant(3);
+        .with.constant(-3);
 
       eq.solve({ 'x': 1, 'y': 2 });
       expect(eq.solution).toMatchObject({ 'z': -0.4 });

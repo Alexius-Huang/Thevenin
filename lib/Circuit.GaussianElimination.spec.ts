@@ -15,6 +15,11 @@ describe('Lib: Circuit.GaussianElimination', () => {
       ge.registerVariable('z');
 
       expect(ge.variables).toMatchObject(expected);
+      expect(ge.variableNameColumnMap).toMatchObject(new Map<string, number>([
+        ['x', 0],
+        ['y', 1],
+        ['z', 2]
+      ]));
     });
   });
 
