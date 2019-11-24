@@ -33,7 +33,7 @@ export default class Equation {
     return this;
   }
 
-  public solve(known: { [key: string]: number } = {}) {
+  public solve(known: { [key: string]: number } = {}): ({ [key: string]: number }) {
     const count = this.unknowns.size;
 
     if (count === 0)
@@ -66,5 +66,7 @@ export default class Equation {
       const coeff = cm.get(targetUnknown) as number;
       this.cacheSolution = { [targetUnknown]: (cumulation / coeff) };
     }
+
+    return this.cacheSolution;
   }
 }

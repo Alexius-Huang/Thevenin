@@ -32,30 +32,47 @@ export default class SimultaneousEquations {
     this.equations.add(eq);
   }
 
-  public solve(): { [key: string]: number } {
+  public solve(knownObj: { [key: string]: number } = {}): { [key: string]: number } {
     const countOfEquations = this.equations.size;
     const countOfUnknowns = this.unknowns.size;
-    if (countOfEquations !== countOfUnknowns)
-      throw new Error(`Only ${countOfEquations} equation(s) to solve for ${countOfUnknowns} unknowns is impossible!`);
+
+    const knowns = Object.keys(knownObj);
+    const countOfKnowns = knowns.length;
+    if (countOfEquations !== countOfUnknowns - countOfKnowns)
+      throw new Error(`Only ${countOfEquations} equation(s) to solve for ${countOfUnknowns - countOfKnowns} unknowns is impossible!`);
+
+    // Directly solved by original Equation provided mechanism
+    if (countOfUnknowns - countOfKnowns === 1)
+      return Array.from(this.equations)[0].solve(knownObj);
 
     const ge = new GaussianElimination();
-    this.unknowns.forEach(uk => ge.registerVariable(uk));
+
+    const restUnknownArr = Array.from(this.unknowns).filter(uk => knowns.indexOf(uk) === -1)
+    const restUnknowns = new Set(restUnknownArr);
+    restUnknownArr.forEach(ruk => ge.registerVariable(ruk));
 
     Array.from(this.equations).forEach((eq, i) => {
-      Array.from(this.unknowns).forEach((uk, j) => {
-        ge.assignCoefficient({
-          equationIndex: i,
-          variableName: uk,
-          value: eq.coefficientMap.get(uk) as number,
-        });
+      let cumulation = eq.constantValue;
+
+      Array.from(this.unknowns).forEach(uk => {
+        const coeff = eq.coefficientMap.get(uk) as number;
+
+        if (restUnknowns.has(uk))
+          ge.assignCoefficient({
+            equationIndex: i,
+            variableName: uk,
+            value: coeff,
+          });
+        else
+          cumulation -= coeff * knownObj[uk];
       });
 
       ge.assignCoefficient({
         equationIndex: i,
         variableName: 'constant',
-        value: eq.constantValue
+        value: cumulation,
       });
-    });
+    });  
 
     return ge.solve().reduce((obj, v) => Object.assign(obj, { [v.name]: v.result }), {});
   }
