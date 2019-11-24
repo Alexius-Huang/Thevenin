@@ -84,4 +84,30 @@ export default class SimultaneousEquations {
 
     return ge.solve().reduce((obj, v) => Object.assign(obj, { [v.name]: v.result }), {});
   }
+
+  public eliminateLinearDependency() {
+    const equations = Array.from(this.equations);
+
+    for (let i = 0; i < equations.length; i += 1) {
+      const mainEq = equations[i];
+      const mainSet = mainEq.pluck();
+
+      for (let j = i + 1; j < equations.length; j += 1) {
+        const comparedEq = equations[j];
+        const comparedSet = comparedEq.pluck();
+        const scaleFactor = comparedSet.constant / mainSet.constant;
+
+        const isLinearlyDependent =
+          Array.from(this.unknowns).every(uk => (
+            (comparedSet[uk] / mainSet[uk]) === scaleFactor
+          ));
+
+        if (isLinearlyDependent) {
+          this.equations.delete(comparedEq);
+          equations.splice(j, 1);
+          j -= 1;
+        }
+      }
+    }
+  }
 }

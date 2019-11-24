@@ -33,6 +33,15 @@ export default class Equation {
     return this;
   }
 
+  public pluck(): { [key: string]: number } {
+    const result: { [key: string]: number } = { constant: this.constantValue };
+    this.unknowns.forEach(uk => {
+      result[uk] = this.coefficientMap.get(uk) as number;
+    });
+ 
+    return result;
+  }
+
   public solve(known: { [key: string]: number } = {}): ({ [key: string]: number }) {
     const count = this.unknowns.size;
 

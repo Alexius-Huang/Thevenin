@@ -106,6 +106,15 @@ describe('Lib: Circuit.Equation', () => {
     });
   });
 
+  describe('Circuit.Equation#pluck', () => {
+    it('plucks out the coefficient and the constant value of the equation', () => {
+      const eq = new Equation();
+      eq.unknown('x', 1).unknown('y', 2).unknown('z', 3).constant(-1);
+
+      expect(eq.pluck()).toMatchObject({ 'x': 1, 'y': 2, 'z': 3, constant: -1 });
+    });
+  });
+
   describe('Edge Case', () => {
     it('throws error when no knowns in the equation to-be solved', () => {
       expect(() => new Equation().solve()).toThrowError(

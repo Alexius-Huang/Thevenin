@@ -83,6 +83,13 @@ describe('Lib: Circuit.SimultaneousEquations', () => {
         expect(() => new SimultaneousEquations([eq21, eq23]).solve())
           .toThrowError('2 equation(s) to solve for 3 unknowns is impossible!');
       });
+
+      it('throws error when there are too much equations provided to be solve', () => {
+        const eq13 = new Equation();
+        eq13.unknown('x').unknown('y').constant(0);
+        expect(() => new SimultaneousEquations([eq11, eq12, eq13]).solve())
+          .toThrowError('3 equation(s) to solve for 2 unknowns is impossible!');
+      });
     });
 
     describe('Equations Provides Known Values', () => {
@@ -143,13 +150,32 @@ describe('Lib: Circuit.SimultaneousEquations', () => {
     });
   });
 
-  describe('Linear Dependent', () => {
-    describe('Circuit.SimultaneousEquations#hasLinearlyDependentEquations', () => {
-      it.todo('returns true if detected linearly dependent equations');
-    });
+  describe('Equations with Linear Dependency', () => {
+    describe('Circuit.SimultaneousEquations#eliminateLinearDependency', () => {
+      let eq1: Equation, eq2: Equation;
+      let ldeq11: Equation, ldeq21: Equation, ldeq22: Equation;
+      beforeAll(() => {
+        [eq1, eq2, ldeq11, ldeq21, ldeq22] = Array.from(Array(5)).map(() => new Equation());
+        eq1.unknown('x', 2).unknown('y', 3).constant(7);
+        eq2.unknown('x', -1).unknown('y', 3).constant(1);
 
-    describe('Circuit.SimultaneousEquations#simplify', () => {
-      it.todo('simplifys the equations by removing one of the equations in linearly dependent equation pairs (or more)');
+        ldeq11.unknown('x', 6).unknown('y', 9).constant(21);
+        ldeq21.unknown('x', 0.5).unknown('y', -1.5).constant(-0.5);
+        ldeq22.unknown('x', -4).unknown('y', 12).constant(4);
+      });
+
+      it('removes the linearly dependent equations', () => {
+        const se = new SimultaneousEquations([eq1, eq2, ldeq11, ldeq21, ldeq22]);
+        se.eliminateLinearDependency();
+
+        expect(se.equations.size).toBe(2);
+        expect(se.equations.has(eq1)).toBe(true);
+        expect(se.equations.has(ldeq11)).toBe(false);
+        expect(se.equations.has(eq2)).toBe(true);
+        expect(se.equations.has(ldeq21)).toBe(false);
+        expect(se.equations.has(ldeq22)).toBe(false);
+        expect(se.solve()).toMatchObject({ 'x': 2, 'y': 1 });
+      });
     });
   });
 });
