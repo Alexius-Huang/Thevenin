@@ -3,6 +3,7 @@ import Unit, { CircuitUnitType, CircuitConnection } from './Circuit.Unit';
 import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
 import Graph, { Node, Edge } from './Circuit.Graph';
 import CircuitUnit from './Circuit.Unit';
+// import Simulation from './Circuit.Simulation';
 
 export default class Circuit {
   static Graph = Graph;
@@ -14,6 +15,13 @@ export default class Circuit {
       Array.from(Array(columns)).map(() => new Unit())
     );
   }
+
+  // TODO: Implement run method
+  // public run() {
+  //   const graph = this.deriveGraph();
+  //   const simulation = new Simulation(graph);
+  //   simulation.run();
+  // }
 
   public addJoint(c1: Coordinate, c2: Coordinate) {
     let [[col1, row1], [col2, row2]] = [c1, c2];
@@ -121,6 +129,10 @@ export default class Circuit {
     electronics.forEach(traverseFromElectronic);
 
     return graph;
+  }
+
+  public reflectGraphToCircuit(graph: Graph) {
+    console.log('Implementation');
   }
 
   private mapElectronicUnitWithCircuitUnit(
