@@ -29,6 +29,25 @@ helper.setPaths(circuit, [
 ]);
 
 /* Expectations */
+// Phase 0. Circuit Layout
+const layout = helper.createLayout([7, 5])
+  .withElectronics([resistor1, resistor2, source, ground])
+  .unit([1, 1])
+    .bottom.is(source, 'POSITIVE')
+  .wire([[2, 1]]).to([3, 1])
+    .bottom.is(resistor1, '1')
+  .wire([[4, 1]]).to([5, 1])
+    .bottom.is(resistor2, '1')
+
+  .unit([1, 3])
+    .top.is(source, 'NEGATIVE')
+  .wire([[2, 3]]).to([3, 3])
+    .top.is(resistor1, '2')
+  .wire([[4, 3]]).to([5, 3])
+    .top.is(resistor2, '2')
+    .bottom.is(ground, '')
+  .result;
+
 // Phase 1. Graph Creation
 const graph = new Circuit.Graph();
 const e1 = graph.createEdge(resistor1);
@@ -92,6 +111,7 @@ export default {
   circuit,
   components,
   expected: {
+    layout,
     graph,
     supernodePropagatedGraph,
     DCPropagatedGraph,

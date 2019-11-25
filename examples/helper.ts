@@ -1,5 +1,7 @@
 import Circuit from "../lib/Circuit";
 import Electronic, { Coordinate, EC, createElectronic } from "../lib/Electronic";
+import Unit from "../lib/Circuit.Unit";
+import { ConnectableDirection } from "../lib/circuit.lib";
 
 const AbbrevECMap = new Map<string, EC>([
   ['R', EC.Resistor],
@@ -43,4 +45,101 @@ export function setPath(circuit: Circuit, coordinates: Array<Coordinate>) {
   for (let i = 0; i < coordinates.length - 1; i += 1) {
     circuit.addJoint(coordinates[i], coordinates[i + 1]);
   }
+}
+
+export function createLayout(dimension: [number, number]) {
+  const layout = Array.from(Array(dimension[1])).map(() =>
+    Array.from(Array(dimension[0])).map(() => new Unit())
+  );
+
+  let targetedUnitCoord: [number, number];
+
+  const obj = {
+    unit(coordinate: [number, number]) {
+      targetedUnitCoord = coordinate;
+      return obj;
+    },
+    connectUnit([col2, row2]: [number, number]) {
+      const [col1, row1] = targetedUnitCoord;
+      let direction: ConnectableDirection;
+      if (col2 - col1 === 0)
+        direction = (row2 - row1 === 1) ? 'bottom' : 'top';
+      else
+        direction = (col2 - col1 === 1) ? 'right' : 'left';
+
+      layout[row1][col1].connect(direction, layout[row2][col2]);
+
+      return obj;
+    },
+
+    connectToUnit(coord: [number, number]) {
+      obj.connectUnit(coord);
+      obj.unit(coord);
+      return obj;
+    },
+
+    wire(coords: Array<[number, number]>) {
+      coords.forEach(coord => obj.connectToUnit(coord));
+
+      return {
+        to(coord: [number, number]) {
+          obj.connectToUnit(coord);
+          return obj;
+        },
+      };
+    },
+
+    connectAlongUnits(coords: Array<[number, number]>) {
+      coords.forEach(coord => obj.connectToUnit(coord));
+      return obj;
+    },
+
+    connectElectronic(
+      direction: ConnectableDirection,
+      electronic: Electronic,
+      pinName: string,
+    ) {
+      const [col1, row1] = targetedUnitCoord;
+      layout[row1][col1].connect(direction, { electronic, pinName });
+      return obj;
+    },
+
+    is(electronic: Electronic) {
+      const [col1, row1] = targetedUnitCoord;
+      layout[row1][col1].setElectronic(electronic.id);
+      return obj;
+    },
+
+    withElectronic(electronic: Electronic) {
+      const { coordinate: [col, row], id } = electronic;
+      layout[row][col].setElectronic(id);
+      return obj;
+    },
+
+    withElectronics(electronics: Array<Electronic>) {
+      electronics.forEach(e => obj.withElectronic(e));
+      return obj;
+    },
+
+    left: { is(e: Electronic, pinName: string) {
+      obj.connectElectronic('left', e, pinName);
+      return obj;
+    }, },
+    right: { is(e: Electronic, pinName: string) {
+      obj.connectElectronic('right', e, pinName);
+      return obj;
+    }, },
+    top: { is(e: Electronic, pinName: string) {
+      obj.connectElectronic('top', e, pinName);
+      return obj;
+    }, },
+    bottom: { is(e: Electronic, pinName: string) {
+      obj.connectElectronic('bottom', e, pinName);
+      return obj;
+    }, },
+
+    result: layout,
+  };
+
+  return obj;
 }

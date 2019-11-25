@@ -257,14 +257,12 @@ describe('Lib: Circuit', () => {
 
   describe('Integration', () => {
     describe('Circuit Creation', () => {
-      it('creates simple circuit with mixed electronic components', async () => {
-        const example = (await import('../examples/01-simple-circuit')).default;
-        const {
-          circuit,
-          expected: { layout: expected }
-        } = example;
-
-        expect(circuit.layout).toMatchObject(expected);
+      it('creates simple circuit with mixed electronic components that has expected layout', async () => {
+        const examples = (await import('../examples')).default;
+        for await (let { default: example } of examples) {
+          const { circuit, expected: { layout: expected } } = example;
+          expect(circuit.layout).toMatchObject(expected);
+        }
       });  
     });
 

@@ -5,7 +5,7 @@ import * as helper from './helper';
 /*
  *  Circuit Layout:
  *  [ a  a  a  a  a  a  a ] R: resistor
- *  [ a  n  w  n  w  n  a ] S: DC Source
+ *  [ a  w  w  n  w  n  a ] S: DC Source
  *  [ a  n  a  R  a  R  a ] G: Ground
  *  [ a  S  a  n  R  n  a ]
  *  [ a  n  a  R  a  R  a ]
@@ -32,6 +32,32 @@ helper.setPaths(circuit, [
 ]);
 
 /* Expectations */
+// Phase 0. Circuit Layout
+const layout = helper.createLayout([7, 7])
+  .withElectronics([resistor1, resistor2, resistor3, resistor4, resistorG, source, ground])
+  .unit([1, 2])
+    .bottom.is(source, 'POSITIVE')
+  .wire([[1, 1], [2, 1]]).to([3, 1])
+    .bottom.is(resistor1, '1')
+  .wire([[4, 1]]).to([5, 1])
+    .bottom.is(resistor3, '1')
+  .unit([3, 3])
+    .top.is(resistor1, '2')
+    .right.is(resistorG, '1')
+    .bottom.is(resistor2, '1')
+  .unit([5, 3])
+    .top.is(resistor3, '2')
+    .left.is(resistorG, '2')
+    .bottom.is(resistor4, '1')
+  .unit([5, 5])
+    .top.is(resistor4, '2')
+  .wire([[4, 5]]).to([3, 5])
+    .top.is(resistor2, '2')
+    .bottom.is(ground, '')
+  .wire([[2, 5], [1, 5]]).to([1, 4])
+    .top.is(source, 'NEGATIVE')
+  .result;
+
 // Phase 1. Graph Creation
 const graph = new Circuit.Graph();
 const e1 = graph.createEdge(resistor1);
@@ -169,6 +195,7 @@ export default {
   components,
   expected: {
     graph,
+    layout,
     supernodePropagatedGraph,
     nodalAnalyzedGraph,
     DCPropagatedGraph,

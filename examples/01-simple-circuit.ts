@@ -27,21 +27,18 @@ const { resistor, source, ground } = components;
 
 /* Expectations */
 // Phase 0. Circuit Layout
-const layout = Array.from(Array(5)).map(() =>
-  Array.from(Array(5)).map(() => new Unit())
-);
-layout[1][1].connect('right', { electronic: resistor, pinName: '1' });
-layout[1][1].connect('bottom', { electronic: source, pinName: 'POSITIVE' });
-layout[1][2].setElectronic(resistor.id);
-layout[1][3].connect('left', { electronic: resistor, pinName: '2' });
-layout[1][3].connect('bottom', layout[2][3]);
-layout[2][3].connect('bottom', layout[3][3]);
-layout[3][3].connect('left', layout[3][2]);
-layout[3][2].connect('left', layout[3][1]);
-layout[3][2].connect('bottom', { electronic: ground, pinName: '' });
-layout[3][1].connect('top', { electronic: source, pinName: 'NEGATIVE' });
-layout[2][1].setElectronic(source.id);
-layout[4][2].setElectronic(ground.id);
+const layout = helper.createLayout([5, 5])
+  .withElectronics([source, ground, resistor])
+  .unit([1, 1])
+    .right.is(resistor, '1')
+    .bottom.is(source, 'POSITIVE')
+  .unit([3, 1])
+    .left.is(resistor, '2')
+  .wire([[3, 2], [3, 3]]).to([2, 3])
+    .bottom.is(ground, '')
+  .connectToUnit([1, 3])
+    .top.is(source, 'NEGATIVE')
+  .result;
 
 // Phase 1. Graph Creation
 const graph = new Circuit.Graph();

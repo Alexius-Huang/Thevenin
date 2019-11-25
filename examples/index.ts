@@ -15,6 +15,7 @@ type CircuitExample = {
   circuit: Circuit;
   components: { [key: string]: Electronic },
   expected: {
+    layout: Graph;
     graph: Graph;
     supernodePropagatedGraph: Graph;
     nodalAnalyzedGraph?: Graph;
