@@ -40,7 +40,7 @@ export default class Circuit {
   public appendElectronics(e: Electronic) {
     this.mapElectronicUnitWithCircuitUnit(e, (eu, cu) => {
       if (eu.type === ElectronicUnitType.Pin) {
-        cu.connect(eu.circuitConnectDirection, { electronic: e, pinName: eu.meta });
+        cu.connect(eu.circuitConnectDirection, { electronic: e, pinName: eu.pinName });
       } else if (eu.type === ElectronicUnitType.Occupied) {
         cu.setElectronic(e.id);
       } else {

@@ -42,7 +42,7 @@ describe('Lib: Electronic', () => {
       expect(resistor.center).toMatchObject([1, 0]);
     });
 
-    it ('rotates electronic component along with meta info', () => {
+    it ('rotates electronic component along with pin', () => {
       const beforeRotationResult = [
         [ElectronicUnit.createPin('left', 'POSITIVE'), ElectronicUnit.Occupied, ElectronicUnit.createPin('right', 'NEGATIVE')]
       ];

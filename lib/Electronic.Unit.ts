@@ -10,7 +10,7 @@ export default class ElectronicUnit {
   constructor(
     public readonly type: ElectronicUnitType,
     public connectDirection: ConnectableDirection | null,
-    public readonly meta: string = ''
+    public readonly pinName: string = ''
   ) {}
 
   private static invertedDirection: {
@@ -44,7 +44,7 @@ export default class ElectronicUnit {
 
   static Occupied:  ElectronicUnit = new ElectronicUnit(ElectronicUnitType.Occupied, null);
 
-  static createPin(direction: ConnectableDirection, meta?: string) {
-    return new ElectronicUnit(ElectronicUnitType.Pin, direction, meta);
+  static createPin(direction: ConnectableDirection, pinName?: string) {
+    return new ElectronicUnit(ElectronicUnitType.Pin, direction, pinName);
   }
 }
