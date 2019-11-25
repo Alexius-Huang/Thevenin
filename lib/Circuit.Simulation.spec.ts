@@ -66,7 +66,7 @@ describe('Lib: Circuit.Simulation', () => {
           const simulation = new Simulation(input);
           simulation.DCPropagation();
           const { graph: result } = simulation;
-    
+
           expect(result.nodes).toMatchObject(expected.nodes);
           expect(result.edges).toMatchObject(expected.edges);
         }

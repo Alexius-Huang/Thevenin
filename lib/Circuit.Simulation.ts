@@ -195,12 +195,10 @@ export default class CircuitSimulation {
 
   private solveMultiNodeCircuit() {
     const nodesArr = Array.from(this.graph.nodes);
-    const indexNodeMap = new Map<number, Node>();
     const nodeIndexMap = new Map<Node, number>();
     let indexOfGround = 0;
 
     nodesArr.forEach((node, i) => {
-      indexNodeMap.set(i, node);
       nodeIndexMap.set(node, i);
     });
 

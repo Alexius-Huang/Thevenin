@@ -8,6 +8,7 @@ const files = [
   './03-linear-parallel.ts',
   './04-linear-mixed.ts',
   './05-linear-series-differed-ground-location.ts',
+  './06-wheatstone-bridge.ts',
 ];
 
 type CircuitExample = {
