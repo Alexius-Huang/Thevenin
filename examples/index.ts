@@ -17,7 +17,7 @@ type CircuitExample = {
     graph: Graph;
     supernodePropagatedGraph: Graph;
     nodalAnalyzedGraph?: Graph;
-    DCPropagatedGraph?: Graph;
+    DCPropagatedGraph: Graph;
   };
 };
 
@@ -25,22 +25,3 @@ const importExamples: Array<Promise<{ default: CircuitExample }>> =
   files.map(path => import(path));
 
 export default importExamples;
-
-/* Specifically for Direct DC propagation tests */
-type DirectDCPropagationExample = {
-  circuit: Circuit;
-  components: { [key: string]: Electronic },
-  expected: {
-    graph: Graph;
-    supernodePropagatedGraph: Graph;
-    DCPropagatedGraph: Graph;
-  };
-}
-
-const directDCPropagationFiles = [
-  './01-simple-circuit.ts',
-  './03-linear-parallel.ts',
-];
-
-export const directDCPropagationExamples: Array<Promise<{ default: DirectDCPropagationExample }>> =
-  directDCPropagationFiles.map(path => import(path));

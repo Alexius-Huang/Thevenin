@@ -68,7 +68,7 @@ export default class Circuit {
     return true;
   }
 
-  public deriveGraph() {
+  public deriveGraph(): Graph {
     const graph = new Circuit.Graph();
 
     const traversedCircuitUnit = new Set<CircuitUnit>();

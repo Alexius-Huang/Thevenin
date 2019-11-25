@@ -7,6 +7,12 @@ import SimultaneousEquations from './Circuit.SimultaneousEquations';
 export default class CircuitSimulation {
   constructor(public graph: Graph) {}
 
+  public run() {
+    this.supernodePropagation();
+    this.graph.nodes.size > 1 && this.nodalAnalysis();
+    this.DCPropagation();
+  }
+
   public supernodePropagation() {
     const { nodes } = this.graph;
     const mergedNodes = new Set<Node>();
