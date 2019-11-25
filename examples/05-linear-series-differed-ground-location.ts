@@ -1,6 +1,6 @@
 import Circuit from '../lib/Circuit';
-import { createElectronic, EC } from '../lib/Electronic';
 import { CurrentFlow } from '../lib/Circuit.Graph';
+import * as helper from './helper';
 
 /*
  *  Circuit Layout:
@@ -13,23 +13,18 @@ import { CurrentFlow } from '../lib/Circuit.Graph';
 
 /* Circuit Implementation */
 const circuit = new Circuit(7, 5);
-const resistor1 = createElectronic(EC.Resistor, { coordinate: [2, 1] });
-const resistor2 = createElectronic(EC.Resistor, { coordinate: [4, 1] });
-const source = createElectronic(EC.DCSource, { coordinate : [1, 2]});
-source.rotate();
-const ground = createElectronic(EC.Ground, { coordinate: [3, 2] });
+const components = helper.setElectronics(circuit, [
+  ['resistor1', 'R', [2, 1]],
+  ['resistor2', 'R', [4, 1]],
+  ['source', 'DCV', [1, 2], , 1],
+  ['ground', 'GND', [3, 2]]
+]);
 
-circuit.appendElectronics(resistor1);
-circuit.appendElectronics(resistor2);
-circuit.appendElectronics(source);
-circuit.appendElectronics(ground);
+const { resistor1, resistor2, source, ground } = components;
 
-circuit.addJoint([5, 1], [5, 2]);
-circuit.addJoint([5, 2], [5, 3]);
-circuit.addJoint([5, 3], [4, 3]);
-circuit.addJoint([4, 3], [3, 3]);
-circuit.addJoint([3, 3], [2, 3]);
-circuit.addJoint([2, 3], [1, 3]);
+helper.setPath(circuit, [
+  [5, 1], [5, 2], [5, 3], [4, 3], [3, 3], [2, 3], [1, 3]
+]);
 
 /* Expectations */
 // Phase 1. Graph Creation
@@ -117,12 +112,7 @@ dcpe4.connect(dcpn2);
 
 export default {
   circuit,
-  components: {
-    resistor1,
-    resistor2,
-    source,
-    ground,
-  },
+  components,
   expected: {
     graph,
     supernodePropagatedGraph,

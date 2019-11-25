@@ -1,6 +1,6 @@
 import Circuit from '../lib/Circuit';
-import { createElectronic, EC } from '../lib/Electronic';
 import { CurrentFlow } from '../lib/Circuit.Graph';
+import * as helper from './helper';
 
 /*
  *  Circuit Layout:
@@ -14,32 +14,20 @@ import { CurrentFlow } from '../lib/Circuit.Graph';
 
 /* Circuit Implementation */
 const circuit = new Circuit(7, 5);
-const resistor1 = createElectronic(EC.Resistor, { coordinate: [2, 1] });
-const resistor2 = createElectronic(EC.Resistor, { coordinate: [3, 2] });
-resistor2.rotate();
-resistor2.value = 2000;
-const resistor3 = createElectronic(EC.Resistor, { coordinate: [4, 1] });
-const resistor4 = createElectronic(EC.Resistor, { coordinate: [5, 2] });
-resistor4.rotate();
-const source = createElectronic(EC.DCSource, { coordinate: [1, 2] });
-source.rotate();
-const ground = createElectronic(EC.Ground, { coordinate: [5, 4] });
+const components = helper.setElectronics(circuit, [
+  ['resistor1', 'R', [2, 1]],
+  ['resistor2', 'R', [3, 2], 2000, 1],
+  ['resistor3', 'R', [4, 1]],
+  ['resistor4', 'R', [5, 2], , 1],
+  ['source', 'DCV', [1, 2], , 1],
+  ['ground', 'GND', [5, 4]],
+]);
 
-const components = {
-  resistor1,
-  resistor2,
-  resistor3,
-  resistor4,
-  source,
-  ground
-};
+const { resistor1, resistor2, resistor3, resistor4, source, ground } = components;
 
-Object.values(components).forEach(e => circuit.appendElectronics(e));
-
-circuit.addJoint([1, 3], [2, 3]);
-circuit.addJoint([2, 3], [3, 3]);
-circuit.addJoint([3, 3], [4, 3]);
-circuit.addJoint([4, 3], [5, 3]);
+helper.setPath(circuit, [
+  [1, 3], [2, 3], [3, 3], [4, 3], [5, 3]
+]);
 
 /* Expectations */
 // Phase 1. Graph Creation

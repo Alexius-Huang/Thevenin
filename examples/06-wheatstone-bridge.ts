@@ -1,6 +1,6 @@
 import Circuit from '../lib/Circuit';
-import { createElectronic, EC } from '../lib/Electronic';
 import { CurrentFlow } from '../lib/Circuit.Graph';
+import * as helper from './helper';
 
 /*
  *  Circuit Layout:
@@ -15,47 +15,21 @@ import { CurrentFlow } from '../lib/Circuit.Graph';
 
 /* Circuit Implementation */
 const circuit = new Circuit(7, 7);
-const resistor1 = createElectronic(EC.Resistor, { coordinate: [3, 2] });
-resistor1.rotate();
-const resistor2 = createElectronic(EC.Resistor, { coordinate: [3, 4] });
-resistor2.rotate();
-resistor2.value = 3000;
-const resistor3 = createElectronic(EC.Resistor, { coordinate: [5, 2] });
-resistor3.rotate();
-resistor3.value = 2000;
-const resistor4 = createElectronic(EC.Resistor, { coordinate: [5, 4] });
-resistor4.rotate();
-resistor4.value = 6000;
+const components = helper.setElectronics(circuit, [
+  ['resistor1', 'R', [3, 2], , 1],
+  ['resistor2', 'R', [3, 4], 3000, 1],
+  ['resistor3', 'R', [5, 2], 2000, 1],
+  ['resistor4', 'R', [5, 4], 6000, 1],
+  ['resistorG', 'R', [4, 3]],
+  ['source', 'DCV', [1, 3], , 1],
+  ['ground', 'GND', [3, 6]]
+]);
+const { resistor1, resistor2, resistor3, resistor4, resistorG, source, ground } = components;
 
-const resistorG = createElectronic(EC.Resistor, { coordinate: [4, 3] });
-
-const source = createElectronic(EC.DCSource, { coordinate: [1, 3] });
-source.rotate();
-
-const ground = createElectronic(EC.Ground, { coordinate: [3, 6] });
-
-const components = {
-  resistor1,
-  resistor2,
-  resistor3,
-  resistor4,
-  resistorG,
-  source,
-  ground
-};
-
-Object.values(components).forEach(e => circuit.appendElectronics(e));
-
-circuit.addJoint([1, 1], [2, 1]);
-circuit.addJoint([2, 1], [3, 1]);
-circuit.addJoint([3, 1], [4, 1]);
-circuit.addJoint([4, 1], [5, 1]);
-circuit.addJoint([1, 1], [1, 2]);
-circuit.addJoint([1, 4], [1, 5]);
-circuit.addJoint([1, 5], [2, 5]);
-circuit.addJoint([2, 5], [3, 5]);
-circuit.addJoint([3, 5], [4, 5]);
-circuit.addJoint([4, 5], [5, 5]);
+helper.setPaths(circuit, [
+  [[1, 2], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1]],
+  [[1, 4], [1, 5], [2, 5], [3, 5], [4, 5], [5, 5]]
+]);
 
 /* Expectations */
 // Phase 1. Graph Creation

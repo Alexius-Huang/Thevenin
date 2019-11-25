@@ -1,7 +1,7 @@
 import Circuit from '../lib/Circuit';
 import Unit from '../lib/Circuit.Unit';
-import { createElectronic, EC } from '../lib/Electronic';
 import { CurrentFlow } from '../lib/Circuit.Graph';
+import * as helper from './helper';
 
 /*
  *  Circuit Layout:
@@ -14,19 +14,16 @@ import { CurrentFlow } from '../lib/Circuit.Graph';
 
 /* Circuit Implementation */
 const circuit = new Circuit(5, 5);
-const resistor = createElectronic(EC.Resistor, { coordinate: [2, 1] });
-const source = createElectronic(EC.DCSource, { coordinate : [1, 2]});
-source.rotate();
-const ground = createElectronic(EC.Ground, { coordinate: [2, 4] });
+const components = helper.setElectronics(circuit, [
+  ['resistor', 'R', [2, 1]],
+  ['source', 'DCV', [1, 2], , 1],
+  ['ground', 'GND', [2, 4]]
+]);
+helper.setPath(circuit, [
+  [3, 1], [3, 2], [3, 3], [2, 3], [1, 3]
+]);
 
-circuit.appendElectronics(resistor);
-circuit.appendElectronics(source);
-circuit.appendElectronics(ground);
-
-circuit.addJoint([3, 1], [3, 2]);
-circuit.addJoint([3, 2], [3, 3]);
-circuit.addJoint([3, 3], [2, 3]);
-circuit.addJoint([2, 3], [1, 3]);
+const { resistor, source, ground } = components;
 
 /* Expectations */
 // Phase 0. Circuit Layout
@@ -98,11 +95,7 @@ dcpe3.connect(dcpn1);
 
 export default {
   circuit,
-  components: {
-    resistor,
-    source,
-    ground,
-  },
+  components,
   expected: {
     layout,
     graph,
