@@ -1,8 +1,9 @@
 import Electronic, { Coordinate } from './Electronic';
-import Unit, { CircuitUnitType, CircuitConnection } from './Circuit.Unit';
+import Unit, { CircuitUnitType } from './Circuit.Unit';
 import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
 import Graph, { Node, Edge } from './Circuit.Graph';
 import CircuitUnit from './Circuit.Unit';
+import { CircuitUnitConnection, Connection } from './Circuit.Connection';
 // import Simulation from './Circuit.Simulation';
 
 export default class Circuit {
@@ -96,18 +97,17 @@ export default class Circuit {
     let traverseFromCircuitUnit = (cu: CircuitUnit, linkedNode?: Node) => {
       traversedCircuitUnit.add(cu);
       const node = linkedNode || graph.createNode();
-      const spannedUnit: Array<CircuitConnection> = [cu.top, cu.right, cu.bottom, cu.left];
+      const connections: Array<Connection | null> = [cu.top, cu.right, cu.bottom, cu.left];
 
-      spannedUnit.forEach(unit => {
-        if (unit === null) return;
+      connections.forEach(connection => {
+        if (connection === null) return;
 
-        if (unit instanceof CircuitUnit) {
-          if (!traversedCircuitUnit.has(unit)) {
-            traverseFromCircuitUnit(unit, node);
-          }
+        if (connection instanceof CircuitUnitConnection) {
+          if (!traversedCircuitUnit.has(connection.unit))
+            traverseFromCircuitUnit(connection.unit, node);
         } else {
-          const edge = electronicEdgeMap.get(unit.electronic.id) as Edge;
-          edge.connect(node, unit.pinName);
+          const edge = electronicEdgeMap.get(connection.electronic.id) as Edge;
+          edge.connect(node, connection.pinName);
         }
       });
     }

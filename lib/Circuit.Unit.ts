@@ -1,4 +1,5 @@
 import { ConnectableDirection } from './circuit.lib';
+import { Connection, ElectronicUnitConnection, CircuitUnitConnection } from './Circuit.Connection';
 import Electronic from './Electronic';
 
 export enum CircuitUnitType {
@@ -21,8 +22,6 @@ export type ElectronicConnection = {
   pinName: string;
 };
 
-export type CircuitConnection = CircuitUnit | ElectronicConnection | null;
-
 const invertDirectionMap: { [key: string]: ConnectableDirection } = {
   left: 'right',
   right: 'left',
@@ -36,25 +35,27 @@ export default class CircuitUnit {
   public electronicID: null | string = null;
   public connectedDirections = new Set<ConnectableDirection>();
 
-  public left:   CircuitConnection = null;
-  public right:  CircuitConnection = null;
-  public top:    CircuitConnection = null;
-  public bottom: CircuitConnection = null;
+  public left:   Connection | null = null;
+  public right:  Connection | null = null;
+  public top:    Connection | null = null;
+  public bottom: Connection | null = null;
 
   public isDirectionConnectable(direction: ConnectableDirection) {
     return !this.connectedDirections.has(direction);
   }
 
-  public connect(direction: ConnectableDirection, connectedUnit: CircuitUnit | ElectronicConnection) {
+  public connect(direction: ConnectableDirection, connected: CircuitUnit | ElectronicConnection) {
     if (this.connectedDirections.has(direction))
       throw new Error(`Direction \`${direction}\` has already connected`);
     this.connectedDirections.add(direction);
-    this[direction] = connectedUnit;
 
-    if (connectedUnit instanceof CircuitUnit) {
+    if (connected instanceof CircuitUnit) {
+      this[direction] = new CircuitUnitConnection(connected);
       const invDir = invertDirectionMap[direction];
-      connectedUnit[invDir] = this;
-      connectedUnit.connectedDirections.add(invDir);
+      connected[invDir] = new CircuitUnitConnection(this);
+      connected.connectedDirections.add(invDir);
+    } else {
+      this[direction] = new ElectronicUnitConnection(connected.electronic, connected.pinName);
     }
   }
 
