@@ -1,6 +1,6 @@
 import Circuit from '../lib/Circuit';
 import { createElectronic, EC } from '../lib/Electronic';
-import CircuitSimulation from '../lib/Circuit.Simulation';
+import { CurrentFlow } from '../lib/Circuit.Graph';
 
 /*
  *  Circuit Layout:
@@ -17,6 +17,7 @@ const circuit = new Circuit(7, 5);
 const resistor1 = createElectronic(EC.Resistor, { coordinate: [2, 1] });
 const resistor2 = createElectronic(EC.Resistor, { coordinate: [3, 2] });
 resistor2.rotate();
+resistor2.value = 2000;
 const resistor3 = createElectronic(EC.Resistor, { coordinate: [4, 1] });
 const resistor4 = createElectronic(EC.Resistor, { coordinate: [5, 2] });
 resistor4.rotate();
@@ -96,11 +97,76 @@ const supn3 = supernodePropagatedGraph.createNode();
 supe3.connect(supn3, '2');
 supe4.connect(supn3, '1');
 
+// Phase 3. Simulation - Nodal Analysis
+const nodalAnalyzedGraph = new Circuit.Graph();
+const nae1 = nodalAnalyzedGraph.createEdge(resistor1);
+const nae2 = nodalAnalyzedGraph.createEdge(resistor2);
+const nae3 = nodalAnalyzedGraph.createEdge(resistor3);
+const nae4 = nodalAnalyzedGraph.createEdge(resistor4);
+const nae5 = nodalAnalyzedGraph.createEdge(source);
+const nae6 = nodalAnalyzedGraph.createEdge(ground);
+
+const nan1 = nodalAnalyzedGraph.createNode();
+nan1.isSupernode = true;
+nan1.voltage = 0;
+nae1.connect(nan1, '1', +10);
+nae5.connect(nan1, 'POSITIVE', +10);
+nae5.connect(nan1, 'NEGATIVE');
+nae2.connect(nan1, '2');
+nae4.connect(nan1, '2');
+nae6.connect(nan1);
+
+const nan2 = nodalAnalyzedGraph.createNode();
+nan2.voltage = 5;
+nae1.connect(nan2, '2');
+nae2.connect(nan2, '1');
+nae3.connect(nan2, '1');
+
+const nan3 = nodalAnalyzedGraph.createNode();
+nan3.voltage = 2.5;
+nae3.connect(nan3, '2');
+nae4.connect(nan3, '1');
+
+// Phase 4. Simulation - DC Propagation
+const DCPropagatedGraph = new Circuit.Graph();
+const dcpe1 = DCPropagatedGraph.createEdge(resistor1);
+const dcpe2 = DCPropagatedGraph.createEdge(resistor2);
+const dcpe3 = DCPropagatedGraph.createEdge(resistor3);
+const dcpe4 = DCPropagatedGraph.createEdge(resistor4);
+const dcpe5 = DCPropagatedGraph.createEdge(source);
+const dcpe6 = DCPropagatedGraph.createEdge(ground);
+dcpe1.current = dcpe5.current = 0.005;
+dcpe2.current = dcpe3.current = dcpe4.current = 0.0025;
+dcpe6.current = 0;
+
+const dcpn1 = DCPropagatedGraph.createNode();
+dcpn1.isSupernode = true;
+dcpn1.voltage = 0;
+dcpe1.connect(dcpn1, '1', +10, CurrentFlow.INWARD);
+dcpe5.connect(dcpn1, 'POSITIVE', +10, CurrentFlow.OUTWARD);
+dcpe5.connect(dcpn1, 'NEGATIVE', 0, CurrentFlow.INWARD);
+dcpe2.connect(dcpn1, '2', 0, CurrentFlow.OUTWARD);
+dcpe4.connect(dcpn1, '2', 0, CurrentFlow.OUTWARD);
+dcpe6.connect(dcpn1);
+
+const dcpn2 = DCPropagatedGraph.createNode();
+dcpn2.voltage = 5;
+dcpe1.connect(dcpn2, '2', 0, CurrentFlow.OUTWARD);
+dcpe2.connect(dcpn2, '1', 0, CurrentFlow.INWARD);
+dcpe3.connect(dcpn2, '1', 0, CurrentFlow.INWARD);
+
+const dcpn3 = DCPropagatedGraph.createNode();
+dcpn3.voltage = 2.5;
+dcpe3.connect(dcpn3, '2', 0, CurrentFlow.OUTWARD);
+dcpe4.connect(dcpn3, '1', 0, CurrentFlow.INWARD);
+
 export default {
   circuit,
   components,
   expected: {
     graph,
     supernodePropagatedGraph,
+    nodalAnalyzedGraph,
+    DCPropagatedGraph,
   },
 };

@@ -2,6 +2,7 @@ import Graph, { Node, Edge, PinInfoMap, PinInfo, CurrentFlow } from './Circuit.G
 import Equation from './Circuit.Equation';
 import E from './electronics';
 import { EC } from './Electronic';
+import SimultaneousEquations from './Circuit.SimultaneousEquations';
 
 export default class CircuitSimulation {
   constructor(public graph: Graph) {}
@@ -126,13 +127,13 @@ export default class CircuitSimulation {
 
   public nodalAnalysis() {
     if (this.graph.nodes.size === 2) {
-      this.deriveSingleNodeEquation();
+      this.solveSingleNodeCircuit();
     } else {
-      this.deriveNodeEquations();
+      this.solveMultiNodeCircuit();
     }
   }
 
-  private deriveSingleNodeEquation() {
+  private solveSingleNodeCircuit() {
     let conductance1 = 0, conductance2 = 0, constant = 0;
     let groundNodeLabel: string = 'V1';
 
@@ -186,9 +187,65 @@ export default class CircuitSimulation {
     });
   }
 
-  private deriveNodeEquations() {
-    console.log('TODO: implement this!');
-    // 1. Derive node equations based on each node
-    // 2. Construct the equation and solve it
+  private solveMultiNodeCircuit() {
+    const nodesArr = Array.from(this.graph.nodes);
+    const indexNodeMap = new Map<number, Node>();
+    const nodeIndexMap = new Map<Node, number>();
+    let indexOfGround = 0;
+
+    nodesArr.forEach((node, i) => {
+      indexNodeMap.set(i, node);
+      nodeIndexMap.set(node, i);
+    });
+
+    const nodesCount = nodesArr.length;
+    const equationCoefficientArray: Array<Array<number>> = [];
+    const constantArray = Array(nodesCount).fill(0);
+    nodesArr.forEach((node, i) => {
+      const conductanceArr = Array(nodesCount).fill(0);
+
+      node.info.forEach(info => {
+        const edge = this.graph.findEdge(info.edgeID);
+        const e = edge.electronic;
+
+        if (e.is(EC.Resistor)) {
+          const conductance = (1 / e.value);
+          conductanceArr[i] += conductance;
+
+          const biasCausedConstant = info.bias * conductance;
+          constantArray[i] -= biasCausedConstant;
+
+          const connectedNode = edge.nodesMap.get(info.pinName === '1' ? '2' : '1') as Node;
+          const connectedNodeIndex = nodeIndexMap.get(connectedNode) as number;
+
+          conductanceArr[connectedNodeIndex] -= conductance;
+          constantArray[connectedNodeIndex] += biasCausedConstant;
+        } else if (e.is(EC.Ground)) {
+          indexOfGround = i;
+        }
+      });
+
+      equationCoefficientArray.push(conductanceArr);
+    });
+
+    /* Construct the simultaneous equations based on derived coefficient */
+    const simEqs = new SimultaneousEquations();
+    equationCoefficientArray.forEach((equationCoefficient, i) => {
+      const eq = new Equation();
+
+      equationCoefficient.forEach((coeff, i) => {
+        eq.unknown(`V${i}`, coeff);
+      });
+
+      eq.constant(constantArray[i]);
+      simEqs.addEquation(eq);
+    });
+
+    /* Assign voltage to each node */
+    const solution: { [key: string]: number } = simEqs.solve();
+    const referencedVoltageFromGround = solution[`V${indexOfGround}`];
+    nodesArr.forEach((node, i) => {
+      node.voltage = solution[`V${i}`] - referencedVoltageFromGround;
+    });
   }
 }

@@ -51,7 +51,20 @@ describe('Lib: Circuit.Simulation', () => {
         expect(result2.edges).toMatchObject(expected2.edges);
       });
 
-      it.todo('[Multi-Nodes Equation] uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit using Gaussian Elimination');
+      it('[Multi-Node Equations] uses Nodal Analysis to model and derive the node voltage and edge current result of the circuit using Gaussian Elimination', async () => {
+        const example = (await import('../examples/04-linear-mixed')).default;
+        const {
+          supernodePropagatedGraph: input,
+          nodalAnalyzedGraph: expected,
+        } = example.expected;
+
+        const simulation = new Simulation(input);
+        simulation.nodalAnalysis();
+        const { graph: result } = simulation;
+
+        expect(result.nodes).toMatchObject(expected.nodes);
+        expect(result.edges).toMatchObject(expected.edges);
+      });
     });
   
     describe('DC Propagation', () => {
@@ -74,7 +87,7 @@ describe('Lib: Circuit.Simulation', () => {
     });
 
     describe('Integration', () => {
-      it('uses Nodal Analysis to derive the node-voltage result and then uses DC propagation to derive the current flow result', async () => {
+      it('[Single Node Equation] uses Nodal Analysis to derive the node-voltage result and then uses DC propagation to derive the current flow result', async () => {
         const example = (await import('../examples/02-linear-series')).default;
         const {
           nodalAnalyzedGraph: input,
@@ -100,6 +113,21 @@ describe('Lib: Circuit.Simulation', () => {
 
         expect(result2.nodes).toMatchObject(expected2.nodes);
         expect(result2.edges).toMatchObject(expected2.edges);
+      });
+
+      it('[Multi-Node Equations] uses Nodal Analysis to derive the node-voltage result and then uses DC propagation to derive the current flow result', async () => {
+        const example3 = (await import('../examples/04-linear-mixed')).default;
+        const {
+          supernodePropagatedGraph: input3,
+          DCPropagatedGraph: expected3,
+        } = example3.expected;
+
+        const simulation3 = new Simulation(input3);
+        simulation3.DCPropagation();
+        const { graph: result3 } = simulation3;
+
+        expect(result3.nodes).toMatchObject(expected3.nodes);
+        expect(result3.edges).toMatchObject(expected3.edges);
       });
     });
   });
