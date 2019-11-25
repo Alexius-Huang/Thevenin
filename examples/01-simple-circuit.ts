@@ -1,4 +1,5 @@
 import Circuit from '../lib/Circuit';
+import Unit from '../lib/Circuit.Unit';
 import { createElectronic, EC } from '../lib/Electronic';
 import { CurrentFlow } from '../lib/Circuit.Graph';
 
@@ -28,6 +29,23 @@ circuit.addJoint([3, 3], [2, 3]);
 circuit.addJoint([2, 3], [1, 3]);
 
 /* Expectations */
+// Phase 0. Circuit Layout
+const layout = Array.from(Array(5)).map(() =>
+  Array.from(Array(5)).map(() => new Unit())
+);
+layout[1][1].connect('right', { electronic: resistor, pinName: '1' });
+layout[1][1].connect('bottom', { electronic: source, pinName: 'POSITIVE' });
+layout[1][2].setElectronic(resistor.id);
+layout[1][3].connect('left', { electronic: resistor, pinName: '2' });
+layout[1][3].connect('bottom', layout[2][3]);
+layout[2][3].connect('bottom', layout[3][3]);
+layout[3][3].connect('left', layout[3][2]);
+layout[3][2].connect('left', layout[3][1]);
+layout[3][2].connect('bottom', { electronic: ground, pinName: '' });
+layout[3][1].connect('top', { electronic: source, pinName: 'NEGATIVE' });
+layout[2][1].setElectronic(source.id);
+layout[4][2].setElectronic(ground.id);
+
 // Phase 1. Graph Creation
 const graph = new Circuit.Graph();
 const e1 = graph.createEdge(resistor);
@@ -86,6 +104,7 @@ export default {
     ground,
   },
   expected: {
+    layout,
     graph,
     supernodePropagatedGraph,
     DCPropagatedGraph,

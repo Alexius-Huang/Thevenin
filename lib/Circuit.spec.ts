@@ -256,25 +256,15 @@ describe('Lib: Circuit', () => {
   });
 
   describe('Integration', () => {
-    describe('Circuit.Electronic', () => {
+    describe('Circuit Creation', () => {
       it('creates simple circuit with mixed electronic components', async () => {
-        const example = await import('../examples/01-simple-circuit');
-        const { circuit, components: { resistor, source, ground } } = example.default;
+        const example = (await import('../examples/01-simple-circuit')).default;
+        const {
+          circuit,
+          expected: { layout: expected }
+        } = example;
 
-        result[1][1].connect('right', { electronic: resistor, pinName: '1' });
-        result[1][1].connect('bottom', { electronic: source, pinName: 'POSITIVE' });
-        result[1][2].setElectronic(resistor.id);
-        result[1][3].connect('left', { electronic: resistor, pinName: '2' });
-        result[1][3].connect('bottom', result[2][3]);
-        result[2][3].connect('bottom', result[3][3]);
-        result[3][3].connect('left', result[3][2]);
-        result[3][2].connect('left', result[3][1]);
-        result[3][2].connect('bottom', { electronic: ground, pinName: '' });
-        result[3][1].connect('top', { electronic: source, pinName: 'NEGATIVE' });
-        result[2][1].setElectronic(source.id);
-        result[4][2].setElectronic(ground.id);
-
-        expect(circuit.layout).toMatchObject(result);
+        expect(circuit.layout).toMatchObject(expected);
       });  
     });
 
