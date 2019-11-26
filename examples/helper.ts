@@ -1,7 +1,7 @@
-import Circuit from "../lib/Circuit";
-import Electronic, { Coordinate, EC, createElectronic } from "../lib/Electronic";
-import Unit from "../lib/Circuit.Unit";
-import { ConnectableDirection } from "../lib/circuit.lib";
+import Circuit from '../lib/Circuit';
+import Electronic, { Coordinate, EC, createElectronic } from '../lib/Electronic';
+import Unit from '../lib/Circuit.Unit';
+import { ConnectableDirection } from '../lib/circuit.lib';
 
 const AbbrevECMap = new Map<string, EC>([
   ['R', EC.Resistor],
@@ -53,10 +53,16 @@ export function createLayout(dimension: [number, number]) {
   );
 
   let targetedUnitCoord: [number, number];
+  // let targetConnection: Connection;
 
   const obj = {
     unit(coordinate: [number, number]) {
       targetedUnitCoord = coordinate;
+      return obj;
+    },
+    voltage(value: number) {
+      const [col, row] = targetedUnitCoord;
+      layout[row][col].voltage = value;
       return obj;
     },
     connectUnit([col2, row2]: [number, number]) {
@@ -67,7 +73,10 @@ export function createLayout(dimension: [number, number]) {
       else
         direction = (col2 - col1 === 1) ? 'right' : 'left';
 
-      layout[row1][col1].connect(direction, layout[row2][col2]);
+      const currentUnit = layout[row1][col1];
+      const connectedUnit = layout[row2][col2];
+      currentUnit.connect(direction, connectedUnit);
+      connectedUnit.voltage = currentUnit.voltage;
 
       return obj;
     },
@@ -99,8 +108,9 @@ export function createLayout(dimension: [number, number]) {
       electronic: Electronic,
       pinName: string,
     ) {
-      const [col1, row1] = targetedUnitCoord;
-      layout[row1][col1].connect(direction, { electronic, pinName });
+      const [col, row] = targetedUnitCoord;
+      const unit = layout[row][col];
+      unit.connect(direction, { electronic, pinName });
       return obj;
     },
 

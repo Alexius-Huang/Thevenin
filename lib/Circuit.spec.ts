@@ -5,7 +5,6 @@ import Electronic, { createElectronic, EC, Coordinate } from './Electronic';
 let circuit: Circuit;
 let result: Array<Array<Unit>>;
 
-
 function createCircuitGrid(col: number, row: number) {
   return Array.from(Array(row)).map(() =>
     Array.from(Array(col)).map(() => new Unit())
@@ -255,8 +254,8 @@ describe('Lib: Circuit', () => {
     });
   });
 
-  describe('Integration', () => {
-    describe('Circuit Creation', () => {
+  describe('Circuit Analyzing Flow', () => {
+    describe('1. Circuit Layout Creation', () => {
       it('creates simple circuit with mixed electronic components that has expected layout', async () => {
         const examples = (await import('../examples')).default;
         for await (let { default: example } of examples) {
@@ -266,7 +265,7 @@ describe('Lib: Circuit', () => {
       });  
     });
 
-    describe('Circuit.Graph', () => {
+    describe('2. Circuit Graph Derivation', () => {
       it('creates graph according to the circuit layout', async () => {
         const examples = (await import('../examples')).default;
         for await (let { default: example } of examples) {
@@ -276,6 +275,22 @@ describe('Lib: Circuit', () => {
           expect(derived.edges).toMatchObject(graph.edges);
           expect(derived.nodes).toMatchObject(graph.nodes);
         }
+      });
+    });
+
+    describe('Last Phase: Analyzed Graph Mapped to Circuit Layout', () => {
+      it('mapped the simulation result graph to the circuit layout', async () => {
+        const example = (await import('../examples/01-simple-circuit')).default;
+        const {
+          circuit,
+          expected: {
+            DCPropagatedGraph: input,
+            mappedLayout: expected,
+          },
+        } = example;
+
+        circuit.mapGraphToCircuitLayout(input);
+        expect(circuit.layout).toMatchObject(expected);
       });
     });
   });

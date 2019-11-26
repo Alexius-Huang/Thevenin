@@ -1,6 +1,7 @@
 import Circuit from '../lib/Circuit';
 import Electronic from '../lib/Electronic';
 import Graph from '../lib/Circuit.Graph';
+import CircuitUnit from '../lib/Circuit.Unit';
 
 const files = [
   './01-simple-circuit.ts',
@@ -15,11 +16,12 @@ type CircuitExample = {
   circuit: Circuit;
   components: { [key: string]: Electronic },
   expected: {
-    layout: Graph;
+    layout: Array<Array<CircuitUnit>>;
     graph: Graph;
     supernodePropagatedGraph: Graph;
     nodalAnalyzedGraph?: Graph;
     DCPropagatedGraph: Graph;
+    mappedLayout: Array<Array<CircuitUnit>>;
   };
 };
 

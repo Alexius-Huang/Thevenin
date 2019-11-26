@@ -72,11 +72,11 @@ describe('Lib: Circuit.Graph', () => {
         ['', pinInfo3],
       ]));
 
-      expect(n1.edgeMap).toMatchObject(new Map<EdgeID, PinInfoMap>([
+      expect(n1.edgePinInfoMap).toMatchObject(new Map<EdgeID, PinInfoMap>([
         [e1.id, new Map([['1', pinInfo11]])],
         [e2.id, new Map([['POSITIVE', pinInfo2Positive]])],
       ]));
-      expect(n2.edgeMap).toMatchObject(new Map<EdgeID, PinInfoMap>([
+      expect(n2.edgePinInfoMap).toMatchObject(new Map<EdgeID, PinInfoMap>([
         [e1.id, new Map([['2', pinInfo12]])],
         [e2.id, new Map([['NEGATIVE', pinInfo2Negative]])],
         [e3.id, new Map([['', pinInfo3]])],

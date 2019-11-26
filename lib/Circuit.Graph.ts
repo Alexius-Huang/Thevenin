@@ -39,11 +39,11 @@ export class Edge {
     this.pinsMap.set(pinName, pinInfo);
     node.info.add(pinInfo);
 
-    if (node.edgeMap.has(this.id)) {
-      const pinInfoMap = node.edgeMap.get(this.id) as Map<string, PinInfo>;
+    if (node.edgePinInfoMap.has(this.id)) {
+      const pinInfoMap = node.edgePinInfoMap.get(this.id) as Map<string, PinInfo>;
       pinInfoMap.set(pinName, pinInfo);
     } else {
-      node.edgeMap.set(this.id, new Map([[pinName, pinInfo]]));
+      node.edgePinInfoMap.set(this.id, new Map([[pinName, pinInfo]]));
     }
   }
 }
@@ -59,7 +59,7 @@ export type PinInfoMap = Map<PinName, PinInfo>;
 
 export class Node {
   public info = new Set<PinInfo>();
-  public edgeMap = new Map<EdgeID, PinInfoMap>();
+  public edgePinInfoMap = new Map<EdgeID, PinInfoMap>();
   public voltage: number = NaN;
   public isSupernode = false;
 

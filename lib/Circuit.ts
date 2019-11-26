@@ -1,9 +1,10 @@
 import Electronic, { Coordinate } from './Electronic';
 import Unit, { CircuitUnitType } from './Circuit.Unit';
 import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
-import Graph, { Node, Edge } from './Circuit.Graph';
+import Graph, { Node, Edge, PinInfoMap, PinInfo, CurrentFlow } from './Circuit.Graph';
 import CircuitUnit from './Circuit.Unit';
 import { CircuitUnitConnection, Connection } from './Circuit.Connection';
+import { ConnectableDirection } from './circuit.lib';
 // import Simulation from './Circuit.Simulation';
 
 export default class Circuit {
@@ -131,8 +132,125 @@ export default class Circuit {
     return graph;
   }
 
-  public reflectGraphToCircuit(graph: Graph) {
-    console.log('Implementation');
+  public mapGraphToCircuitLayout(graph: Graph) {
+    const unresolvedUnits = new Set<Unit>();
+
+    /* Assign all voltage and current to electronic mapped circuit unit */
+    this.electronics.forEach(e => {
+      const edge = graph.findEdge(e.id);
+      this.mapElectronicUnitWithCircuitUnit(e, (eu, cu) => {
+        if (eu.type === ElectronicUnitType.Pin) {
+          const node = edge.nodesMap.get(eu.pinName) as Node;
+          const pinInfoMap = node.edgePinInfoMap.get(e.id) as PinInfoMap;
+          const { bias, currentFlow } = pinInfoMap.get(eu.pinName) as PinInfo;
+          cu.voltage = node.voltage + bias;
+
+          const connection = cu[eu.circuitConnectDirection] as Connection;
+          connection.currentFlow = (
+            currentFlow === CurrentFlow.INWARD ? CurrentFlow.OUTWARD :
+            currentFlow === CurrentFlow.OUTWARD ? CurrentFlow.INWARD : CurrentFlow.NEUTRAL
+          );
+          connection.current = edge.current;
+
+          const conns = cu.circuitUnitConnections;
+          let resolved = true;
+          for (let { connection: conn } of conns) {
+            if (Number.isNaN(conn.current)) {
+              resolved = false;
+              break;
+            }
+          }
+
+          unresolvedUnits[resolved ? 'delete' : 'add'](cu);
+        }
+      });
+    });
+
+    /* KVL & KCL Propagation */
+    do {
+      for (let cu of Array.from(unresolvedUnits)) {
+        if (!unresolvedUnits.has(cu)) continue;
+
+        const conns = cu.circuitUnitConnections;
+        let isReadyToResolve = true;
+        let connectionWithUnknownCurrent: CircuitUnitConnection | undefined;
+        let unknownCurrentDir: ConnectableDirection | undefined;
+        let KCLCurrentCumulation = 0;
+
+        /* Assign and check voltage in surrounding connections */
+        conns.forEach(({ connection: conn, direction: dir }) => {
+          const connectedUnit = conn.unit;
+          /* Voltage Assignment */
+          if (Number.isNaN(connectedUnit.voltage))
+            conn.unit.voltage = cu.voltage;
+          else if (connectedUnit.voltage !== cu.voltage)
+            throw new Error('Inequipotential Voltage Detected!');
+
+          /* Current Calculation */
+          if (isReadyToResolve)
+            if (Number.isNaN(conn.current))
+              if (connectionWithUnknownCurrent === undefined) {
+                connectionWithUnknownCurrent = conn;
+                unknownCurrentDir = dir;
+              }
+              else
+                isReadyToResolve = false;
+
+            else if (conn.current !== 0)
+              KCLCurrentCumulation += (
+                conn.currentFlow === CurrentFlow.INWARD ? conn.current : -conn.current
+              );
+        });
+
+        /* Apply KCL to solve the unresolved connection's current */
+        if (isReadyToResolve && connectionWithUnknownCurrent !== undefined && unknownCurrentDir !== undefined) {
+          cu.electronicUnitConnections.forEach(({ connection: econn }) => {
+            KCLCurrentCumulation += (
+              econn.currentFlow === CurrentFlow.INWARD ? econn.current : -econn.current
+            );
+          });
+
+          const currentValue = Math.abs(KCLCurrentCumulation);
+          const currentFlow = (
+            KCLCurrentCumulation > 0 ? CurrentFlow.OUTWARD :
+            KCLCurrentCumulation < 0 ? CurrentFlow.INWARD : CurrentFlow.NEUTRAL
+          );
+          const relativeCurrentFlow = (
+            currentFlow === CurrentFlow.INWARD ? CurrentFlow.OUTWARD :
+            currentFlow === CurrentFlow.OUTWARD ? CurrentFlow.INWARD : CurrentFlow.NEUTRAL
+          );
+
+          connectionWithUnknownCurrent.current = currentValue;
+          connectionWithUnknownCurrent.currentFlow = currentFlow;
+
+          let connectedCUDir: ConnectableDirection;
+          if (unknownCurrentDir === 'left')
+            connectedCUDir = 'right';
+          else if (unknownCurrentDir === 'right')
+            connectedCUDir = 'left';
+          else if (unknownCurrentDir === 'top')
+            connectedCUDir = 'bottom';
+          else
+            connectedCUDir = 'top';
+
+          const connectedUnit = connectionWithUnknownCurrent.unit;
+          (connectedUnit[connectedCUDir] as Connection).current = currentValue;
+          (connectedUnit[connectedCUDir] as Connection).currentFlow = relativeCurrentFlow;
+
+          /* Check next unit is resolved or not */
+          let connectedUnitIsResolved = true;
+          for (let { connection: conn } of connectedUnit.connections) {
+            if (Number.isNaN(conn.current)) {
+              connectedUnitIsResolved = false;
+              break;
+            }
+          }
+          unresolvedUnits[connectedUnitIsResolved ? 'delete' : 'add'](connectedUnit);
+        }
+
+        if (isReadyToResolve) unresolvedUnits.delete(cu);
+      }
+    } while (unresolvedUnits.size !== 0)
   }
 
   private mapElectronicUnitWithCircuitUnit(

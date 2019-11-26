@@ -42,18 +42,18 @@ export default class CircuitSimulation {
               edge.nodesMap.set(pinName, node);
             }
 
-            if (node.edgeMap.has(info.edgeID)) {
-              const pinInfoMap = node.edgeMap.get(info.edgeID) as PinInfoMap;
+            if (node.edgePinInfoMap.has(info.edgeID)) {
+              const pinInfoMap = node.edgePinInfoMap.get(info.edgeID) as PinInfoMap;
               pinInfoMap.set(info.pinName, info);
             } else {
-              node.edgeMap.set(info.edgeID, new Map([[info.pinName, info]]));
+              node.edgePinInfoMap.set(info.edgeID, new Map([[info.pinName, info]]));
             }
           });
 
           // Making sure that 'linkedNode' is the same as 'node'
           linkedNode.isSupernode = true;
           linkedNode.info = node.info;
-          linkedNode.edgeMap = node.edgeMap;
+          linkedNode.edgePinInfoMap = node.edgePinInfoMap;
           mergedNodes.add(linkedNode);
         }
       }

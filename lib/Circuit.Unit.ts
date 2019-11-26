@@ -35,10 +35,27 @@ export default class CircuitUnit {
   public electronicID: null | string = null;
   public connectedDirections = new Set<ConnectableDirection>();
 
+  public voltage: number = NaN;
+
   public left:   Connection | null = null;
   public right:  Connection | null = null;
   public top:    Connection | null = null;
   public bottom: Connection | null = null;
+
+  get connections(): Array<{ direction: ConnectableDirection, connection: Connection }> {
+    return Array.from(this.connectedDirections)
+      .map(dir => ({ direction: dir, connection: this[dir] as Connection }));
+  }
+
+  get circuitUnitConnections(): Array<{ direction: ConnectableDirection, connection: CircuitUnitConnection }> {
+    return this.connections.filter(({ connection: conn }) => conn instanceof CircuitUnitConnection) as
+      Array<{ direction: ConnectableDirection, connection: CircuitUnitConnection }>;
+  }
+
+  get electronicUnitConnections(): Array<{ direction: ConnectableDirection, connection: ElectronicUnitConnection }> {
+    return this.connections.filter(({ connection: conn }) => conn instanceof ElectronicUnitConnection) as
+      Array<{ direction: ConnectableDirection, connection: ElectronicUnitConnection }>;
+  }
 
   public isDirectionConnectable(direction: ConnectableDirection) {
     return !this.connectedDirections.has(direction);
