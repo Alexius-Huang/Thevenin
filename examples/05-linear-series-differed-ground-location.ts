@@ -1,4 +1,6 @@
 import Circuit from '../lib/Circuit';
+import Unit from '../lib/Circuit.Unit';
+import { Connection } from '../lib/Circuit.Connection';
 import { CurrentFlow } from '../lib/Circuit.Graph';
 import * as helper from './helper';
 
@@ -126,6 +128,70 @@ dcpe1.connect(dcpn2, '2', 0, CurrentFlow.OUTWARD);
 dcpe2.connect(dcpn2, '1', 0, CurrentFlow.INWARD);
 dcpe4.connect(dcpn2);
 
+// Phase 5. Map Propagated Graph to Circuit Layout
+const mappedLayout = helper.createLayout([7, 5])
+  .withElectronics([resistor1, resistor2, source, ground])
+  .unit([1, 1]).voltage(5)
+    .bottom.is(source, 'POSITIVE')
+    .right.is(resistor1, '1')
+  .unit([3, 1]).voltage(0)
+    .left.is(resistor1, '2')
+    .right.is(resistor2, '1')
+    .bottom.is(ground, '')
+  .unit([5, 1]).voltage(-5)
+    .left.is(resistor2, '2')
+  .wire([[5, 2], [5, 3], [4, 3], [3, 3], [2, 3]]).to([1, 3])
+    .top.is(source, 'NEGATIVE')
+  .result;
+
+// TODO: Refactor current setup test
+((mappedLayout[1][1] as Unit).bottom as Connection).current = 0.005;
+((mappedLayout[1][1] as Unit).bottom as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[1][1] as Unit).right as Connection).current = 0.005;
+((mappedLayout[1][1] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[1][3] as Unit).left as Connection).current = 0.005;
+((mappedLayout[1][3] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[1][3] as Unit).right as Connection).current = 0.005;
+((mappedLayout[1][3] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;
+((mappedLayout[1][3] as Unit).bottom as Connection).current = 0;
+((mappedLayout[1][3] as Unit).bottom as Connection).currentFlow = CurrentFlow.NEUTRAL;
+
+((mappedLayout[1][5] as Unit).left as Connection).current = 0.005;
+((mappedLayout[1][5] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[1][5] as Unit).bottom as Connection).current = 0.005;
+((mappedLayout[1][5] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[2][5] as Unit).top as Connection).current = 0.005;
+((mappedLayout[2][5] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[2][5] as Unit).bottom as Connection).current = 0.005;
+((mappedLayout[2][5] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[3][5] as Unit).top as Connection).current = 0.005;
+((mappedLayout[3][5] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][5] as Unit).left as Connection).current = 0.005;
+((mappedLayout[3][5] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[3][4] as Unit).right as Connection).current = 0.005;
+((mappedLayout[3][4] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][4] as Unit).left as Connection).current = 0.005;
+((mappedLayout[3][4] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[3][3] as Unit).right as Connection).current = 0.005;
+((mappedLayout[3][3] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][3] as Unit).left as Connection).current = 0.005;
+((mappedLayout[3][3] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[3][2] as Unit).right as Connection).current = 0.005;
+((mappedLayout[3][2] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][2] as Unit).left as Connection).current = 0.005;
+((mappedLayout[3][2] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[3][1] as Unit).right as Connection).current = 0.005;
+((mappedLayout[3][1] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][1] as Unit).top as Connection).current = 0.005;
+((mappedLayout[3][1] as Unit).top as Connection).currentFlow = CurrentFlow.OUTWARD;
+
 export default {
   circuit,
   components,
@@ -135,5 +201,6 @@ export default {
     supernodePropagatedGraph,
     nodalAnalyzedGraph,
     DCPropagatedGraph,
+    mappedLayout,
   },
 };

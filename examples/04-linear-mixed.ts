@@ -1,4 +1,6 @@
 import Circuit from '../lib/Circuit';
+import Unit from '../lib/Circuit.Unit';
+import { Connection } from '../lib/Circuit.Connection';
 import { CurrentFlow } from '../lib/Circuit.Graph';
 import * as helper from './helper';
 
@@ -170,6 +172,75 @@ dcpn3.voltage = 2.5;
 dcpe3.connect(dcpn3, '2', 0, CurrentFlow.OUTWARD);
 dcpe4.connect(dcpn3, '1', 0, CurrentFlow.INWARD);
 
+// Phase 5. Map Propagated Graph to Circuit Layout
+const mappedLayout = helper.createLayout([7, 5])
+  .withElectronics([resistor1, resistor2, resistor3, resistor4, source, ground])
+  .unit([1, 1]).voltage(10)
+    .bottom.is(source, 'POSITIVE')
+    .right.is(resistor1, '1')
+  .unit([3, 1]).voltage(5)
+    .left.is(resistor1, '2')
+    .bottom.is(resistor2, '1')
+    .right.is(resistor3, '1')
+  .unit([5, 1]).voltage(2.5)
+    .left.is(resistor3, '2')
+    .bottom.is(resistor4, '1')
+  .unit([1, 3]).voltage(0)
+    .top.is(source, 'NEGATIVE')
+  .wire([[2, 3]]).to([3, 3])
+    .top.is(resistor2, '2')
+  .wire([[4, 3]]).to([5, 3])
+    .top.is(resistor4, '2')
+    .bottom.is(ground, '')
+  .result;
+
+// TODO: Refactor current setup test
+((mappedLayout[1][1] as Unit).bottom as Connection).current = 0.005;
+((mappedLayout[1][1] as Unit).bottom as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[1][1] as Unit).right as Connection).current = 0.005;
+((mappedLayout[1][1] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[1][3] as Unit).left as Connection).current = 0.005;
+((mappedLayout[1][3] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[1][3] as Unit).right as Connection).current = 0.0025;
+((mappedLayout[1][3] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;
+((mappedLayout[1][3] as Unit).bottom as Connection).current = 0.0025;
+((mappedLayout[1][3] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[1][5] as Unit).left as Connection).current = 0.0025;
+((mappedLayout[1][5] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[1][5] as Unit).bottom as Connection).current = 0.0025;
+((mappedLayout[1][5] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[3][5] as Unit).top as Connection).current = 0.0025;
+((mappedLayout[3][5] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][5] as Unit).left as Connection).current = 0.0025;
+((mappedLayout[3][5] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
+((mappedLayout[3][5] as Unit).bottom as Connection).current = 0;
+((mappedLayout[3][5] as Unit).bottom as Connection).currentFlow = CurrentFlow.NEUTRAL;
+
+((mappedLayout[3][4] as Unit).right as Connection).current = 0.0025;
+((mappedLayout[3][4] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][4] as Unit).left as Connection).current = 0.0025;
+((mappedLayout[3][4] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[3][3] as Unit).right as Connection).current = 0.0025;
+((mappedLayout[3][3] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][3] as Unit).top as Connection).current = 0.0025;
+((mappedLayout[3][3] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][3] as Unit).left as Connection).current = 0.005;
+((mappedLayout[3][3] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[3][2] as Unit).right as Connection).current = 0.005;
+((mappedLayout[3][2] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][2] as Unit).left as Connection).current = 0.005;
+((mappedLayout[3][2] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[3][1] as Unit).right as Connection).current = 0.005;
+((mappedLayout[3][1] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][1] as Unit).top as Connection).current = 0.005;
+((mappedLayout[3][1] as Unit).top as Connection).currentFlow = CurrentFlow.OUTWARD;
+
 export default {
   circuit,
   components,
@@ -179,5 +250,6 @@ export default {
     supernodePropagatedGraph,
     nodalAnalyzedGraph,
     DCPropagatedGraph,
+    mappedLayout,
   },
 };

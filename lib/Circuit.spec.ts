@@ -280,17 +280,19 @@ describe('Lib: Circuit', () => {
 
     describe('Last Phase: Analyzed Graph Mapped to Circuit Layout', () => {
       it('mapped the simulation result graph to the circuit layout', async () => {
-        const example = (await import('../examples/01-simple-circuit')).default;
-        const {
-          circuit,
-          expected: {
-            DCPropagatedGraph: input,
-            mappedLayout: expected,
-          },
-        } = example;
+        const examples = (await import('../examples')).default;
+        for await (let { default: example } of [examples[3]]) {
+          const {
+            circuit,
+            expected: {
+              DCPropagatedGraph: input,
+              mappedLayout: expected,
+            },
+          } = example;
 
-        circuit.mapGraphToCircuitLayout(input);
-        expect(circuit.layout).toMatchObject(expected);
+          circuit.mapGraphToCircuitLayout(input);
+          expect(circuit.layout).toMatchObject(expected);
+        }
       });
     });
   });

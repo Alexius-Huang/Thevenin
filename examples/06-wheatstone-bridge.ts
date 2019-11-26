@@ -1,4 +1,6 @@
 import Circuit from '../lib/Circuit';
+import Unit from '../lib/Circuit.Unit';
+import { Connection } from '../lib/Circuit.Connection';
 import { CurrentFlow } from '../lib/Circuit.Graph';
 import * as helper from './helper';
 
@@ -190,6 +192,112 @@ dcpe3.connect(dcpn3, '2', 0, CurrentFlow.OUTWARD);
 dcpe4.connect(dcpn3, '1', 0, CurrentFlow.INWARD);
 dcpeg.connect(dcpn3, '2');
 
+// Phase 5. Map Propagated Graph to Circuit Layout
+const mappedLayout = helper.createLayout([7, 7])
+  .withElectronics([resistor1, resistor2, resistor3, resistor4, resistorG, source, ground])
+  .unit([1, 2]).voltage(10)
+    .bottom.is(source, 'POSITIVE')
+  .wire([[1, 1], [2, 1]]).to([3, 1])
+    .bottom.is(resistor1, '1')
+  .wire([[4, 1]]).to([5, 1])
+    .bottom.is(resistor3, '1')
+  .unit([3, 3]).voltage(7.5)
+    .top.is(resistor1, '2')
+    .right.is(resistorG, '1')
+    .bottom.is(resistor2, '1')
+  .unit([5, 3]).voltage(7.5)
+    .top.is(resistor3, '2')
+    .left.is(resistorG, '2')
+    .bottom.is(resistor4, '1')
+  .unit([5, 5]).voltage(0)
+    .top.is(resistor4, '2')
+  .wire([[4, 5]]).to([3, 5])
+    .top.is(resistor2, '2')
+    .bottom.is(ground, '')
+  .wire([[2, 5], [1, 5]]).to([1, 4])
+    .top.is(source, 'NEGATIVE')
+  .result;
+
+((mappedLayout[2][1] as Unit).bottom as Connection).current = 0.00375;
+((mappedLayout[2][1] as Unit).bottom as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[2][1] as Unit).top as Connection).current = 0.00375;
+((mappedLayout[2][1] as Unit).top as Connection).currentFlow = CurrentFlow.OUTWARD;  
+
+((mappedLayout[1][1] as Unit).bottom as Connection).current = 0.00375;
+((mappedLayout[1][1] as Unit).bottom as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[1][1] as Unit).right as Connection).current = 0.00375;
+((mappedLayout[1][1] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;  
+
+((mappedLayout[1][2] as Unit).left as Connection).current = 0.00375;
+((mappedLayout[1][2] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[1][2] as Unit).right as Connection).current = 0.00375;
+((mappedLayout[1][2] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;  
+
+((mappedLayout[1][3] as Unit).left as Connection).current = 0.00375;
+((mappedLayout[1][3] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[1][3] as Unit).right as Connection).current = 0.00125;
+((mappedLayout[1][3] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;  
+((mappedLayout[1][3] as Unit).bottom as Connection).current = 0.0025;
+((mappedLayout[1][3] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;  
+
+((mappedLayout[1][4] as Unit).left as Connection).current = 0.00125;
+((mappedLayout[1][4] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[1][4] as Unit).right as Connection).current = 0.00125;
+((mappedLayout[1][4] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;  
+
+((mappedLayout[1][5] as Unit).left as Connection).current = 0.00125;
+((mappedLayout[1][5] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[1][5] as Unit).bottom as Connection).current = 0.00125;
+((mappedLayout[1][5] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;  
+
+((mappedLayout[3][3] as Unit).top as Connection).current = 0.0025;
+((mappedLayout[3][3] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][3] as Unit).bottom as Connection).current = 0.0025;
+((mappedLayout[3][3] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;  
+((mappedLayout[3][3] as Unit).right as Connection).current = 0;
+((mappedLayout[3][3] as Unit).right as Connection).currentFlow = CurrentFlow.NEUTRAL;
+
+((mappedLayout[3][5] as Unit).top as Connection).current = 0.00125;
+((mappedLayout[3][5] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[3][5] as Unit).bottom as Connection).current = 0.00125;
+((mappedLayout[3][5] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;  
+((mappedLayout[3][5] as Unit).left as Connection).current = 0;
+((mappedLayout[3][5] as Unit).left as Connection).currentFlow = CurrentFlow.NEUTRAL;
+
+((mappedLayout[5][5] as Unit).top as Connection).current = 0.00125;
+((mappedLayout[5][5] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[5][5] as Unit).left as Connection).current = 0.00125;
+((mappedLayout[5][5] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;  
+
+((mappedLayout[5][4] as Unit).right as Connection).current = 0.00125;
+((mappedLayout[5][4] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[5][4] as Unit).left as Connection).current = 0.00125;
+((mappedLayout[5][4] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;  
+
+((mappedLayout[5][3] as Unit).right as Connection).current = 0.00125;
+((mappedLayout[5][3] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[5][3] as Unit).top as Connection).current = 0.0025;
+((mappedLayout[5][3] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[5][3] as Unit).left as Connection).current = 0.00375;
+((mappedLayout[5][3] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
+((mappedLayout[5][3] as Unit).bottom as Connection).current = 0;
+((mappedLayout[5][3] as Unit).bottom as Connection).currentFlow = CurrentFlow.NEUTRAL;
+
+((mappedLayout[5][2] as Unit).right as Connection).current = 0.00375;
+((mappedLayout[5][2] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[5][2] as Unit).left as Connection).current = 0.00375;
+((mappedLayout[5][2] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[5][1] as Unit).right as Connection).current = 0.00375;
+((mappedLayout[5][1] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[5][1] as Unit).top as Connection).current = 0.00375;
+((mappedLayout[5][1] as Unit).top as Connection).currentFlow = CurrentFlow.OUTWARD;
+
+((mappedLayout[4][1] as Unit).bottom as Connection).current = 0.00375;
+((mappedLayout[4][1] as Unit).bottom as Connection).currentFlow = CurrentFlow.INWARD;
+((mappedLayout[4][1] as Unit).top as Connection).current = 0.00375;
+((mappedLayout[4][1] as Unit).top as Connection).currentFlow = CurrentFlow.OUTWARD;
+
 export default {
   circuit,
   components,
@@ -199,6 +307,7 @@ export default {
     supernodePropagatedGraph,
     nodalAnalyzedGraph,
     DCPropagatedGraph,
+    mappedLayout,
   },
 };
 

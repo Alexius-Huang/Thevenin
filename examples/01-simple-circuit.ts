@@ -1,8 +1,8 @@
 import Circuit from '../lib/Circuit';
 import Unit from '../lib/Circuit.Unit';
+import { Connection } from '../lib/Circuit.Connection';
 import { CurrentFlow } from '../lib/Circuit.Graph';
 import * as helper from './helper';
-import { Connection } from '../lib/Circuit.Connection';
 
 /*
  *  Circuit Layout:
