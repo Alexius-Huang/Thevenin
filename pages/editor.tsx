@@ -26,16 +26,22 @@ const Editor: NextPage<EditorProps> = () => (
       }
 
       div.Editor > aside.tools-wrapper {
-        width: 30vw;
-        height: 100vh;
-        background-color: #222;
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto 0;
+        width: auto;
+        height: auto;
+        max-height: 100vh;
+        background-color: transparent;
         color: white;
         display: inline-block;
         vertical-align: top;
       }
 
       div.Editor > section.circuitry-design {
-        width: 70vw;
+        width: 100vw;
         height: 100vh;
         display: inline-block;
         vertical-align: top;

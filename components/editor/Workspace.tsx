@@ -1,8 +1,8 @@
-import React, { RefObject } from 'react';
+import React, { RefObject, Fragment } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import classnames from 'classnames';
 
-import * as Electronic from '../electronics';
+import * as ElectronicComponent from '../electronics';
 // import IdealWire from '../Circuit.IdealWire';
 
 import { useResize } from '../../hooks';
@@ -76,6 +76,9 @@ const Workspace: React.FC<WorkspaceProps> = ({
     }
   }
 
+  const gridPinsDirectives = `M${[-unitSize / 4, 0]} L${[unitSize / 4, 0]} M${[0, -unitSize / 4]} L${[0, +unitSize / 4]}`;
+  const gridPointRadius = toolMode === ToolMode.ADD_COMPONENT ? unitSize / 2 : 0;
+
   const renderGridPoints = Array.from(Array(rows)).map((_, i) =>
     Array.from(Array(columns)).map((_, j) => {
       const meta = { row: i, column: j };
@@ -83,14 +86,15 @@ const Workspace: React.FC<WorkspaceProps> = ({
       const ref = React.createRef<SVGCircleElement>();
       $circuitPoints.set(key, ref);
 
-      return <circle
-        className="grid-point"
-        key={key}
-        ref={ref}
-        cx={(i + .5) * unitSize}
-        cy={(j + .5) * unitSize}
-        onMouseEnter={(e) => handleMouseEnterGridPoint(e, meta)}
-      />;
+      const translation = [(i + .5) * unitSize, (j + .5) * unitSize];
+
+      return <g key={key} className="grid-point-group" transform={`translate(${translation})`}>
+        <circle
+          className="grid-point" ref={ref} cx="0" cy="0" r={gridPointRadius}
+          onMouseEnter={(e) => handleMouseEnterGridPoint(e, meta)}
+        />
+        <path className="grid-point-pin" d={gridPinsDirectives} />
+      </g>;
     })
   );
 
@@ -127,7 +131,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
       <g className="circuit">
         {
           (PC.coordinate !== null) && (
-            <Electronic.Resistor
+            <ElectronicComponent.Resistor
               className={classnames('preview', {
                 invalid: !PC.isValid,
               })}
@@ -138,8 +142,8 @@ const Workspace: React.FC<WorkspaceProps> = ({
         }
 
         {
-          circuit.electronics.map(e => {
-            return <Electronic.Resistor
+          Array.from(circuit.electronics.values()).map(e => {
+            return <ElectronicComponent.Resistor
               key={e.id}
               unitSize={unitSize}
               coordinate={e.coordinate}

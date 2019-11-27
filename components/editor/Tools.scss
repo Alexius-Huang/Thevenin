@@ -1,7 +1,6 @@
 div.list-wrapper {
   box-sizing: border-box;
   width: 100%;
-  padding: 10pt 12pt;
 
   & > h2 {
     font-size: 16pt;
@@ -14,46 +13,52 @@ div.list-wrapper {
 
   & > ul {
     font-size: 0;
-    & > li {
-      display: inline-block;
-      width: 50%;
+  }
 
-      & > button {
-        border: none;
-        height: 32pt;
-        line-height: 32pt;
-        width: 100%;
-        background-color: #aaa;
-        transition: .25s;
-      }
+  & > ul > li {
+    position: relative;
+    display: block;
+    width: 100pt;
+    height: 32pt;
+    line-height: 32pt;
+    text-align: center;
 
-      & > button:hover {
-        background-color: #ddd;
-        transition: .25s;
-      }
+    &.tool-category {
+      background-color: #eee;
+      color: #333;
+      font-size: 9pt;
+      transition: .25s;
+    }
 
-      &.active > button,
-      &.active > button.hover {
-        background-color: white;
-      }
+    &.tool-category:hover,
+    &.tool-category > ul.inner-list > li:hover {
+      background-color: #ddd;
+      transition: .25s
+    }
 
-      & > button > img {
-        vertical-align: middle;
-        max-width: 32pt;
-        background-color: transparent;
-      }
+    &.tool-category > ul.inner-list {
+      position: absolute;
+      width: 100pt;
+      right: -100pt;
+      top: 0;
+      opacity: 0;
+      box-shadow: 2pt 2pt 2pt #ccc;
+      pointer-events: none;
+      transition: .25s;
+    }
 
-      & > button > img + span {
-        margin-left: 6pt;
-      }
+    &.tool-category:hover > ul.inner-list {
+      opacity: 1;
+      pointer-events: visible;
+      transition: .25s;
+    }
 
-      & > button > span {
-        font-size: 10pt;
-        display: inline-block;
-        height: 32pt;
-        line-height: 32pt;
-        vertical-align: top;
-      }
+    &.tool-category > ul.inner-list > li > button {
+      background-color: transparent;
+      width: 100%;
+      height: 32pt;
+      border: none;
+      font-size: 9pt;
     }
   }
 }

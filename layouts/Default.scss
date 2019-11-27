@@ -17,20 +17,21 @@ li {
 
 button {
   box-sizing: border-box;
-  border: 1pt solid #333;
+  border: none;
   padding: 0;
   margin: 0;
   font-family: 'Work sans', sans-serif;
-  font-size: 10pt;
+  font-size: 9pt;
   letter-spacing: .2pt;
 
   &.default {
-    height: 24pt;
-    line-height: 24pt;
+    height: 32pt;
+    line-height: 32pt;
     display: inline-block;
-    padding: 0 6pt;
+    padding: 0 9pt;
     transition: .25s;
-    border-radius: 2pt;  
+    border-radius: 1pt;
+    box-shadow: 2pt 2pt 2pt #ddd;
   }
 
   &.default:hover {

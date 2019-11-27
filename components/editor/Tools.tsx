@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { ToolsProps } from './Tools.d';
 import { ToolsStoreState } from '../../reducers/State';
@@ -18,20 +18,42 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent }) => {
   }
 
   return (
-    <Fragment>
-      <div className="list-wrapper">
-        <h2>Electronics</h2>
+    <div className="list-wrapper">
+      <ul>
+        <li className="tool-category">
+          <span>Tools</span>
 
-        <ul>
-          <li className={selectedComponent !== null ? 'active' : ''}>
-            <button onClick={() => handleToolSelect(EC.Resistor)}>
-              <img src={'/static/circuit/resistor.svg'} alt="Resistor" style={{ backgroundColor: 'transparent' }}/>
-              <span>Resistor</span>
-            </button>
-          </li>
-        </ul>
-      </div>
-    </Fragment>
+          <ul className="inner-list">
+            <li>
+              <button>
+                Wiring
+              </button>
+            </li>
+          </ul>
+        </li>
+        <li className="tool-category">
+          <span>New Electronics</span>
+
+          <ul className="inner-list">
+            <li>
+              <button>
+                DC Source
+              </button>
+            </li>
+            <li>
+              <button>
+                Ground
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleToolSelect(EC.Resistor)}>
+                Resistor
+              </button>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
   );
 };
 

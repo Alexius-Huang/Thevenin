@@ -1,24 +1,29 @@
 svg#workspace {
   display: inline-block;
-  background-color: #aaa;
+  background-color: #eee;
 
   & > g > g.grid {
     & > rect.grid-bg {
       fill: white;
-      stroke: #333;
+      stroke: #ddd;
       stroke-width: 1;
       pointer-events: none;
     }
 
-    & > circle.grid-point {
-      r: 0;
-      fill: rgba(0, 0, 0, 0.1);
+    & > g.grid-point-group > circle.grid-point {
+      fill: transparent;
       pointer-events: visible;
       transition: .25s;
     }
 
-    &.tool-selected > circle.grid-point {
-      r: 10;
+    & > g.grid-point-group > path.grid-point-pin {
+      stroke: transparent;
+      stroke-width: 1;
+      transition: .25s;
+    }
+
+    &.tool-selected > g.grid-point-group > path.grid-point-pin {
+      stroke: #ddd;
       transition: .25s;
     }
   }
