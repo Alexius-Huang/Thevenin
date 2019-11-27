@@ -15,7 +15,14 @@ li {
   list-style-type: none;
 }
 
-button {
+a {
+  text-decoration: none;
+}
+a:visited {
+  color: #333;
+}
+
+button, a {
   box-sizing: border-box;
   border: none;
   padding: 0;
@@ -38,6 +45,11 @@ button {
     transition: .25s;
     color: white;
     background-color: #333;
+  }
+
+  &.default:disabled, &.default:hover:disabled {
+    background-color: #eee;
+    color: #aaa;
   }
 
   &:focus {
