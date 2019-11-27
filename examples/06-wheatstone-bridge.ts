@@ -155,7 +155,6 @@ naeg.connect(nan3, '2');
 nae4.connect(nan3, '1');
 
 // Phase 4. Simulation - DC Propagation
-
 const DCPropagatedGraph = new Circuit.Graph();
 const dcpe1 = DCPropagatedGraph.createEdge(resistor1);
 const dcpe2 = DCPropagatedGraph.createEdge(resistor2);
@@ -218,20 +217,13 @@ const mappedLayout = helper.createLayout([7, 7])
     .top.is(source, 'NEGATIVE')
   .result;
 
-((mappedLayout[2][1] as Unit).bottom as Connection).current = 0.00375;
-((mappedLayout[2][1] as Unit).bottom as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[2][1] as Unit).top as Connection).current = 0.00375;
-((mappedLayout[2][1] as Unit).top as Connection).currentFlow = CurrentFlow.OUTWARD;  
-
-((mappedLayout[1][1] as Unit).bottom as Connection).current = 0.00375;
-((mappedLayout[1][1] as Unit).bottom as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[1][1] as Unit).right as Connection).current = 0.00375;
-((mappedLayout[1][1] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;  
-
-((mappedLayout[1][2] as Unit).left as Connection).current = 0.00375;
-((mappedLayout[1][2] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[1][2] as Unit).right as Connection).current = 0.00375;
-((mappedLayout[1][2] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;  
+helper.currentFlows(mappedLayout, 0.00375)
+  .at([1, 2]).from('bottom').to('top')
+  .at([1, 1]).from('bottom').to('right')
+  .at([2, 1]).from('left').to('right')
+  .at([2, 5]).from('right').to('left')
+  .at([1, 5]).from('right').to('top')
+  .at([1, 4]).from('bottom').to('top');
 
 ((mappedLayout[1][3] as Unit).left as Connection).current = 0.00375;
 ((mappedLayout[1][3] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
@@ -240,39 +232,21 @@ const mappedLayout = helper.createLayout([7, 7])
 ((mappedLayout[1][3] as Unit).bottom as Connection).current = 0.0025;
 ((mappedLayout[1][3] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;  
 
-((mappedLayout[1][4] as Unit).left as Connection).current = 0.00125;
-((mappedLayout[1][4] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[1][4] as Unit).right as Connection).current = 0.00125;
-((mappedLayout[1][4] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;  
+helper.currentFlows(mappedLayout, 0.00125)
+  .at([4, 1]).from('left').to('right')
+  .at([5, 1]).from('left').to('bottom')
+  .at([5, 3]).from('top').to('bottom')
+  .at([5, 5]).from('top').to('left')
+  .at([4, 5]).from('right').to('left');
 
-((mappedLayout[1][5] as Unit).left as Connection).current = 0.00125;
-((mappedLayout[1][5] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[1][5] as Unit).bottom as Connection).current = 0.00125;
-((mappedLayout[1][5] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;  
-
-((mappedLayout[3][3] as Unit).top as Connection).current = 0.0025;
-((mappedLayout[3][3] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[3][3] as Unit).bottom as Connection).current = 0.0025;
-((mappedLayout[3][3] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;  
-((mappedLayout[3][3] as Unit).right as Connection).current = 0;
-((mappedLayout[3][3] as Unit).right as Connection).currentFlow = CurrentFlow.NEUTRAL;
-
-((mappedLayout[3][5] as Unit).top as Connection).current = 0.00125;
-((mappedLayout[3][5] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[3][5] as Unit).bottom as Connection).current = 0.00125;
-((mappedLayout[3][5] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;  
 ((mappedLayout[3][5] as Unit).left as Connection).current = 0;
 ((mappedLayout[3][5] as Unit).left as Connection).currentFlow = CurrentFlow.NEUTRAL;
+  
+helper.currentFlows(mappedLayout, 0.0025)
+  .at([3, 3]).from('top').to('bottom');
 
-((mappedLayout[5][5] as Unit).top as Connection).current = 0.00125;
-((mappedLayout[5][5] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[5][5] as Unit).left as Connection).current = 0.00125;
-((mappedLayout[5][5] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;  
-
-((mappedLayout[5][4] as Unit).right as Connection).current = 0.00125;
-((mappedLayout[5][4] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[5][4] as Unit).left as Connection).current = 0.00125;
-((mappedLayout[5][4] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;  
+((mappedLayout[3][3] as Unit).right as Connection).current = 0;
+((mappedLayout[3][3] as Unit).right as Connection).currentFlow = CurrentFlow.NEUTRAL;
 
 ((mappedLayout[5][3] as Unit).right as Connection).current = 0.00125;
 ((mappedLayout[5][3] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
@@ -282,21 +256,6 @@ const mappedLayout = helper.createLayout([7, 7])
 ((mappedLayout[5][3] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
 ((mappedLayout[5][3] as Unit).bottom as Connection).current = 0;
 ((mappedLayout[5][3] as Unit).bottom as Connection).currentFlow = CurrentFlow.NEUTRAL;
-
-((mappedLayout[5][2] as Unit).right as Connection).current = 0.00375;
-((mappedLayout[5][2] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[5][2] as Unit).left as Connection).current = 0.00375;
-((mappedLayout[5][2] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
-
-((mappedLayout[5][1] as Unit).right as Connection).current = 0.00375;
-((mappedLayout[5][1] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[5][1] as Unit).top as Connection).current = 0.00375;
-((mappedLayout[5][1] as Unit).top as Connection).currentFlow = CurrentFlow.OUTWARD;
-
-((mappedLayout[4][1] as Unit).bottom as Connection).current = 0.00375;
-((mappedLayout[4][1] as Unit).bottom as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[4][1] as Unit).top as Connection).current = 0.00375;
-((mappedLayout[4][1] as Unit).top as Connection).currentFlow = CurrentFlow.OUTWARD;
 
 export default {
   circuit,
@@ -310,4 +269,3 @@ export default {
     mappedLayout,
   },
 };
-

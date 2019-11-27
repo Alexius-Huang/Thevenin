@@ -2,6 +2,8 @@ import Circuit from '../lib/Circuit';
 import Electronic, { Coordinate, EC, createElectronic } from '../lib/Electronic';
 import Unit from '../lib/Circuit.Unit';
 import { ConnectableDirection } from '../lib/circuit.lib';
+import { Connection } from '../lib/Circuit.Connection';
+import { CurrentFlow } from '../lib/Circuit.Graph';
 
 const AbbrevECMap = new Map<string, EC>([
   ['R', EC.Resistor],
@@ -153,3 +155,26 @@ export function createLayout(dimension: [number, number]) {
 
   return obj;
 }
+
+export function currentFlows(layout: Array<Array<Unit>>, value: number) {
+  const obj = {
+    at([col, row]: [number, number]) {
+      const unit = layout[row][col];
+
+      return {
+        from: (dir1: ConnectableDirection) => ({
+          to: (dir2: ConnectableDirection) => {
+            const [from, to] = [unit[dir1], unit[dir2]] as [Connection, Connection];
+            from.current = to.current = value;
+            from.currentFlow = CurrentFlow.INWARD;
+            to.currentFlow = CurrentFlow.OUTWARD;
+
+            return obj;
+          },
+        }),
+      }
+    },
+  };
+
+  return obj;
+};

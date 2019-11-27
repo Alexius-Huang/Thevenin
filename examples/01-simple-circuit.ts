@@ -105,38 +105,16 @@ const mappedLayout = helper.createLayout([5, 5])
     .top.is(source, 'NEGATIVE')
   .result;
 
-// TODO: Refactor current setup test
-((mappedLayout[1][1] as Unit).bottom as Connection).current = 0.01;
-((mappedLayout[1][1] as Unit).bottom as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[1][1] as Unit).right as Connection).current = 0.01;
-((mappedLayout[1][1] as Unit).right as Connection).currentFlow = CurrentFlow.OUTWARD;
+helper.currentFlows(mappedLayout, 0.01)
+  .at([1, 1]).from('bottom').to('right')
+  .at([3, 1]).from('left').to('bottom')
+  .at([3, 2]).from('top').to('bottom')
+  .at([3, 3]).from('top').to('left')
+  .at([2, 3]).from('right').to('left')
+  .at([1, 3]).from('right').to('top');
 
-((mappedLayout[1][3] as Unit).left as Connection).current = 0.01;
-((mappedLayout[1][3] as Unit).left as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[1][3] as Unit).bottom as Connection).current = 0.01;
-((mappedLayout[1][3] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;
-
-((mappedLayout[2][3] as Unit).top as Connection).current = 0.01;
-((mappedLayout[2][3] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[2][3] as Unit).bottom as Connection).current = 0.01;
-((mappedLayout[2][3] as Unit).bottom as Connection).currentFlow = CurrentFlow.OUTWARD;
-
-((mappedLayout[3][3] as Unit).top as Connection).current = 0.01;
-((mappedLayout[3][3] as Unit).top as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[3][3] as Unit).left as Connection).current = 0.01;
-((mappedLayout[3][3] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
-
-((mappedLayout[3][2] as Unit).right as Connection).current = 0.01;
-((mappedLayout[3][2] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[3][2] as Unit).left as Connection).current = 0.01;
-((mappedLayout[3][2] as Unit).left as Connection).currentFlow = CurrentFlow.OUTWARD;
 ((mappedLayout[3][2] as Unit).bottom as Connection).current = 0;
 ((mappedLayout[3][2] as Unit).bottom as Connection).currentFlow = CurrentFlow.NEUTRAL;
-
-((mappedLayout[3][1] as Unit).right as Connection).current = 0.01;
-((mappedLayout[3][1] as Unit).right as Connection).currentFlow = CurrentFlow.INWARD;
-((mappedLayout[3][1] as Unit).top as Connection).current = 0.01;
-((mappedLayout[3][1] as Unit).top as Connection).currentFlow = CurrentFlow.OUTWARD;
 
 export default {
   circuit,
