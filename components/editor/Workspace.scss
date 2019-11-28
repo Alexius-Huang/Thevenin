@@ -1,11 +1,13 @@
+@import '../../scss/colors.scss';
+
 svg#workspace {
   display: inline-block;
-  background-color: #eee;
+  background-color: $snow-2;
 
   & > g > g.grid {
     & > rect.grid-bg {
       fill: white;
-      stroke: #ddd;
+      stroke: $snow-1;
       stroke-width: 1;
       pointer-events: none;
     }
@@ -22,8 +24,16 @@ svg#workspace {
       transition: .25s;
     }
 
-    &.tool-selected > g.grid-point-group > path.grid-point-pin {
-      stroke: #ddd;
+    &.add-component-mode,
+    &.wiring-mode {
+      & > g.grid-point-group > path.grid-point-pin {
+        stroke: $snow-1;
+        transition: .25s;
+      }
+    }
+
+    &.wiring-mode > g.grid-point-group > circle:hover + path.grid-point-pin {
+      stroke: $frost-4;
       transition: .25s;
     }
   }

@@ -4,6 +4,7 @@ import Circuit from "../lib/Circuit";
 export enum ToolMode {
   NONE,
   ADD_COMPONENT,
+  ADD_WIRE,
 }
 
 export type ToolsStoreState = {

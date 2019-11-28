@@ -24,6 +24,12 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent, mode }) => {
     }
   }
 
+  const basicToolText = mode === ToolMode.ADD_WIRE ?
+    '<Wiring>' : 'Basics';
+  const basicToolClass = classnames('tool-category', {
+    active: mode === ToolMode.ADD_WIRE,
+  });
+
   const newElectronicText = mode === ToolMode.ADD_COMPONENT ?
     `<${selectedComponent}>` : 'New Electronics';
   const newElectronicClass = classnames('tool-category', {
@@ -33,12 +39,12 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent, mode }) => {
   return (
     <div className="list-wrapper">
       <ul>
-        <li className="tool-category">
-          <span>Tools</span>
+        <li className={basicToolClass}>
+          <span>{basicToolText}</span>
 
           <ul className="inner-list">
-            <li>
-              <button>
+            <li className={mode === ToolMode.ADD_WIRE ? 'active' : ''}>
+              <button onClick={() => dispatch(actions.enableAddWireMode())}>
                 Wiring
               </button>
             </li>

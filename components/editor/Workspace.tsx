@@ -1,18 +1,20 @@
-import React, { RefObject, useEffect } from 'react';
+import React, { RefObject, useEffect, useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import classnames from 'classnames';
-
 import * as ElectronicComponent from '../electronics';
 // import IdealWire from '../Circuit.IdealWire';
 
-import { useResize } from '../../hooks';
 import { WorkspaceProps, Coordinate } from './Workspace.d';
-import * as actions from '../../actions/Workspace';
-import * as selectors from '../../selectors/Workspace';
-import { DestructuredStore, ToolMode } from '../../reducers/State.d';
-import './Workspace.scss';
 import { createElectronic, EC } from '../../lib/Electronic';
 import { ElectronicProps } from '../electronics/types';
+
+import { DestructuredStore, ToolMode } from '../../reducers/State.d';
+import * as actions from '../../actions/Workspace';
+import * as toolsActions from '../../actions/Tools';
+import * as selectors from '../../selectors/Workspace';
+
+import { useResize } from '../../hooks';
+import './Workspace.scss';
 
 const ElectronicComponentMap = new Map<EC, React.FC<ElectronicProps>>([
   [EC.DCSource, ElectronicComponent.DCSource],
@@ -45,18 +47,22 @@ const Workspace: React.FC<WorkspaceProps> = ({
     }
   });
 
-  const keypressHandler = (event: KeyboardEvent) => {
-    if (event.keyCode === 114) /* The R key */ {
+  const keydownHandler = (event: KeyboardEvent) => {
+    const { keyCode: c } = event;
+
+    if (c === 82) /* The R key */ {
       if (toolMode === ToolMode.ADD_COMPONENT) {
         dispatch(actions.rotatePreviewComponent());
 
         /* TODO: After rotate, check the component attachability again */
       }
+    } else if (c === 27) /* The ESC key */ {
+      dispatch(toolsActions.cancelAnyOperation());
     }
   };
   useEffect(() => {
-    window.addEventListener('keypress', keypressHandler);
-    return () => window.removeEventListener('keypress', keypressHandler);
+    window.addEventListener('keydown', keydownHandler);
+    return () => window.removeEventListener('keydown', keydownHandler);
   });
 
   function handleMouseEnterGridPoint(e: React.MouseEvent, meta: { [type: string]: any; }) {
@@ -102,8 +108,13 @@ const Workspace: React.FC<WorkspaceProps> = ({
     }
   }
 
-  const gridPinsDirectives = `M${[-unitSize / 4, 0]} L${[unitSize / 4, 0]} M${[0, -unitSize / 4]} L${[0, +unitSize / 4]}`;
-  const gridPointRadius = toolMode === ToolMode.ADD_COMPONENT ? unitSize / 2 : 0;
+  const gridPinsDirectives = useMemo(() => {
+    return `M${[-unitSize / 4, 0]} L${[unitSize / 4, 0]} M${[0, -unitSize / 4]} L${[0, +unitSize / 4]}`;
+  }, [unitSize]);
+
+  const gridPointRadius = useMemo(() => {
+    return toolMode !== ToolMode.NONE ? (unitSize / 2) : 0;
+  }, [toolMode, unitSize]);
 
   const renderGridPoints = Array.from(Array(rows)).map((_, i) =>
     Array.from(Array(columns)).map((_, j) => {
@@ -125,7 +136,8 @@ const Workspace: React.FC<WorkspaceProps> = ({
   );
 
   const workspaceGridClassname = classnames('grid', {
-    'tool-selected': SC !== null
+    'add-component-mode': toolMode === ToolMode.ADD_COMPONENT,
+    'wiring-mode': toolMode === ToolMode.ADD_WIRE,
   });
 
   const PreviewComponent = SC ? (ElectronicComponentMap.get(SC) as React.FC<ElectronicProps>) : null;

@@ -1,3 +1,5 @@
+@import '../../scss/colors.scss';
+
 .electronics.preview {
   opacity: .5;
   pointer-events: none;
@@ -8,12 +10,12 @@ path.path-dc-source,
 path.path-ground {
   stroke-width: 2;
   stroke-linecap: round;
-  stroke: #333;
+  stroke: $polar-1;
   fill: transparent;
 }
 
 .electronics > path.wire {
-  stroke: #333;
+  stroke: $polar-1;
   stroke-width: 1;
 }
 
@@ -21,7 +23,7 @@ path.path-ground {
 .electronics.invalid > path.path-resistor,
 .electronics.invalid > path.path-dc-source,
 .electronics.invalid > path.path-ground {
-  stroke: red;
+  stroke: $aurora-red;
 }
 
 .electronics > rect.electronic-bg {

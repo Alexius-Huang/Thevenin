@@ -1,5 +1,7 @@
+@import '../scss/colors.scss';
+
 .ideal-wire {
-  stroke: #333;
+  stroke: $polar-1;
   stroke-width: 1;
   fill: transparent;
 }

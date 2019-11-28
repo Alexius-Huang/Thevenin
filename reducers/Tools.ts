@@ -18,4 +18,17 @@ export default createReducer(initialState)
     ...state,
     selectedComponent: null,
     mode: ToolMode.NONE,
+  }))
+  .case(actions.enableAddWireMode, (state) => ({
+    ...state,
+    selectedComponent: null,
+    mode: ToolMode.ADD_WIRE,
+  }))
+  .case(actions.disableAddWireMode, (state) => ({
+    ...state,
+    mode: ToolMode.NONE,
+  }))
+  .case(actions.cancelAnyOperation, () => ({
+    selectedComponent: null,
+    mode: ToolMode.NONE
   }));

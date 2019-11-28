@@ -1,9 +1,11 @@
+@import '../scss/colors.scss';
+
 body {
   font-family: 'Work sans', sans-serif;
   margin: 0;
   padding: 0;
   font-size: 12pt;
-  color: #333;
+  color: $polar-1;
 }
 
 h1, h2, h3, h4, h5, h6, p, ul {
@@ -19,7 +21,7 @@ a {
   text-decoration: none;
 }
 a:visited {
-  color: #333;
+  color: $polar-1;
 }
 
 button, a {
@@ -38,17 +40,17 @@ button, a {
     padding: 0 9pt;
     transition: .25s;
     border-radius: 1pt;
-    box-shadow: 2pt 2pt 2pt #ddd;
+    box-shadow: 2pt 2pt 2pt $snow-1;
   }
 
   &.default:hover {
     transition: .25s;
     color: white;
-    background-color: #333;
+    background-color: $polar-1;
   }
 
   &.default:disabled, &.default:hover:disabled {
-    background-color: #eee;
+    background-color: $snow-2;
     color: #aaa;
   }
 
