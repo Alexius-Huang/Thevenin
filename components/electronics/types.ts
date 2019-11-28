@@ -1,6 +1,9 @@
+import Electronic from "../../lib/Electronic";
+
 export type ElectronicProps = {
   className?: string;
-  coordinate: [number, number];
+  electronic: Electronic;
+  // coordinate: [number, number];
   unitSize: number;
-  rotations?: number;
+  // rotations?: number;
 };

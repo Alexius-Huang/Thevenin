@@ -1,12 +1,12 @@
-import React, { RefObject } from 'react';
+import React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CircuitGrid from './Workspace.CircuitGrid';
 import * as ElectronicComponent from '../electronics';
 import classnames from 'classnames';
 // import IdealWire from '../Circuit.IdealWire';
 
-import { WorkspaceProps, Coordinate } from './Workspace.d';
-import { createElectronic, EC } from '../../lib/Electronic';
+import { WorkspaceProps } from './Workspace.d';
+import { EC } from '../../lib/Electronic';
 import { ElectronicProps } from '../electronics/types';
 
 import { DestructuredStore, ToolMode } from '../../reducers/State.d';
@@ -31,6 +31,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
   mode,
   selectedComponent: SC,
   previewComponent: PC,
+  previewComponentIsValid,
   workspaceTranslation,
   circuit,
   children,
@@ -51,49 +52,37 @@ const Workspace: React.FC<WorkspaceProps> = ({
       dispatch(toolsActions.cancelAnyOperation());
     },
     R: () => {
-      if (mode === ToolMode.ADD_COMPONENT) {
+      if (mode === ToolMode.ADD_COMPONENT && PC !== null) {
         dispatch(actions.rotatePreviewComponent());
-
-        /* TODO: After rotate, check the component attachability again */
+        dispatch(actions.validatePreviewComponentAttachability());
       }
     },
   });
 
-  function handleMouseEnterGridPoint(
+  async function handleMouseEnterGridPoint(
     e: React.MouseEvent,
     meta: { row: number; column: number; $circleRef: SVGCircleElement | null },
   ) {
     if (mode === ToolMode.ADD_COMPONENT) {
       const { row, column } = meta;
-      const { rotations } = PC;
-      const coordinate = [row, column] as Coordinate;
-      const electronic = createElectronic(SC as EC, { coordinate });
-      for (let i = 0; i < rotations; i++)
-        electronic.rotate();
-
-      const isValid = circuit.canAttachComponent(electronic);
-      dispatch(actions.setPreviewComponentInfo({ coordinate, isValid }));
+      dispatch(actions.setPreviewComponent({ type: SC as EC, coordinate: [row, column] }));
+      dispatch(actions.validatePreviewComponentAttachability());
     }
   }
 
   function handleMouseClickGridArea(e: React.MouseEvent) {
-    const { coordinate, isValid, rotations } = PC;
-
     if (
       mode === ToolMode.ADD_COMPONENT &&
-      isValid &&
-      coordinate !== null
+      PC !== null &&
+      previewComponentIsValid
     ) {
-      const electronic = createElectronic(SC as EC, { coordinate });
-      for (let i = 0; i < rotations; i += 1) electronic.rotate();
-
-      dispatch(actions.appendElectronicComponent(electronic));
+      dispatch(actions.appendElectronicComponent());
     }
   }
 
   function handleMouseLeaveGridArea(e: React.MouseEvent) {
     if (mode === ToolMode.ADD_COMPONENT) {
-      dispatch(actions.unsetPreviewComponentInfo());
+      dispatch(actions.unsetPreviewComponent());
     }
   }
 
@@ -134,14 +123,13 @@ const Workspace: React.FC<WorkspaceProps> = ({
 
       <g className="circuit">
         {
-          (PC.coordinate !== null && PreviewComponent !== null) && (
+          (PC !== null && PreviewComponent !== null) && (
             <PreviewComponent
               className={classnames('preview', {
-                invalid: !PC.isValid,
+                invalid: !previewComponentIsValid,
               })}
+              electronic={PC}
               unitSize={unitSize}
-              coordinate={PC.coordinate}
-              rotations={PC.rotations}
             />
           )
         }
@@ -152,8 +140,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
             return <Component
               key={e.id}
               unitSize={unitSize}
-              coordinate={e.coordinate}
-              rotations={e.rotations}
+              electronic={e}
             />;
           })
         }
@@ -173,6 +160,7 @@ function mapStateToProps({ Workspace: w, Tools: t }: DestructuredStore) {
     columns: w.columns,
     unitSize: w.unitSize,
     previewComponent: w.previewComponent,
+    previewComponentIsValid: w.previewComponentIsValid,
     circuit: w.circuit,
 
     mode: t.mode,

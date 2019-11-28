@@ -1,19 +1,20 @@
 import createAction from './createAction';
-import Electronic from '../lib/Electronic';
+import Electronic, { EC } from '../lib/Electronic';
 
 export const setSize = createAction<{
   height: number;
   width: number;
 }>('SET_SIZE');
 
-export const setPreviewComponentInfo = createAction<{
-  coordinate: [number, number];
-  isValid: boolean;
-  rotations?: number;
-}>('SET_PREVIEW_COMPONENT_INFO');
+export const setPreviewComponent = createAction<{
+  type: EC,
+  coordinate: [number, number],
+}>('SET_PREVIEW_COMPONENT');
+
+export const validatePreviewComponentAttachability = createAction('VALIDATE_PREVIEW_COMPONENT_ATTACHABILITY');
 
 export const rotatePreviewComponent = createAction('ROTATE_PREVIEW_COMPONENT');
 
-export const unsetPreviewComponentInfo = createAction('UNSET_PREVIEW_COMPONENT_INFO');
+export const unsetPreviewComponent = createAction('UNSET_PREVIEW_COMPONENT');
 
-export const appendElectronicComponent = createAction<Electronic>('APPEND_ELECTRONIC_COMPONENT');
+export const appendElectronicComponent = createAction('APPEND_ELECTRONIC_COMPONENT');

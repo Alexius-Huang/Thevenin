@@ -19,11 +19,8 @@ export type WorkspaceStoreState = {
   rows: number;
   columns: number;
 
-  previewComponent: {
-    coordinate: [number, number] | null;
-    isValid: boolean;
-    rotations: number;
-  };
+  previewComponent: Electronic | null;
+  previewComponentIsValid: boolean;
 
   circuit: Circuit;
 }

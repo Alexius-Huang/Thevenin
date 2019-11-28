@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import classnames from 'classnames';
 import { ElectronicProps } from './types';
 
-export const Ground: React.FC<ElectronicProps> = ({ coordinate, unitSize, className = '', rotations = 0 }) => {
+export const Ground: React.FC<ElectronicProps> = ({ unitSize, className = '', electronic }) => {
+  const { coordinate, rotations } = electronic;
   const halfUnitSize = unitSize / 2;
 
   const translation = `translate(${[

@@ -2,8 +2,9 @@ import React, { useMemo } from 'react';
 import classnames from 'classnames';
 import { ElectronicProps } from './types';
 
-export const Resistor: React.FC<ElectronicProps> = ({ coordinate, unitSize, className = '', rotations = 0 }) => {
+export const Resistor: React.FC<ElectronicProps> = ({ unitSize, className = '', electronic }) => {
   const halfUnitSize = unitSize / 2;
+  const { coordinate, rotations } = electronic;
 
   const translation = `translate(${[
     unitSize * (coordinate[0]),
