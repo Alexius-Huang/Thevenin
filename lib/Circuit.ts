@@ -57,9 +57,12 @@ export default class Circuit {
     try {
       this.mapElectronicUnitWithCircuitUnit(e, (eu, cu, [relX, relY]) => {
         const isOutOfBound = (relX < 0 || relY < 0 || relX >= this.columns || relY >= this.rows);
-        if (isOutOfBound) throw 'Break-loop';
   
         if (
+          // Out of bound will considered to be not attachable
+          isOutOfBound ||
+
+          // Unit already represented as part of the electronic components or occupied are consider to be not attachable
           cu.type === CircuitUnitType.Electronic ||
           cu.type === CircuitUnitType.Occupied ||
   

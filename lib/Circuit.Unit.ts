@@ -116,20 +116,23 @@ export default class CircuitUnit {
     if (this.isLocked || AD === 0) return CircuitUnitType.Occupied;
 
     if (AD === 4) return CircuitUnitType.Available;
-    if (AD === 3 || AD === 1) return CircuitUnitType.PartiallyAvailable;
 
-    if (
-      this.connectedDirections.has('left') &&
-      this.connectedDirections.has('right')
-    ) return CircuitUnitType.VerticallyAvailable;
+    // TODO: Circuit unit consists of intersected/connected feature
+    // if (AD === 3 || AD === 1) return CircuitUnitType.PartiallyAvailable;
 
-    if (
-      this.connectedDirections.has('top') &&
-      this.connectedDirections.has('bottom')
-    ) return CircuitUnitType.HorizontallyAvailable;
+    // if (
+    //   this.connectedDirections.has('left') &&
+    //   this.connectedDirections.has('right')
+    // ) return CircuitUnitType.VerticallyAvailable;
 
-    if (this.isNode) return CircuitUnitType.PartiallyAvailable;
+    // if (
+    //   this.connectedDirections.has('top') &&
+    //   this.connectedDirections.has('bottom')
+    // ) return CircuitUnitType.HorizontallyAvailable;
 
-    return CircuitUnitType.Occupied;
+    // if (this.isNode) return CircuitUnitType.PartiallyAvailable;
+
+    return CircuitUnitType.PartiallyAvailable;
+    // return CircuitUnitType.Occupied;
   }
 }
