@@ -16,7 +16,7 @@ export type WorkspaceProps = {
     rotations: number;
   };
   selectedComponent: EC | null;
-  toolMode: ToolMode;
+  mode: ToolMode;
   circuit: Circuit;
 
   svgViewBox: string;

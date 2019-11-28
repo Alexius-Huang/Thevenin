@@ -1,7 +1,8 @@
-import React, { RefObject, useEffect, useMemo } from 'react';
+import React, { RefObject } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import classnames from 'classnames';
+import CircuitGrid from './Workspace.CircuitGrid';
 import * as ElectronicComponent from '../electronics';
+import classnames from 'classnames';
 // import IdealWire from '../Circuit.IdealWire';
 
 import { WorkspaceProps, Coordinate } from './Workspace.d';
@@ -27,7 +28,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
   columns,
   unitSize,
   svgViewBox,
-  toolMode,
+  mode,
   selectedComponent: SC,
   previewComponent: PC,
   workspaceTranslation,
@@ -35,10 +36,8 @@ const Workspace: React.FC<WorkspaceProps> = ({
   children,
 }) => {
   const dispatch = useDispatch();
-
   const $svg = React.createRef<SVGSVGElement>();
   const $circuit = React.createRef<SVGRectElement>();
-  const $circuitPoints = new Map<string, RefObject<SVGCircleElement>>();
 
   useResize(() => {
     if ($svg.current !== null) {
@@ -52,7 +51,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
       dispatch(toolsActions.cancelAnyOperation());
     },
     R: () => {
-      if (toolMode === ToolMode.ADD_COMPONENT) {
+      if (mode === ToolMode.ADD_COMPONENT) {
         dispatch(actions.rotatePreviewComponent());
 
         /* TODO: After rotate, check the component attachability again */
@@ -60,8 +59,11 @@ const Workspace: React.FC<WorkspaceProps> = ({
     },
   });
 
-  function handleMouseEnterGridPoint(e: React.MouseEvent, meta: { [type: string]: any; }) {
-    if (toolMode === ToolMode.ADD_COMPONENT) {
+  function handleMouseEnterGridPoint(
+    e: React.MouseEvent,
+    meta: { row: number; column: number; $circleRef: SVGCircleElement | null },
+  ) {
+    if (mode === ToolMode.ADD_COMPONENT) {
       const { row, column } = meta;
       const { rotations } = PC;
       const coordinate = [row, column] as Coordinate;
@@ -72,21 +74,13 @@ const Workspace: React.FC<WorkspaceProps> = ({
       const isValid = circuit.canAttachComponent(electronic);
       dispatch(actions.setPreviewComponentInfo({ coordinate, isValid }));
     }
-
-    /* To get the reference of the circuit point DOM */
-    // const refKey = `${row}-${column}`;
-    // const circleRef = $circuitPoints.get(refKey);
-    // if (circleRef !== undefined && circleRef.current !== null) {
-    //   const circle = circleRef.current;
-    //   /* anything... */
-    // }
   }
 
   function handleMouseClickGridArea(e: React.MouseEvent) {
     const { coordinate, isValid, rotations } = PC;
 
     if (
-      toolMode === ToolMode.ADD_COMPONENT &&
+      mode === ToolMode.ADD_COMPONENT &&
       isValid &&
       coordinate !== null
     ) {
@@ -98,41 +92,14 @@ const Workspace: React.FC<WorkspaceProps> = ({
   }
 
   function handleMouseLeaveGridArea(e: React.MouseEvent) {
-    if (toolMode === ToolMode.ADD_COMPONENT) {
+    if (mode === ToolMode.ADD_COMPONENT) {
       dispatch(actions.unsetPreviewComponentInfo());
     }
   }
 
-  const gridPinsDirectives = useMemo(() => {
-    return `M${[-unitSize / 4, 0]} L${[unitSize / 4, 0]} M${[0, -unitSize / 4]} L${[0, +unitSize / 4]}`;
-  }, [unitSize]);
-
-  const gridPointRadius = useMemo(() => {
-    return toolMode !== ToolMode.NONE ? (unitSize / 2) : 0;
-  }, [toolMode, unitSize]);
-
-  const renderGridPoints = Array.from(Array(rows)).map((_, i) =>
-    Array.from(Array(columns)).map((_, j) => {
-      const meta = { row: i, column: j };
-      const key = `${meta.row}-${meta.column}`;
-      const ref = React.createRef<SVGCircleElement>();
-      $circuitPoints.set(key, ref);
-
-      const translation = [(i + .5) * unitSize, (j + .5) * unitSize];
-
-      return <g key={key} className="grid-point-group" transform={`translate(${translation})`}>
-        <circle
-          className="grid-point" ref={ref} cx="0" cy="0" r={gridPointRadius}
-          onMouseEnter={(e) => handleMouseEnterGridPoint(e, meta)}
-        />
-        <path className="grid-point-pin" d={gridPinsDirectives} />
-      </g>;
-    })
-  );
-
   const workspaceGridClassname = classnames('grid', {
-    'add-component-mode': toolMode === ToolMode.ADD_COMPONENT,
-    'wiring-mode': toolMode === ToolMode.ADD_WIRE,
+    'add-component-mode': mode === ToolMode.ADD_COMPONENT,
+    'wiring-mode': mode === ToolMode.ADD_WIRE,
   });
 
   const PreviewComponent = SC ? (ElectronicComponentMap.get(SC) as React.FC<ElectronicProps>) : null;
@@ -160,7 +127,9 @@ const Workspace: React.FC<WorkspaceProps> = ({
           height={(columns + 1) * unitSize}
         />
 
-        {renderGridPoints}
+        <CircuitGrid
+          handleEnterGridPoint={handleMouseEnterGridPoint}
+        />
       </g>
 
       <g className="circuit">
@@ -206,7 +175,7 @@ function mapStateToProps({ Workspace: w, Tools: t }: DestructuredStore) {
     previewComponent: w.previewComponent,
     circuit: w.circuit,
 
-    toolMode: t.mode,
+    mode: t.mode,
     selectedComponent: t.selectedComponent,
   };
 }

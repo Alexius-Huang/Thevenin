@@ -29,6 +29,7 @@ svg#workspace {
       & > g.grid-point-group > path.grid-point-pin {
         stroke: $snow-1;
         transition: .25s;
+        pointer-events: none;
       }
     }
 
