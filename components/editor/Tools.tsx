@@ -36,12 +36,12 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent }) => {
 
           <ul className="inner-list">
             <li>
-              <button>
+              <button onClick={() => handleToolSelect(EC.DCSource)}>
                 DC Source
               </button>
             </li>
             <li>
-              <button>
+              <button onClick={() => handleToolSelect(EC.Ground)}>
                 Ground
               </button>
             </li>

@@ -3,12 +3,24 @@
   pointer-events: none;
 }
 
+path.path-resistor,
+path.path-dc-source,
+path.path-ground, {
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke: #333;
+  fill: transparent;
+}
+
 .electronics > path.wire {
   stroke: #333;
   stroke-width: 1;
 }
 
-.electronics.invalid > path.wire {
+.electronics.invalid > path.wire,
+.electronics.invalid > path.path-resistor,
+.electronics.invalid > path.path-dc-source,
+.electronics.invalid > path.path-ground {
   stroke: red;
 }
 

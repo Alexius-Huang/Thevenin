@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import classnames from 'classnames';
 import { ElectronicProps } from './types';
 
-export const Resistor: React.FC<ElectronicProps> = ({ coordinate, unitSize, className = '', rotations = 0 }) => {
+export const Ground: React.FC<ElectronicProps> = ({ coordinate, unitSize, className = '', rotations = 0 }) => {
   const halfUnitSize = unitSize / 2;
 
   const translation = `translate(${[
@@ -10,21 +10,17 @@ export const Resistor: React.FC<ElectronicProps> = ({ coordinate, unitSize, clas
     unitSize * (coordinate[1] + .5)
   ]}) rotate(${rotations * 90}, ${halfUnitSize}, 0)`;
 
-  const wireDirective = `M ${-halfUnitSize} 0 L ${unitSize * 1.5} 0`;
+  const wireDirective = `M ${halfUnitSize} ${-unitSize} L ${halfUnitSize} 0`;
   const iconTranslation = `translate(${[0, -unitSize / 4]})`;
 
-  const electronicName = 'resistor';
-  const resistorPathDirective = useMemo(() => {
-    let directive = 'M0 0 ';
+  const electronicName = 'ground';
+  const GroundPathDirective = useMemo(() => {
     const step = unitSize / 10;
-    const amp = unitSize / 8;
-    const ampArr = [-amp, 0, amp, 0, -amp, 0, amp, 0, -amp, 0];
-
-    for (let i = 1; i <= 10; i += 1) {
-      directive += `L${step * i} ${ampArr[i - 1]}`;
-    }
-
-    return directive;
+    return `
+      M${unitSize / 4} 0 L${unitSize * (3 / 4)} 0
+      M${unitSize * (5 / 16)} ${step} L${unitSize * (11 / 16)} ${step}
+      M${unitSize * (3 / 8)} ${step * 2} L${unitSize * (5 / 8)} ${step * 2}
+      M ${unitSize / 2} 0 L ${unitSize / 2} -${unitSize / 4}`;
   }, [unitSize]);
 
   return (
@@ -42,8 +38,8 @@ export const Resistor: React.FC<ElectronicProps> = ({ coordinate, unitSize, clas
       />
 
       <path
-        className="path-resistor"
-        d={resistorPathDirective}
+        className="path-ground"
+        d={GroundPathDirective}
       />
     </g>
   );

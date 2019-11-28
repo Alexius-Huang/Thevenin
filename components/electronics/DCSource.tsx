@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import classnames from 'classnames';
 import { ElectronicProps } from './types';
 
-export const Resistor: React.FC<ElectronicProps> = ({ coordinate, unitSize, className = '', rotations = 0 }) => {
+export const DCSource: React.FC<ElectronicProps> = ({ coordinate, unitSize, className = '', rotations = 0 }) => {
   const halfUnitSize = unitSize / 2;
 
   const translation = `translate(${[
@@ -13,18 +13,17 @@ export const Resistor: React.FC<ElectronicProps> = ({ coordinate, unitSize, clas
   const wireDirective = `M ${-halfUnitSize} 0 L ${unitSize * 1.5} 0`;
   const iconTranslation = `translate(${[0, -unitSize / 4]})`;
 
-  const electronicName = 'resistor';
-  const resistorPathDirective = useMemo(() => {
-    let directive = 'M0 0 ';
-    const step = unitSize / 10;
-    const amp = unitSize / 8;
-    const ampArr = [-amp, 0, amp, 0, -amp, 0, amp, 0, -amp, 0];
-
-    for (let i = 1; i <= 10; i += 1) {
-      directive += `L${step * i} ${ampArr[i - 1]}`;
-    }
-
-    return directive;
+  const electronicName = 'dc-source';
+  const DCSourcePathDirective = useMemo(() => {
+    const positivePinSize = unitSize / 4;
+    const negativePinSize = unitSize / 8;
+    const positivePinLocation = unitSize * (.5 -  (1 / 20));
+    const nagativePinLocation = unitSize * (.5 +  (1 / 20));
+    return `
+      M0 0 L${positivePinLocation} 0
+      M${positivePinLocation} ${positivePinSize} L${positivePinLocation} -${positivePinSize}
+      M${nagativePinLocation} ${negativePinSize} L${nagativePinLocation} -${negativePinSize}
+      M${nagativePinLocation} 0 L${unitSize} 0`;
   }, [unitSize]);
 
   return (
@@ -42,8 +41,8 @@ export const Resistor: React.FC<ElectronicProps> = ({ coordinate, unitSize, clas
       />
 
       <path
-        className="path-resistor"
-        d={resistorPathDirective}
+        className="path-dc-source"
+        d={DCSourcePathDirective}
       />
     </g>
   );

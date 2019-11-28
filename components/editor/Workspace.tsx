@@ -12,6 +12,13 @@ import * as selectors from '../../selectors/Workspace';
 import { DestructuredStore, ToolMode } from '../../reducers/State.d';
 import './Workspace.scss';
 import { createElectronic, EC } from '../../lib/Electronic';
+import { ElectronicProps } from '../electronics/types';
+
+const ElectronicComponentMap = new Map<EC, React.FC<ElectronicProps>>([
+  [EC.DCSource, ElectronicComponent.DCSource],
+  [EC.Ground, ElectronicComponent.Ground],
+  [EC.Resistor, ElectronicComponent.Resistor],
+]);
 
 const Workspace: React.FC<WorkspaceProps> = ({
   rows,
@@ -40,8 +47,11 @@ const Workspace: React.FC<WorkspaceProps> = ({
 
   const keypressHandler = (event: KeyboardEvent) => {
     if (event.keyCode === 114) /* The R key */ {
-      if (toolMode === ToolMode.ADD_COMPONENT)
+      if (toolMode === ToolMode.ADD_COMPONENT) {
         dispatch(actions.rotatePreviewComponent());
+
+        /* TODO: After rotate, check the component attachability again */
+      }
     }
   };
   useEffect(() => {
@@ -54,7 +64,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
       const { row, column } = meta;
       const { rotations } = PC;
       const coordinate = [row, column] as Coordinate;
-      const electronic = createElectronic(EC.Resistor, { coordinate });
+      const electronic = createElectronic(SC as EC, { coordinate });
       for (let i = 0; i < rotations; i++)
         electronic.rotate();
 
@@ -79,10 +89,8 @@ const Workspace: React.FC<WorkspaceProps> = ({
       isValid &&
       coordinate !== null
     ) {
-      const electronic = createElectronic(EC.Resistor, { coordinate });
+      const electronic = createElectronic(SC as EC, { coordinate });
       for (let i = 0; i < rotations; i += 1) electronic.rotate();
-
-      console.log(electronic);
 
       dispatch(actions.appendElectronicComponent(electronic));
     }
@@ -120,6 +128,8 @@ const Workspace: React.FC<WorkspaceProps> = ({
     'tool-selected': SC !== null
   });
 
+  const PreviewComponent = SC ? (ElectronicComponentMap.get(SC) as React.FC<ElectronicProps>) : null;
+
   return <svg
     ref={$svg}
     id="workspace"
@@ -148,8 +158,8 @@ const Workspace: React.FC<WorkspaceProps> = ({
 
       <g className="circuit">
         {
-          (PC.coordinate !== null) && (
-            <ElectronicComponent.Resistor
+          (PC.coordinate !== null && PreviewComponent !== null) && (
+            <PreviewComponent
               className={classnames('preview', {
                 invalid: !PC.isValid,
               })}
@@ -162,7 +172,8 @@ const Workspace: React.FC<WorkspaceProps> = ({
 
         {
           Array.from(circuit.electronics.values()).map(e => {
-            return <ElectronicComponent.Resistor
+            const Component = ElectronicComponentMap.get(e.name) as React.FC<ElectronicProps>;
+            return <Component
               key={e.id}
               unitSize={unitSize}
               coordinate={e.coordinate}
