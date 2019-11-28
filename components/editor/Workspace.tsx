@@ -30,8 +30,8 @@ const Workspace: React.FC<WorkspaceProps> = ({
   svgViewBox,
   mode,
   selectedComponent: SC,
-  previewComponent: PC,
-  previewComponentIsValid,
+  PC,
+  PCIsValid,
   workspaceTranslation,
   circuit,
   children,
@@ -71,11 +71,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
   }
 
   function handleMouseClickGridArea(e: React.MouseEvent) {
-    if (
-      mode === ToolMode.ADD_COMPONENT &&
-      PC !== null &&
-      previewComponentIsValid
-    ) {
+    if (mode === ToolMode.ADD_COMPONENT && PC !== null && PCIsValid) {
       dispatch(actions.appendElectronicComponent());
     }
   }
@@ -125,9 +121,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
         {
           (PC !== null && PreviewComponent !== null) && (
             <PreviewComponent
-              className={classnames('preview', {
-                invalid: !previewComponentIsValid,
-              })}
+              className={classnames('preview', { invalid: !PCIsValid })}
               electronic={PC}
               unitSize={unitSize}
             />
@@ -159,8 +153,8 @@ function mapStateToProps({ Workspace: w, Tools: t }: DestructuredStore) {
     rows: w.rows,
     columns: w.columns,
     unitSize: w.unitSize,
-    previewComponent: w.previewComponent,
-    previewComponentIsValid: w.previewComponentIsValid,
+    PC: w.previewComponent,
+    PCIsValid: w.previewComponentIsValid,
     circuit: w.circuit,
 
     mode: t.mode,

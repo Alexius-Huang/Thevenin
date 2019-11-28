@@ -5,16 +5,18 @@ import Circuit from '../lib/Circuit';
 import Electronic, { createElectronic } from '../lib/Electronic';
 
 const initialState: State = {
+  circuit: new Circuit(10, 10),
+  rows: 10,
+  columns: 10,
+
   width: 0,
   height: 0,
   unitSize: 40,
-  rows: 10,
-  columns: 10,
 
   previewComponent: null,
   previewComponentIsValid: false,
 
-  circuit: new Circuit(10, 10),
+  primaryWiringCoordinate: null,
 };
 
 export default createReducer(initialState)
@@ -23,6 +25,8 @@ export default createReducer(initialState)
     width,
     height,
   }))
+
+  /* Previewing & Attaching Component Actions */
   .case(actions.setPreviewComponent, (state, { type, coordinate }) => ({
     ...state,
     previewComponent: createElectronic(type, { coordinate }),
@@ -57,4 +61,10 @@ export default createReducer(initialState)
 
     state.circuit.appendElectronics(state.previewComponent);
     return { ...state, previewComponent: null, previewComponentIsValid: false };
-  });
+  })
+  
+  /* Wiring Actions */
+  .case(actions.setPrimaryWiringCoordinate, (state, payload) => ({
+    ...state,
+    primaryWiringCoordinate: payload,
+  }));

@@ -13,16 +13,20 @@ export type ToolsStoreState = {
 }
 
 export type WorkspaceStoreState = {
-  width: number;
-  height: number;
-  unitSize: number;
+  circuit: Circuit;
   rows: number;
   columns: number;
 
+  width: number;
+  height: number;
+  unitSize: number;
+
+  /* To-be Attached Component Previewing */
   previewComponent: Electronic | null;
   previewComponentIsValid: boolean;
 
-  circuit: Circuit;
+  /* Wiring */
+  primaryWiringCoordinate: [number, number] | null;
 }
 
 export type DestructuredStore = {

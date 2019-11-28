@@ -18,6 +18,12 @@ svg#workspace {
       transition: .25s;
     }
 
+    & > g.grid-point-group > circle.wiring-coordinate {
+      pointer-events: none;
+      fill: $frost-3;
+      transition: .25s;
+    }
+
     & > g.grid-point-group > path.grid-point-pin {
       stroke: transparent;
       stroke-width: 1;

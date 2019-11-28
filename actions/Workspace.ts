@@ -1,11 +1,12 @@
 import createAction from './createAction';
-import Electronic, { EC } from '../lib/Electronic';
+import { EC } from '../lib/Electronic';
 
 export const setSize = createAction<{
   height: number;
   width: number;
 }>('SET_SIZE');
 
+/* Previewing & Attaching Component Actions */
 export const setPreviewComponent = createAction<{
   type: EC,
   coordinate: [number, number],
@@ -18,3 +19,6 @@ export const rotatePreviewComponent = createAction('ROTATE_PREVIEW_COMPONENT');
 export const unsetPreviewComponent = createAction('UNSET_PREVIEW_COMPONENT');
 
 export const appendElectronicComponent = createAction('APPEND_ELECTRONIC_COMPONENT');
+
+/* Wiring Actions */
+export const setPrimaryWiringCoordinate = createAction<[number, number]>('SET_PRIMARY_WIRING_COORDINATE');

@@ -10,8 +10,8 @@ export type WorkspaceProps = {
   unitSize: number;
   rows: number;
   columns: number;
-  previewComponent: Electronic | null;
-  previewComponentIsValid: boolean;
+  PC: Electronic | null; // Preview component
+  PCIsValid: boolean;    // Previewed component is valid
   selectedComponent: EC | null;
   mode: ToolMode;
   circuit: Circuit;
