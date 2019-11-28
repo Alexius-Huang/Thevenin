@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { ToolsProps } from './Tools.d';
+import classnames from 'classnames';
 import { ToolsStoreState } from '../../reducers/State';
+import { ToolMode } from '../../reducers/State.d';
+import { EC } from '../../lib/Electronic';
 import * as actions from '../../actions/Tools';
 import './Tools.scss';
-import { EC } from '../../lib/Electronic';
 
-const Tools: React.FC<ToolsProps> = ({ selectedComponent }) => {
+type ToolsProps = {
+  children: ReactNode;
+  selectedComponent: EC | null;
+  mode: ToolMode;
+};
+
+const Tools: React.FC<ToolsProps> = ({ selectedComponent, mode }) => {
   const dispatch = useDispatch();
 
   function handleToolSelect(name: EC) {
@@ -16,6 +23,12 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent }) => {
       dispatch(actions.selectComponent({ name }));
     }
   }
+
+  const newElectronicText = mode === ToolMode.ADD_COMPONENT ?
+    `<${selectedComponent}>` : 'New Electronics';
+  const newElectronicClass = classnames('tool-category', {
+    active: mode === ToolMode.ADD_COMPONENT
+  });
 
   return (
     <div className="list-wrapper">
@@ -31,25 +44,17 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent }) => {
             </li>
           </ul>
         </li>
-        <li className="tool-category">
-          <span>New Electronics</span>
+        <li className={newElectronicClass}>
+          <span>{newElectronicText}</span>
 
           <ul className="inner-list">
-            <li>
-              <button onClick={() => handleToolSelect(EC.DCSource)}>
-                DC Source
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleToolSelect(EC.Ground)}>
-                Ground
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleToolSelect(EC.Resistor)}>
-                Resistor
-              </button>
-            </li>
+            {
+              [EC.DCSource, EC.Ground, EC.Resistor].map(type => (
+                <li className={type === selectedComponent ? 'active' : ''}>
+                  <button onClick={() => handleToolSelect(type)}>{type}</button>
+                </li>  
+              ))
+            }
           </ul>
         </li>
       </ul>
@@ -58,7 +63,10 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent }) => {
 };
 
 function mapStateToProps({ Tools: t }: { Tools: ToolsStoreState }) {
-  return { selectedComponent: t.selectedComponent };
+  return {
+    selectedComponent: t.selectedComponent,
+    mode: t.mode,
+  };
 }
 
 export default connect(mapStateToProps)(Tools);

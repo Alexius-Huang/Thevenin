@@ -30,6 +30,15 @@ div.list-wrapper {
       transition: .25s;
     }
 
+    &.tool-category.active,
+    &.tool-category > ul.inner-list > li.active {
+      background-color: #fff;
+
+      &:hover {
+        background-color: #fff;
+      }
+    }
+
     &.tool-category:hover,
     &.tool-category > ul.inner-list > li:hover {
       background-color: #ddd;
