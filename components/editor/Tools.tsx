@@ -56,9 +56,9 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent, mode }) => {
           <ul className="inner-list">
             {
               [EC.DCSource, EC.Ground, EC.Resistor].map(type => (
-                <li className={type === selectedComponent ? 'active' : ''}>
+                <li key={type} className={type === selectedComponent ? 'active' : ''}>
                   <button onClick={() => handleToolSelect(type)}>{type}</button>
-                </li>  
+                </li>
               ))
             }
           </ul>

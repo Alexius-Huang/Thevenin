@@ -13,7 +13,7 @@ import * as actions from '../../actions/Workspace';
 import * as toolsActions from '../../actions/Tools';
 import * as selectors from '../../selectors/Workspace';
 
-import { useResize } from '../../hooks';
+import { useResize, useKeyDown } from '../../hooks';
 import './Workspace.scss';
 
 const ElectronicComponentMap = new Map<EC, React.FC<ElectronicProps>>([
@@ -47,22 +47,17 @@ const Workspace: React.FC<WorkspaceProps> = ({
     }
   });
 
-  const keydownHandler = (event: KeyboardEvent) => {
-    const { keyCode: c } = event;
-
-    if (c === 82) /* The R key */ {
+  useKeyDown({
+    ESC: () => {
+      dispatch(toolsActions.cancelAnyOperation());
+    },
+    R: () => {
       if (toolMode === ToolMode.ADD_COMPONENT) {
         dispatch(actions.rotatePreviewComponent());
 
         /* TODO: After rotate, check the component attachability again */
       }
-    } else if (c === 27) /* The ESC key */ {
-      dispatch(toolsActions.cancelAnyOperation());
-    }
-  };
-  useEffect(() => {
-    window.addEventListener('keydown', keydownHandler);
-    return () => window.removeEventListener('keydown', keydownHandler);
+    },
   });
 
   function handleMouseEnterGridPoint(e: React.MouseEvent, meta: { [type: string]: any; }) {
