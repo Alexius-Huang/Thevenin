@@ -1,4 +1,4 @@
-import React, { RefObject, Fragment } from 'react';
+import React, { RefObject, useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import classnames from 'classnames';
 
@@ -38,13 +38,27 @@ const Workspace: React.FC<WorkspaceProps> = ({
     }
   });
 
+  const keypressHandler = (event: KeyboardEvent) => {
+    if (event.keyCode === 114) /* The R key */ {
+      if (toolMode === ToolMode.ADD_COMPONENT)
+        dispatch(actions.rotatePreviewComponent());
+    }
+  };
+  useEffect(() => {
+    window.addEventListener('keypress', keypressHandler);
+    return () => window.removeEventListener('keypress', keypressHandler);
+  });
+
   function handleMouseEnterGridPoint(e: React.MouseEvent, meta: { [type: string]: any; }) {
     if (toolMode === ToolMode.ADD_COMPONENT) {
       const { row, column } = meta;
+      const { rotations } = PC;
       const coordinate = [row, column] as Coordinate;
       const electronic = createElectronic(EC.Resistor, { coordinate });
-      const isValid = circuit.canAttachComponent(electronic);
+      for (let i = 0; i < rotations; i++)
+        electronic.rotate();
 
+      const isValid = circuit.canAttachComponent(electronic);
       dispatch(actions.setPreviewComponentInfo({ coordinate, isValid }));
     }
 
@@ -58,7 +72,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
   }
 
   function handleMouseClickGridArea(e: React.MouseEvent) {
-    const { coordinate, isValid } = PC;
+    const { coordinate, isValid, rotations } = PC;
 
     if (
       toolMode === ToolMode.ADD_COMPONENT &&
@@ -66,6 +80,10 @@ const Workspace: React.FC<WorkspaceProps> = ({
       coordinate !== null
     ) {
       const electronic = createElectronic(EC.Resistor, { coordinate });
+      for (let i = 0; i < rotations; i += 1) electronic.rotate();
+
+      console.log(electronic);
+
       dispatch(actions.appendElectronicComponent(electronic));
     }
   }
@@ -137,6 +155,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
               })}
               unitSize={unitSize}
               coordinate={PC.coordinate}
+              rotations={PC.rotations}
             />
           )
         }
@@ -147,6 +166,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
               key={e.id}
               unitSize={unitSize}
               coordinate={e.coordinate}
+              rotations={e.rotations}
             />;
           })
         }

@@ -9,7 +9,10 @@ export const setSize = createAction<{
 export const setPreviewComponentInfo = createAction<{
   coordinate: [number, number];
   isValid: boolean;
+  rotations?: number;
 }>('SET_PREVIEW_COMPONENT_INFO');
+
+export const rotatePreviewComponent = createAction('ROTATE_PREVIEW_COMPONENT');
 
 export const unsetPreviewComponentInfo = createAction('UNSET_PREVIEW_COMPONENT_INFO');
 

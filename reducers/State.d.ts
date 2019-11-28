@@ -21,6 +21,7 @@ export type WorkspaceStoreState = {
   previewComponent: {
     coordinate: [number, number] | null;
     isValid: boolean;
+    rotations: number;
   };
 
   circuit: Circuit;

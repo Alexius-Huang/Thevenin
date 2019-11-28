@@ -13,6 +13,7 @@ const initialState: State = {
   previewComponent: {
     coordinate: null,
     isValid: false,
+    rotations: 0,
   },
 
   circuit: new Circuit(10, 10),
@@ -24,21 +25,28 @@ export default createReducer(initialState)
     width,
     height,
   }))
-  .case(actions.setPreviewComponentInfo, (state, { coordinate, isValid }) => ({
+  .case(actions.setPreviewComponentInfo, (state, payload) => ({
     ...state,
     previewComponent: {
-      ...state.previewComponent,
-      coordinate,
-      isValid,
+      ...payload,
+      rotations: payload.rotations || state.previewComponent.rotations,
     },
   }))
   .case(actions.unsetPreviewComponentInfo, (state) => ({
     ...state,
     previewComponent: {
-      ...state.previewComponent,
       coordinate: null,
       isValid: false,
+      rotations: 0,
     },
+  }))
+  .case(actions.rotatePreviewComponent, (state) => ({
+    ...state,
+    previewComponent: {
+      ...state.previewComponent,
+      rotations: (state.previewComponent.rotations === 3) ? 0 :
+        (state.previewComponent.rotations + 1),
+    }
   }))
   .case(actions.appendElectronicComponent, (state, payload) => {
     state.circuit.appendElectronics(payload);

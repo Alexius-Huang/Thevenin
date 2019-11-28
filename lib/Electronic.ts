@@ -14,6 +14,7 @@ export enum EC {
 
 export default class Electronic {
   public id: ElectronicID = GUIDGenerator();
+  public rotations = 0;
 
   constructor(
     public readonly name: EC,
@@ -54,6 +55,9 @@ export default class Electronic {
 
     this.center = [rows - 1 - this.center[1], this.center[0]];
     this.dimension = newDimension;
+
+    this.rotations++;
+    if (this.rotations > 3) this.rotations = 0;
   }
 
   public is(type: EC) { return this.name === type; }

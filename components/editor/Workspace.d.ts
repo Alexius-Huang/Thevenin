@@ -13,6 +13,7 @@ export type WorkspaceProps = {
   previewComponent: {
     coordinate: Coordinate | null;
     isValid: boolean;
+    rotations: number;
   };
   selectedComponent: EC | null;
   toolMode: ToolMode;
