@@ -74,4 +74,14 @@ export default createReducer(initialState)
   .case(actions.setPrimaryWiringCoordinate, (state, payload) => ({
     ...state,
     primaryWiringCoordinate: payload,
-  }));
+  }))
+  .case(actions.attachWire, (state, payload) => {
+    if (state.primaryWiringCoordinate === null)
+      throw new Error('Cannot attach wire without primary wiring coordinate');
+
+    state.circuit.addJoint(state.primaryWiringCoordinate, payload);
+    return {
+      ...state,
+      primaryWiringCoordinate: payload,
+    };
+  });

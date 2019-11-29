@@ -24,3 +24,5 @@ export const appendElectronicComponent = createAction('APPEND_ELECTRONIC_COMPONE
 
 /* Wiring Actions */
 export const setPrimaryWiringCoordinate = createAction<[number, number]>('SET_PRIMARY_WIRING_COORDINATE');
+
+export const attachWire = createAction<[number, number]>('ATTACH_WIRE');

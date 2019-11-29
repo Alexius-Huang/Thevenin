@@ -46,17 +46,24 @@ const CircuitGrid: React.FC<CircuitGridProps> = ({
     }
   }
 
-  function handleGridPointClick(e: React.MouseEvent, meta: { coordinate: [number, number] }) {
-    const { coordinate: [row, column] } = meta;
+  function handleGridPointClick(
+    e: React.MouseEvent,
+    coordinate: [number, number]
+  ) {
+    const [row, column] = coordinate;
 
-    if (mode === ToolMode.ADD_WIRE) {
+    if (mode === ToolMode.ADD_WIRE) {  
       if (PWC !== null && (
         (PWC[0] === row && (PWC[1] === column - 1 || PWC[1] === column + 1)) ||
         (PWC[1] === column && (PWC[0] === row - 1 || PWC[0] === row + 1))
       )) {
-        /* Attach wire */
-      } else if (PWC === null) {
-        dispatch(actions.setPrimaryWiringCoordinate([row, column]));
+        if (circuit.canAddJoint(PWC, coordinate)) {
+          dispatch(actions.attachWire(coordinate));
+        } else {
+          /* TODO: Show cannot attach wire hint! */
+        }
+      } else {
+        dispatch(actions.setPrimaryWiringCoordinate(coordinate));
       }
     }
   }
@@ -70,6 +77,7 @@ const CircuitGrid: React.FC<CircuitGridProps> = ({
     mode !== ToolMode.NONE ? (unitSize / 2) : 0
   ), [mode, unitSize]);
 
+  const wireLengthFromUnit = (unitSize / 2);
   const renderGridPoint = (row: number, column: number) => {
     const meta = { row, column };
     const coordinate: [number, number] = [row, column];
@@ -84,17 +92,27 @@ const CircuitGrid: React.FC<CircuitGridProps> = ({
       (PWC[0] === row && (PWC[1] === column - 1 || PWC[1] === column + 1)) ||
       (PWC[1] === column && (PWC[0] === row - 1 || PWC[0] === row + 1))
     )) {
-      gridPointPinClasses.push('wire-attachable');
+      const wireAttachmentClass = circuit.canAddJoint(PWC, [row, column]) ?
+        'wire-attachable' : 'wire-unattachable';
+      gridPointPinClasses.push(wireAttachmentClass);
     }
+
+    const unit = circuit.layout[column][row];
+    const directions = new Set(unit.circuitUnitConnections.map(conn => conn.direction));
 
     return (
       <g key={key} className="grid-point-group" transform={`translate(${translation})`}>
         <circle
           className="grid-point" ref={ref} cx="0" cy="0" r={gridPointRadius}
           onMouseEnter={(e) => handleGridPointMouseEnter(e, meta)}
-          onClick={(e) => handleGridPointClick(e, { coordinate })}
+          onClick={(e) => handleGridPointClick(e, coordinate)}
         />
         <path className={classnames(gridPointPinClasses)} d={gridPinsDirectives} />
+
+        {directions.has('left')   && <path className="wire-path" d={`M0 0 L-${wireLengthFromUnit} 0`} />}
+        {directions.has('right')  && <path className="wire-path" d={`M0 0 L${wireLengthFromUnit} 0`}  />}
+        {directions.has('top')    && <path className="wire-path" d={`M0 0 L0 -${wireLengthFromUnit}`} />}
+        {directions.has('bottom') && <path className="wire-path" d={`M0 0 L0 ${wireLengthFromUnit}`}  />}
 
         {
           (mode === ToolMode.ADD_WIRE && PWC !== null && PWC[0] === row && PWC[1] === column) && (

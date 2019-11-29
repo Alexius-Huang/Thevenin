@@ -39,6 +39,33 @@ export default class Circuit {
     }
   }
 
+  public canAddJoint(c1: Coordinate, c2: Coordinate) {
+    let [[col1, row1], [col2, row2]] = [c1, c2];
+    const [cu1, cu2] = [this.layout[row1][col1], this.layout[row2][col2]];
+
+    if (
+      cu1.type === CircuitUnitType.Electronic || cu2.type === CircuitUnitType.Electronic ||
+      cu1.type === CircuitUnitType.Occupied || cu2.type === CircuitUnitType.Occupied
+    ) return false;
+
+    if (cu1.type === CircuitUnitType.Available && cu2.type === CircuitUnitType.Available) return true;
+
+    const [deltaCol, deltaRow] = [col2 - col1, row2 - row1];
+
+    let direction: ConnectableDirection, invertedDirection: ConnectableDirection;
+    if (Math.abs(deltaCol) === 1 && deltaRow === 0) {
+      direction = deltaCol > 0 ? 'right' : 'left';
+      invertedDirection = direction === 'right' ? 'left' : 'right';
+    } else if (Math.abs(deltaRow) === 1 && deltaCol === 0) {
+      direction = deltaRow > 0 ? 'bottom' : 'top';
+      invertedDirection = direction === 'bottom' ? 'top' : 'bottom';
+    } else {
+      throw new Error('Invalid circuit joint connection!');
+    }
+
+    return (cu1[direction] === null && cu2[invertedDirection] === null);
+  }
+
   public appendElectronics(e: Electronic) {
     this.mapElectronicUnitWithCircuitUnit(e, (eu, cu) => {
       if (eu.type === ElectronicUnitType.Pin) {

@@ -30,6 +30,12 @@ svg#workspace {
       transition: .25s;
     }
 
+    & > g.grid-point-group > path.wire-path {
+      stroke: $polar-1;
+      stroke-width: 1;
+      stroke-linecap: round;
+    }
+
     &.add-component-mode,
     &.wiring-mode {
       & > g.grid-point-group > path.grid-point-pin {

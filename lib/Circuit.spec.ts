@@ -215,15 +215,16 @@ describe('Lib: Circuit', () => {
     });
   });
 
-  describe('Circuit.addJoint', () => {
-    it('wires simple circuit using wire-edges', () => {
+  describe('Circuit Wiring', () => {
+    let resistor1: Electronic, resistor2: Electronic;
+    beforeEach(() => {
       // [ a a a a a ]
       // [ w n o n w ]
       // [ w a a a w ]
       // [ w n o n w ]
       // [ a a a a a ]
-      const resistor1 = createElectronic(EC.Resistor, { coordinate: [2, 1] });
-      const resistor2 = createElectronic(EC.Resistor, { coordinate: [2, 3] });
+      resistor1 = createElectronic(EC.Resistor, { coordinate: [2, 1] });
+      resistor2 = createElectronic(EC.Resistor, { coordinate: [2, 3] });
       circuit.appendElectronics(resistor1);
       circuit.appendElectronics(resistor2);
 
@@ -235,22 +236,86 @@ describe('Lib: Circuit', () => {
       circuit.addJoint([1, 3], [0, 3]);
       circuit.addJoint([0, 3], [0, 2]);
       circuit.addJoint([0, 2], [0, 1]);
+    });
 
-      result[1][0].connect('right', result[1][1]);
-      result[1][0].connect('bottom', result[2][0]);
-      result[1][1].connect('right', { electronic: resistor1, pinName: '1' });
-      result[1][2].setElectronic(resistor1.id);
-      result[1][3].connect('left', { electronic: resistor1, pinName: '2' });
-      result[1][3].connect('right', result[1][4]);
-      result[1][4].connect('bottom', result[2][4]);
-      result[2][4].connect('bottom', result[3][4]);
-      result[3][4].connect('left', result[3][3]);
-      result[3][3].connect('left', { electronic: resistor2, pinName: '2' });
-      result[3][2].setElectronic(resistor2.id);
-      result[3][1].connect('right', { electronic: resistor2, pinName: '1' });
-      result[3][1].connect('left', result[3][0]);
-      result[3][0].connect('top', result[2][0]);
-      expect(circuit.layout).toMatchObject(result);
+    describe('Circuit.addJoint', () => {
+      it('wires simple circuit using wire-edges', () => {
+        result[1][0].connect('right', result[1][1]);
+        result[1][0].connect('bottom', result[2][0]);
+        result[1][1].connect('right', { electronic: resistor1, pinName: '1' });
+        result[1][2].setElectronic(resistor1.id);
+        result[1][3].connect('left', { electronic: resistor1, pinName: '2' });
+        result[1][3].connect('right', result[1][4]);
+        result[1][4].connect('bottom', result[2][4]);
+        result[2][4].connect('bottom', result[3][4]);
+        result[3][4].connect('left', result[3][3]);
+        result[3][3].connect('left', { electronic: resistor2, pinName: '2' });
+        result[3][2].setElectronic(resistor2.id);
+        result[3][1].connect('right', { electronic: resistor2, pinName: '1' });
+        result[3][1].connect('left', result[3][0]);
+        result[3][0].connect('top', result[2][0]);
+        expect(circuit.layout).toMatchObject(result);
+      });
+    });
+  
+    describe('Circuit.canAddJoint', () => {
+      it('checks if the joints are connectable', () => {
+        const testCases: Array<[Coordinate, Coordinate, boolean]> = [
+          [[0, 0], [0, 1], true],
+          [[0, 1], [0, 2], false],
+          [[0, 2], [0, 3], false],
+          [[0, 3], [0, 4], true],
+
+          [[1, 0], [1, 1], true],
+          [[1, 1], [1, 2], true],
+          [[1, 2], [1, 3], true],
+          [[1, 3], [1, 4], true],
+
+          [[2, 0], [2, 1], false],
+          [[2, 1], [2, 2], false],
+          [[2, 2], [2, 3], false],
+          [[2, 3], [2, 4], false],
+
+          [[3, 0], [3, 1], true],
+          [[3, 1], [3, 2], true],
+          [[3, 2], [3, 3], true],
+          [[3, 3], [3, 4], true],
+
+          [[4, 0], [4, 1], true],
+          [[4, 1], [4, 2], false],
+          [[4, 2], [4, 3], false],
+          [[4, 3], [4, 4], true],
+
+          [[0, 0], [1, 0], true],
+          [[1, 0], [2, 0], true],
+          [[2, 0], [3, 0], true],
+          [[3, 0], [4, 0], true],
+
+          [[0, 1], [1, 1], false],
+          [[1, 1], [2, 1], false],
+          [[2, 1], [3, 1], false],
+          [[3, 1], [4, 1], false],
+
+          [[0, 2], [1, 2], true],
+          [[1, 2], [2, 2], true],
+          [[2, 2], [3, 2], true],
+          [[3, 2], [4, 2], true],
+
+          [[0, 3], [1, 3], false],
+          [[1, 3], [2, 3], false],
+          [[2, 3], [3, 3], false],
+          [[3, 3], [4, 3], false],
+
+          [[0, 4], [1, 4], true],
+          [[1, 4], [2, 4], true],
+          [[2, 4], [3, 4], true],
+          [[3, 4], [4, 4], true],
+        ];
+
+        testCases.forEach(([c1, c2, expected]) => {
+          expect(circuit.canAddJoint(c1, c2)).toBe(expected);
+        });
+      });
     });
   });
 
