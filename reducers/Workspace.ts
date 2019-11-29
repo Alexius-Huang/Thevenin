@@ -5,14 +5,15 @@ import Circuit from '../lib/Circuit';
 import Electronic, { createElectronic } from '../lib/Electronic';
 
 const initialState: State = {
-  circuit: new Circuit(5, 5),
-  rows: 5,
-  columns: 5,
+  circuit: new Circuit(7, 7),
+  rows: 7,
+  columns: 7,
 
   width: 0,
   height: 0,
   unitSize: 40,
-  zoomScale: 1,
+  zoomScale: 1.5,
+  center: [0, 0],
 
   previewComponent: null,
   previewComponentIsValid: false,
@@ -25,6 +26,10 @@ export default createReducer(initialState)
     ...state,
     width,
     height,
+  }))
+  .case(actions.setCenter, (state, payload) => ({
+    ...state,
+    center: payload,
   }))
   .case(actions.cancelAnyOperation, (state) => ({
     ...state,

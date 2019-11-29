@@ -44,6 +44,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
     if ($svg.current !== null) {
       const { clientWidth: width, clientHeight: height } = $svg.current;
       dispatch(actions.setSize({ width, height }));
+      dispatch(actions.setCenter([width / 2, height / 2]));
     }
   });
 

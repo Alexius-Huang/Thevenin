@@ -21,6 +21,7 @@ export type WorkspaceStoreState = {
   height: number;
   unitSize: number;
   zoomScale: number;
+  center: [number, number];
 
   /* To-be Attached Component Previewing */
   previewComponent: Electronic | null;

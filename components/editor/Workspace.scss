@@ -35,7 +35,8 @@ svg#workspace {
       stroke-width: 1;
       stroke-linecap: round;
       &.has-current {
-        stroke-dasharray: 1 3 1 3;
+        stroke: $aurora-yellow;
+        stroke-dasharray: 3 3;
         animation: dash 5s infinite linear;  
       }
       &.inward-current {

@@ -6,10 +6,13 @@ export const svgViewBoxSelector =
 
 export const workspaceTranslationSelector =
   (state: WorkspaceStoreState) => {
-    const { width, height, rows, columns, unitSize, zoomScale } = state;
+    const { width, height, rows, columns, unitSize, zoomScale, center } = state;
 
-    return `translate(${[
-      (width - (rows * unitSize)) / 2,
-      (height - (columns * unitSize)) / 2,
-    ]}) scale(${zoomScale}, ${zoomScale})`;
+    return `
+      translate(${[
+        (width - (rows * unitSize * zoomScale)) / 2,
+        (height - (columns * unitSize * zoomScale)) / 2,
+      ]})
+      scale(${zoomScale}, ${zoomScale})
+    `.trim();
   };

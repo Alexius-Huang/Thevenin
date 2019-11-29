@@ -120,15 +120,17 @@ const CircuitGrid: React.FC<CircuitGridProps> = ({
               direction === 'top'    ? `M0 0 L0 -${wireLengthFromUnit}` :
               `M0 0 L0 ${wireLengthFromUnit}`;
 
-            return <path
-              key={`${key}-${direction}`}
-              className={classnames('wire-path', {
-                'has-current': !Number.isNaN(conn.current) && conn.current !== 0,
-                'inward-current': conn.currentFlow === CurrentFlow.INWARD,
-                'outward-current': conn.currentFlow === CurrentFlow.OUTWARD,
-              })}
-              d={directive}
-            />;
+            return [
+              <path key={`${key}-${direction}-1`} className="wire-path" d={directive} />,
+              !Number.isNaN(conn.current) && conn.current !== 0 ? <path
+                key={`${key}-${direction}-2`}
+                className={classnames('wire-path', 'has-current', {
+                  'inward-current': conn.currentFlow === CurrentFlow.INWARD,
+                  'outward-current': conn.currentFlow === CurrentFlow.OUTWARD,
+                })}
+                d={directive}
+              /> : undefined,
+            ];
           })
         }
 
