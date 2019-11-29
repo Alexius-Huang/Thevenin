@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { ToolMode, WorkspaceStoreState, ToolsStoreState } from '../../reducers/State.d';
 import * as actions from '../../actions/Workspace';
 import Circuit from '../../lib/Circuit';
+import { CurrentFlow } from '../../lib/Circuit.Graph';
 
 type CircuitGridProps = {
   circuit: Circuit,
@@ -98,7 +99,9 @@ const CircuitGrid: React.FC<CircuitGridProps> = ({
     }
 
     const unit = circuit.layout[column][row];
-    const directions = new Set(unit.circuitUnitConnections.map(conn => conn.direction));
+    const cuConns = unit.circuitUnitConnections;
+    const directions = new Set(cuConns.map(conn => conn.direction));
+    if (directions.size !== 0)console.log(cuConns);
 
     return (
       <g key={key} className="grid-point-group" transform={`translate(${translation})`}>
@@ -109,10 +112,25 @@ const CircuitGrid: React.FC<CircuitGridProps> = ({
         />
         <path className={classnames(gridPointPinClasses)} d={gridPinsDirectives} />
 
-        {directions.has('left')   && <path className="wire-path" d={`M0 0 L-${wireLengthFromUnit} 0`} />}
-        {directions.has('right')  && <path className="wire-path" d={`M0 0 L${wireLengthFromUnit} 0`}  />}
-        {directions.has('top')    && <path className="wire-path" d={`M0 0 L0 -${wireLengthFromUnit}`} />}
-        {directions.has('bottom') && <path className="wire-path" d={`M0 0 L0 ${wireLengthFromUnit}`}  />}
+        {
+          cuConns.map(({ direction, connection: conn }) => {
+            const directive =
+              direction === 'left'   ? `M0 0 L-${wireLengthFromUnit} 0` :
+              direction === 'right'  ? `M0 0 L${wireLengthFromUnit} 0`  :
+              direction === 'top'    ? `M0 0 L0 -${wireLengthFromUnit}` :
+              `M0 0 L0 ${wireLengthFromUnit}`;
+
+            return <path
+              key={`${key}-${direction}`}
+              className={classnames('wire-path', {
+                'has-current': !Number.isNaN(conn.current) && conn.current !== 0,
+                'inward-current': conn.currentFlow === CurrentFlow.INWARD,
+                'outward-current': conn.currentFlow === CurrentFlow.OUTWARD,
+              })}
+              d={directive}
+            />;
+          })
+        }
 
         {
           (mode === ToolMode.ADD_WIRE && PWC !== null && PWC[0] === row && PWC[1] === column) && (

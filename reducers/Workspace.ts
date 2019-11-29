@@ -5,9 +5,9 @@ import Circuit from '../lib/Circuit';
 import Electronic, { createElectronic } from '../lib/Electronic';
 
 const initialState: State = {
-  circuit: new Circuit(10, 10),
-  rows: 10,
-  columns: 10,
+  circuit: new Circuit(5, 5),
+  rows: 5,
+  columns: 5,
 
   width: 0,
   height: 0,
@@ -84,4 +84,10 @@ export default createReducer(initialState)
       ...state,
       primaryWiringCoordinate: payload,
     };
+  })
+
+  /* Simulation Actions */
+  .case(actions.startCircuitSimulation, (state) => {
+    state.circuit.run();
+    return { ...state };
   });

@@ -1,6 +1,5 @@
 import Graph, { Node, Edge, PinInfoMap, PinInfo, CurrentFlow } from './Circuit.Graph';
 import Equation from './Circuit.Equation';
-import E from './electronics';
 import { EC } from './Electronic';
 import SimultaneousEquations from './Circuit.SimultaneousEquations';
 
@@ -9,7 +8,7 @@ export default class CircuitSimulation {
 
   public run() {
     this.supernodePropagation();
-    this.graph.nodes.size > 1 && this.nodalAnalysis();
+    this.nodalAnalysis();
     this.DCPropagation();
   }
 
@@ -70,25 +69,47 @@ export default class CircuitSimulation {
   }
 
   public DCPropagation() {
-    let isConverged = false;
+    const undeterminedEdges = new Set(this.graph.edges.values());
 
     let traverseFromEdge = (edge: Edge) => {
-      if (!Number.isNaN(edge.current)) return;
       const { electronic: e } = edge;
 
-      if (e.is(EC.Ground) || e.is(EC.Resistor)) {
-        const ok = E[e.name].deriveCurrent(edge);
-        if (!ok) isConverged = false;
-        return;
+      if (e.is(EC.Ground)) {
+        const node = edge.nodesMap.get('') as Node;
+        edge.current = 0;
+        node.voltage = 0;
+
+        undeterminedEdges.delete(edge);
+      }
+
+      else if (e.is(EC.Resistor)) {
+        const node1 = edge.nodesMap.get('1') as Node;
+        const node2 = edge.nodesMap.get('2') as Node;
+      
+        if (Number.isNaN(node1.voltage) && Number.isNaN(node2.voltage)) return;
+      
+        const pinInfo1 = edge.pinsMap.get('1') as PinInfo;
+        const pinInfo2 = edge.pinsMap.get('2') as PinInfo;
+      
+        const emf1 = node1.voltage + pinInfo1.bias;
+        const emf2 = node2.voltage + pinInfo2.bias;
+      
+        edge.current = (emf1 - emf2) / edge.electronic.value;
+      
+        if (edge.current > 0) {
+          pinInfo1.currentFlow = CurrentFlow.INWARD;
+          pinInfo2.currentFlow = CurrentFlow.OUTWARD;
+        } else if (edge.current < 0) {
+          pinInfo1.currentFlow = CurrentFlow.OUTWARD;
+          pinInfo2.currentFlow = CurrentFlow.INWARD;
+        }
+
+        undeterminedEdges.delete(edge);
       }
 
       else if (e.is(EC.DCSource)) {
-        isConverged = false;
         const node = edge.nodesMap.get('POSITIVE') as Node;
-        if (Number.isNaN(node.voltage)) {
-          isConverged = false;
-          return;
-        }
+        if (Number.isNaN(node.voltage)) return;
 
         const positivePin = edge.pinsMap.get('POSITIVE') as PinInfo;
         const negativePin = edge.pinsMap.get('NEGATIVE') as PinInfo;
@@ -103,10 +124,7 @@ export default class CircuitSimulation {
         for (let i = 0; i < equipotentialPins.length; i += 1) {
           const pin = equipotentialPins[i];
           const edge = this.graph.findEdge(pin.edgeID);
-          if (Number.isNaN(edge.current)) {
-            isConverged = false;
-            return;
-          }
+          if (Number.isNaN(edge.current)) return;
 
           sourceCurrent += (pin.currentFlow === CurrentFlow.INWARD) ?
             edge.current : -edge.current;
@@ -120,19 +138,25 @@ export default class CircuitSimulation {
           positivePin.currentFlow = CurrentFlow.INWARD;
           negativePin.currentFlow = CurrentFlow.OUTWARD;
         }
+
+        undeterminedEdges.delete(edge);
       }
 
       else throw new Error(`${e.name} isn't handled in DC Propagation!`);
     };
 
-    while (!isConverged) {
-      isConverged = true;
-      this.graph.edges.forEach(traverseFromEdge);
+    while (undeterminedEdges.size !== 0) {
+      undeterminedEdges.forEach(traverseFromEdge);
     }
   }
 
   public nodalAnalysis() {
-    if (this.graph.nodes.size === 2) {
+    const nodeCount = this.graph.nodes.size;
+    if (nodeCount === 1) {
+      /* Fix bug: One Supernode situation */
+      // Assign the gound edge pointed node as 0 voltage
+      Array.from(this.graph.nodes)[0].voltage = 0;
+    } else if (this.graph.nodes.size === 2) {
       this.solveSingleNodeCircuit();
     } else {
       this.solveMultiNodeCircuit();

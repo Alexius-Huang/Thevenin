@@ -34,6 +34,21 @@ svg#workspace {
       stroke: $polar-1;
       stroke-width: 1;
       stroke-linecap: round;
+      &.has-current {
+        stroke-dasharray: 1 3 1 3;
+        animation: dash 5s infinite linear;  
+      }
+      &.inward-current {
+        animation-direction: reverse;
+      }
+      &.outward-current {
+        animation-direction: normal;
+      }
+    }
+
+    @keyframes dash {
+      from { stroke-dashoffset: 40; }
+      to   { stroke-dashoffset:  0; }
     }
 
     &.add-component-mode,

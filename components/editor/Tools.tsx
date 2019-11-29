@@ -5,6 +5,7 @@ import { ToolsStoreState } from '../../reducers/State';
 import { ToolMode } from '../../reducers/State.d';
 import { EC } from '../../lib/Electronic';
 import * as actions from '../../actions/Tools';
+import * as workspaceActions from '../../actions/Workspace';
 import './Tools.scss';
 
 type ToolsProps = {
@@ -24,6 +25,12 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent, mode }) => {
     }
   }
 
+  function handleStartSimulation() {
+    dispatch(actions.cancelAnyOperation());
+    dispatch(workspaceActions.cancelAnyOperation());
+    dispatch(workspaceActions.startCircuitSimulation());
+  }
+
   const basicToolText = mode === ToolMode.ADD_WIRE ?
     '<Wiring>' : 'Basics';
   const basicToolClass = classnames('tool-category', {
@@ -37,7 +44,7 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent, mode }) => {
   });
 
   return (
-    <div className="list-wrapper">
+    <div className="tools">
       <ul>
         <li className={basicToolClass}>
           <span>{basicToolText}</span>
@@ -48,8 +55,15 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent, mode }) => {
                 Wiring
               </button>
             </li>
+
+            <li>
+              <button onClick={handleStartSimulation}>
+                Run Simulation
+              </button>
+            </li>
           </ul>
         </li>
+
         <li className={newElectronicClass}>
           <span>{newElectronicText}</span>
 

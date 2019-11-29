@@ -5,7 +5,7 @@ import Graph, { Node, Edge, PinInfoMap, PinInfo, CurrentFlow } from './Circuit.G
 import CircuitUnit from './Circuit.Unit';
 import { CircuitUnitConnection, Connection } from './Circuit.Connection';
 import { ConnectableDirection } from './circuit.lib';
-// import Simulation from './Circuit.Simulation';
+import Simulation from './Circuit.Simulation';
 
 export default class Circuit {
   static Graph = Graph;
@@ -18,12 +18,12 @@ export default class Circuit {
     );
   }
 
-  // TODO: Implement run method
-  // public run() {
-  //   const graph = this.deriveGraph();
-  //   const simulation = new Simulation(graph);
-  //   simulation.run();
-  // }
+  public run() {
+    const graph = this.deriveGraph();
+    const simulation = new Simulation(graph);
+    simulation.run();
+    this.mapGraphToCircuitLayout(simulation.graph);
+  }
 
   public addJoint(c1: Coordinate, c2: Coordinate) {
     let [[col1, row1], [col2, row2]] = [c1, c2];
