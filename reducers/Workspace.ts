@@ -12,6 +12,7 @@ const initialState: State = {
   width: 0,
   height: 0,
   unitSize: 40,
+  zoomScale: 1,
 
   previewComponent: null,
   previewComponentIsValid: false,
