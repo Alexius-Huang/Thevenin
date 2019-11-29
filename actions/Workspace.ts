@@ -6,6 +6,8 @@ export const setSize = createAction<{
   width: number;
 }>('SET_SIZE');
 
+export const cancelAnyOperation = createAction('CANCEL_ANY_OPERATION');
+
 /* Previewing & Attaching Component Actions */
 export const setPreviewComponent = createAction<{
   type: EC,

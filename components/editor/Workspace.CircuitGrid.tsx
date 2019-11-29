@@ -1,5 +1,6 @@
 import React, { RefObject, useMemo, Fragment } from 'react';
 import { connect, useDispatch } from 'react-redux';
+import classnames from 'classnames';
 import { ToolMode, WorkspaceStoreState, ToolsStoreState } from '../../reducers/State.d';
 import * as actions from '../../actions/Workspace';
 import Circuit from '../../lib/Circuit';
@@ -46,8 +47,18 @@ const CircuitGrid: React.FC<CircuitGridProps> = ({
   }
 
   function handleGridPointClick(e: React.MouseEvent, meta: { coordinate: [number, number] }) {
-    const { coordinate: c } = meta;
-    dispatch(actions.setPrimaryWiringCoordinate(c));
+    const { coordinate: [row, column] } = meta;
+
+    if (mode === ToolMode.ADD_WIRE) {
+      if (PWC !== null && (
+        (PWC[0] === row && (PWC[1] === column - 1 || PWC[1] === column + 1)) ||
+        (PWC[1] === column && (PWC[0] === row - 1 || PWC[0] === row + 1))
+      )) {
+        /* Attach wire */
+      } else if (PWC === null) {
+        dispatch(actions.setPrimaryWiringCoordinate([row, column]));
+      }
+    }
   }
 
   const gridPinsDirectives = useMemo(() => `
@@ -67,6 +78,14 @@ const CircuitGrid: React.FC<CircuitGridProps> = ({
     $circuitPoints.set(key, ref);
 
     const translation = [(row + .5) * unitSize, (column + .5) * unitSize];
+    const gridPointPinClasses = ['grid-point-pin'];
+
+    if (mode === ToolMode.ADD_WIRE && PWC !== null && (
+      (PWC[0] === row && (PWC[1] === column - 1 || PWC[1] === column + 1)) ||
+      (PWC[1] === column && (PWC[0] === row - 1 || PWC[0] === row + 1))
+    )) {
+      gridPointPinClasses.push('wire-attachable');
+    }
 
     return (
       <g key={key} className="grid-point-group" transform={`translate(${translation})`}>
@@ -75,7 +94,7 @@ const CircuitGrid: React.FC<CircuitGridProps> = ({
           onMouseEnter={(e) => handleGridPointMouseEnter(e, meta)}
           onClick={(e) => handleGridPointClick(e, { coordinate })}
         />
-        <path className="grid-point-pin" d={gridPinsDirectives} />
+        <path className={classnames(gridPointPinClasses)} d={gridPinsDirectives} />
 
         {
           (mode === ToolMode.ADD_WIRE && PWC !== null && PWC[0] === row && PWC[1] === column) && (

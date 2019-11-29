@@ -50,6 +50,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
   useKeyDown({
     ESC: () => {
       dispatch(toolsActions.cancelAnyOperation());
+      dispatch(actions.cancelAnyOperation());
     },
     R: () => {
       if (mode === ToolMode.ADD_COMPONENT && PC !== null) {

@@ -25,6 +25,12 @@ export default createReducer(initialState)
     width,
     height,
   }))
+  .case(actions.cancelAnyOperation, (state) => ({
+    ...state,
+    previewComponent: null,
+    previewComponentIsValid: false,
+    primaryWiringCoordinate: null,  
+  }))
 
   /* Previewing & Attaching Component Actions */
   .case(actions.setPreviewComponent, (state, { type, coordinate }) => ({

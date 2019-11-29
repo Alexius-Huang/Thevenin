@@ -36,6 +36,18 @@ svg#workspace {
         stroke: $snow-1;
         transition: .25s;
         pointer-events: none;
+
+        &.wire-attachable {
+          stroke: $frost-4;
+        }
+
+        &.wire-unattachable {
+          stroke: $aurora-red;
+        }
+      }
+
+      & > g.grid-point-group > circle.grid-point:hover + path.wire-attachable {
+        stroke: $polar-1;
       }
     }
 
