@@ -2,6 +2,7 @@ import React from 'react';
 import { NextPage } from 'next';
 import Tools from '../components/editor/Tools';
 import Workspace from '../components/editor/Workspace';
+// import ErrorModal from '../components/utils/Modal.Error';
 
 type EditorProps = {};
 
@@ -16,6 +17,13 @@ const Editor: NextPage<EditorProps> = () => (
       <Workspace>
       </Workspace>
     </section>
+
+    {/* <ErrorModal
+      active={true}
+      title="Undetermined Circuit"
+      message="Undetermined Circuit"
+      onConfirm={() => console.log('OK')}
+    /> */}
 
     <style jsx>{`
       div.Editor {

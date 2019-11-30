@@ -1,0 +1,39 @@
+@import '../../scss/colors.scss';
+
+.modal-wrapper {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  opacity: 0;
+
+  &.active {
+    pointer-events: visible;
+    opacity: 1;
+    animation: fadeIn 1s;
+  }
+  &:not(.active) {
+    animation: fadeOut 1s;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.modal-wrapper > .inner-modal {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  background-color: $snow-3
+}

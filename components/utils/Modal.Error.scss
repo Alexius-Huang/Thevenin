@@ -1,0 +1,46 @@
+@import '../../scss/colors.scss';
+
+.error-modal > .inner-modal {
+  border-bottom: 2pt solid $aurora-red;
+  text-align: center;
+
+  &:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    width: 0;
+    vertical-align: middle;
+  }
+
+  & > div.content-wrapper {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  & > div.content-wrapper > h2.message-title {
+    font-size: 16pt;
+    margin-bottom: 8pt;
+  }
+
+  & > div.content-wrapper > p.message-wrapper {
+    font-size: 12pt;
+    margin-bottom: 12pt;
+  }
+
+  & > div.content-wrapper > button.confirm-btn {
+    border: 1pt solid transparentize($aurora-red, .7);
+    box-sizing: border-box;
+    border-radius: 2pt;
+    background-color: transparent;
+    width: 30pt;
+    height: 24pt;
+    line-height: 24pt;
+    transition: .25s;
+
+    &:hover {
+      background-color: $aurora-red;
+      color: $snow-3;
+      transition: .25s;
+    }
+  }
+}

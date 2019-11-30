@@ -3,7 +3,6 @@ import { connect, useDispatch } from 'react-redux';
 import CircuitGrid from './Workspace.CircuitGrid';
 import * as ElectronicComponent from '../electronics';
 import classnames from 'classnames';
-// import IdealWire from '../Circuit.IdealWire';
 
 import { WorkspaceProps } from './Workspace.d';
 import { EC } from '../../lib/Electronic';
