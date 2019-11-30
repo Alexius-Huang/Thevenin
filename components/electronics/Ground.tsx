@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import classnames from 'classnames';
-import { ElectronicProps } from './types';
+import { ElectronicProps } from './index.types';
 
 export const Ground: React.FC<ElectronicProps> = ({ unitSize, className = '', electronic }) => {
   const { coordinate, rotations } = electronic;

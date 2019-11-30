@@ -9,7 +9,6 @@ export default class CircuitSimulation {
   public run() {
     this.supernodePropagation();
     this.nodalAnalysis();
-    debugger;
     this.DCPropagation();
   }
 

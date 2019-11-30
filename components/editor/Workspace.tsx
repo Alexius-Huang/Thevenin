@@ -7,7 +7,7 @@ import classnames from 'classnames';
 
 import { WorkspaceProps } from './Workspace.d';
 import { EC } from '../../lib/Electronic';
-import { ElectronicProps } from '../electronics/types';
+import { ElectronicProps } from '../electronics/index.types';
 
 import { DestructuredStore, ToolMode } from '../../reducers/State.d';
 import * as actions from '../../actions/Workspace';

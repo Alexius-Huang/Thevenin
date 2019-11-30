@@ -1,4 +1,4 @@
-import './electronics.scss';
+import './index.scss';
 
 export * from './DCSource';
 export * from './Ground';
