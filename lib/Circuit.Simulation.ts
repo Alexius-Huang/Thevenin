@@ -9,6 +9,7 @@ export default class CircuitSimulation {
   public run() {
     this.supernodePropagation();
     this.nodalAnalysis();
+    debugger;
     this.DCPropagation();
   }
 
@@ -32,27 +33,26 @@ export default class CircuitSimulation {
           const linkedNode = nodesMap.get(negativePinName);
           if (!linkedNode) throw new Error(`DC Source isn't connected correctly!`);
 
+          edge.nodesMap.set(negativePinName, node);
+
           node.boostVoltageBias(bias);
 
           linkedNode.info.forEach(info => {
-            node.info.add({ ...info });
+            const clonedInfo = { ...info };
+            node.info.add(clonedInfo);
 
-            if (edge.electronic.is(EC.DCSource)) {
-              edge.nodesMap.set(pinName, node);
-            }
+            const linkedEdge = this.graph.findEdge(info.edgeID);
+            linkedEdge.nodesMap.set(clonedInfo.pinName, node);
+            linkedEdge.pinsMap.set(clonedInfo.pinName, clonedInfo);
 
-            if (node.edgePinInfoMap.has(info.edgeID)) {
-              const pinInfoMap = node.edgePinInfoMap.get(info.edgeID) as PinInfoMap;
-              pinInfoMap.set(info.pinName, info);
+            if (node.edgePinInfoMap.has(clonedInfo.edgeID)) {
+              const pinInfoMap = node.edgePinInfoMap.get(clonedInfo.edgeID) as PinInfoMap;
+              pinInfoMap.set(clonedInfo.pinName, clonedInfo);
             } else {
-              node.edgePinInfoMap.set(info.edgeID, new Map([[info.pinName, info]]));
+              node.edgePinInfoMap.set(clonedInfo.edgeID, new Map([[clonedInfo.pinName, clonedInfo]]));
             }
           });
 
-          // Making sure that 'linkedNode' is the same as 'node'
-          linkedNode.isSupernode = true;
-          linkedNode.info = node.info;
-          linkedNode.edgePinInfoMap = node.edgePinInfoMap;
           mergedNodes.add(linkedNode);
         }
       }
@@ -168,10 +168,6 @@ export default class CircuitSimulation {
     let groundNodeLabel: string = 'V1';
 
     const [node1, node2] = Array.from(this.graph.nodes);
-    const labelNodeMap = new Map<string, Node>([
-      ['V1', node1],
-      ['V2', node2],
-    ]);
 
     node1.info.forEach(info => {
       const edge = this.graph.findEdge(info.edgeID);
@@ -197,7 +193,7 @@ export default class CircuitSimulation {
         constant -= info.bias * conductance;
       }
       else if (e.is(EC.Ground)) {
-        node1.voltage = 0;
+        node2.voltage = 0;
         groundNodeLabel = 'V2';
       }
     });
@@ -212,9 +208,9 @@ export default class CircuitSimulation {
 
     const knownInfo = { [groundNodeLabel]: 0 };
     const solutions = Object.assign(eq.solve(knownInfo), knownInfo);
-    Object.keys(solutions).forEach(label => {
-      (labelNodeMap.get(label) as Node).voltage = solutions[label];
-    });
+
+    node1.voltage = solutions['V1'];
+    node2.voltage = solutions['V2'];
   }
 
   private solveMultiNodeCircuit() {
