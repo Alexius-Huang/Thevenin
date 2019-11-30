@@ -1,6 +1,6 @@
 import * as actions from '../actions/Workspace';
 import { reducerWithInitialState as createReducer } from 'typescript-fsa-reducers';
-import State from './State.d';
+import State, { SimulationStatus } from './State.d';
 import Circuit from '../lib/Circuit';
 import Electronic, { createElectronic } from '../lib/Electronic';
 
@@ -19,6 +19,11 @@ const initialState: State = {
   previewComponentIsValid: false,
 
   primaryWiringCoordinate: null,
+
+  simulation: {
+    status: SimulationStatus.PENDING,
+    errorMessage: null,
+  },
 };
 
 export default createReducer(initialState)

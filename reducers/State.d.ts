@@ -7,6 +7,12 @@ export enum ToolMode {
   ADD_WIRE,
 }
 
+export enum SimulationStatus {
+  PENDING,
+  SUCCESS,
+  ERROR,
+}
+
 export type ToolsStoreState = {
   mode: ToolMode;
   selectedComponent: EC | null;
@@ -29,6 +35,12 @@ export type WorkspaceStoreState = {
 
   /* Wiring */
   primaryWiringCoordinate: [number, number] | null;
+
+  /* Simulation Status */
+  simulation: {
+    status: SimulationStatus;
+    errorMessage: string | null;
+  };
 }
 
 export type DestructuredStore = {
