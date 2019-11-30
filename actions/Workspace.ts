@@ -30,4 +30,7 @@ export const setPrimaryWiringCoordinate = createAction<[number, number]>('SET_PR
 export const attachWire = createAction<[number, number]>('ATTACH_WIRE');
 
 /* Simulation Actions */
-export const startCircuitSimulation = createAction('START_CIRCUIT_SIMULATION');
+export const circuitSimulationStart = createAction('CIRCUIT_SIMULATION_START');
+export const circuitSimulationSuccess = createAction('CIRCUIT_SIMULATION_SUCCESS');
+export const circuitSimulationError = createAction<{ message: string; }>('CIRCUIT_SIMULATION_ERROR');
+export const circuitSimulationReset = createAction('CIRCUIT_SIMULATION_RESET');

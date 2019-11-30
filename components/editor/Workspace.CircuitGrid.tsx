@@ -101,7 +101,6 @@ const CircuitGrid: React.FC<CircuitGridProps> = ({
     const unit = circuit.layout[column][row];
     const cuConns = unit.circuitUnitConnections;
     const directions = new Set(cuConns.map(conn => conn.direction));
-    if (directions.size !== 0)console.log(cuConns);
 
     return (
       <g key={key} className="grid-point-group" transform={`translate(${translation})`}>

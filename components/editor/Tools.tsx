@@ -28,7 +28,7 @@ const Tools: React.FC<ToolsProps> = ({ selectedComponent, mode }) => {
   function handleStartSimulation() {
     dispatch(actions.cancelAnyOperation());
     dispatch(workspaceActions.cancelAnyOperation());
-    dispatch(workspaceActions.startCircuitSimulation());
+    dispatch(workspaceActions.circuitSimulationStart());
   }
 
   const basicToolText = mode === ToolMode.ADD_WIRE ?

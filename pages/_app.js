@@ -1,15 +1,16 @@
 // pages/_app.js
-import React from "react";
-import App from "next/app";
+import React from 'react';
+import App from 'next/app';
 
-import withRedux from "next-redux-wrapper";
-import { createStore, applyMiddleware } from "redux";
-import { Provider } from "react-redux";
+import withRedux from 'next-redux-wrapper';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import createSagaMiddleware from 'redux-saga';
 import RootReducer from '../reducers';
+import RootSaga from '../sagas';
 
 import Layout from '../layouts/Default';
-import logger from "redux-logger";
-
+import logger from 'redux-logger';
 
 /**
 * @param {object} initialState
@@ -19,6 +20,8 @@ import logger from "redux-logger";
 * @param {boolean} options.debug User-defined debug mode param
 * @param {string} options.storeKey This key will be used to preserve store in global namespace for safe HMR 
 */
+
+
 const makeStore = (/* options */) => {
   const middlewares = [];
 
@@ -26,7 +29,14 @@ const makeStore = (/* options */) => {
     middlewares.push(logger);
   }
 
-  return createStore(RootReducer, applyMiddleware(...middlewares));
+  const sagaMiddleware = createSagaMiddleware();
+  middlewares.push(sagaMiddleware);
+
+  const store = createStore(RootReducer, applyMiddleware(...middlewares));
+
+  sagaMiddleware.run(RootSaga);
+
+  return store;
 };
 
 class MyApp extends App {

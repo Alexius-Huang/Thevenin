@@ -8,6 +8,7 @@ export enum ToolMode {
 }
 
 export enum SimulationStatus {
+  INACTIVE,
   PENDING,
   SUCCESS,
   ERROR,

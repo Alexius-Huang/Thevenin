@@ -21,7 +21,7 @@ const initialState: State = {
   primaryWiringCoordinate: null,
 
   simulation: {
-    status: SimulationStatus.PENDING,
+    status: SimulationStatus.INACTIVE,
     errorMessage: null,
   },
 };
@@ -97,7 +97,31 @@ export default createReducer(initialState)
   })
 
   /* Simulation Actions */
-  .case(actions.startCircuitSimulation, (state) => {
-    state.circuit.run();
-    return { ...state };
-  });
+  .case(actions.circuitSimulationStart, state => ({
+    ...state,
+    simulation: {
+      status: SimulationStatus.PENDING,
+      errorMessage: null,
+    },
+  }))
+  .case(actions.circuitSimulationSuccess, state => ({
+    ...state,
+    simulation: {
+      status: SimulationStatus.SUCCESS,
+      errorMessage: null,
+    },
+  }))
+  .case(actions.circuitSimulationError, (state, payload) => ({
+    ...state,
+    simulation: {
+      status: SimulationStatus.ERROR,
+      errorMessage: payload.message,
+    },
+  }))
+  .case(actions.circuitSimulationReset, state => ({
+    ...state,
+    simulation: {
+      status: SimulationStatus.INACTIVE,
+      errorMessage: null,
+    },
+  }));
