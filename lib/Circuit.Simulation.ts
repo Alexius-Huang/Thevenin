@@ -7,9 +7,21 @@ export default class CircuitSimulation {
   constructor(public graph: Graph) {}
 
   public run() {
+    if (!this.hasReferencePoint())
+      throw new Error('Circuit must contain `Ground` component as voltage reference point!');
     this.supernodePropagation();
     this.nodalAnalysis();
     this.DCPropagation();
+  }
+
+  public hasReferencePoint() {
+    const edgeArr = Array.from(this.graph.edges.values());
+    for (let i = 0; i < edgeArr.length; i += 1) {
+      const edge = edgeArr[i];
+      if (edge.electronic.is(EC.Ground)) return true;
+    }
+
+    return false;
   }
 
   public supernodePropagation() {

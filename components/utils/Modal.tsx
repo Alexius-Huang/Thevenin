@@ -11,7 +11,7 @@ export type ModalProps = {
 
 const Modal: React.FC<ModalProps> = ({ width, height, active, children, className }) => {
   const innerModalStyle: { [key: string]: string } = {
-    width: '30vw',
+    width: '60vw',
     height: '30vh',
   };
 

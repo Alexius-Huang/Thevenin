@@ -4,6 +4,12 @@
 import Simulation from './Circuit.Simulation';
 
 describe('Lib: Circuit.Simulation', () => {
+  describe('Reference Point Validation', () => {
+    describe('Circuit.Simulation#hasReferencePoint', () => {
+      it.todo('returns true if circuit graph contains the Ground electronic component');
+    });
+  });
+
   describe('Supernode Propagation', () => {
     it('creates supernode whenever linked to the DCSource edge', async () => {
       const examples = (await import('../examples')).default;

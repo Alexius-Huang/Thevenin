@@ -2,11 +2,9 @@ import React from 'react';
 import { NextPage } from 'next';
 import Tools from '../components/editor/Tools';
 import Workspace from '../components/editor/Workspace';
-// import ErrorModal from '../components/utils/Modal.Error';
+import ModalGroup from '../components/editor/ModalGroup';
 
-type EditorProps = {};
-
-const Editor: NextPage<EditorProps> = () => (
+const Editor: NextPage = () => (
   <div className="Editor">
     <aside className="tools-wrapper">
       <Tools>
@@ -18,12 +16,7 @@ const Editor: NextPage<EditorProps> = () => (
       </Workspace>
     </section>
 
-    {/* <ErrorModal
-      active={true}
-      title="Undetermined Circuit"
-      message="Undetermined Circuit"
-      onConfirm={() => console.log('OK')}
-    /> */}
+    <ModalGroup />
 
     <style jsx>{`
       div.Editor {

@@ -6,7 +6,12 @@ export default function* CircuitSimulationTransaction() {
   const state = (yield select(state => state.Workspace)) as WorkspaceStoreState;
   const circuit = state.circuit;
 
-  circuit.run();
+  try {
+    circuit.run();
+  } catch (err) {
+    yield put(actions.circuitSimulationError(err));
+    return;    
+  }
 
   yield put(actions.circuitSimulationSuccess());
 }
