@@ -2,7 +2,7 @@ import * as actions from '../actions/Workspace';
 import { reducerWithInitialState as createReducer } from 'typescript-fsa-reducers';
 import State, { SimulationStatus } from './State.d';
 import Circuit from '../lib/Circuit';
-import Electronic, { createElectronic } from '../lib/Electronic';
+import Electronic, { createElectronic } from '../lib/Circuit.Electronic';
 
 const initialState: State = {
   circuit: new Circuit(7, 7),

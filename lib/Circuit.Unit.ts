@@ -1,6 +1,6 @@
 import { ConnectableDirection } from './circuit.lib';
 import { Connection, ElectronicUnitConnection, CircuitUnitConnection } from './Circuit.Connection';
-import Electronic from './Electronic';
+import Electronic from './Circuit.Electronic';
 
 export enum CircuitUnitType {
   Available,             // all direction

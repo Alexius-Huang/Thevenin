@@ -1,6 +1,6 @@
 import CircuitGraph, { Node, EdgeID, PinInfo, PinInfoMap, CurrentFlow } from './Circuit.Graph';
-import { EC, createElectronic } from './Electronic';
-import { PinName } from './Electronic.Info';
+import { EC, createElectronic } from './Circuit.Electronic';
+import { PinName } from './Circuit.Electronic.Info';
 
 describe('Lib: Circuit.Graph', () => {
   describe('Initialization', () => {

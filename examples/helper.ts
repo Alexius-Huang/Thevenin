@@ -1,5 +1,5 @@
 import Circuit from '../lib/Circuit';
-import Electronic, { Coordinate, EC, createElectronic } from '../lib/Electronic';
+import Electronic, { Coordinate, EC, createElectronic } from '../lib/Circuit.Electronic';
 import Unit from '../lib/Circuit.Unit';
 import { ConnectableDirection } from '../lib/circuit.lib';
 import { Connection } from '../lib/Circuit.Connection';

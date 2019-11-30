@@ -1,5 +1,5 @@
-import { createElectronic, EC } from './Electronic';
-import ElectronicUnit from './Electronic.Unit';
+import { createElectronic, EC } from './Circuit.Electronic';
+import ElectronicUnit from './Circuit.Electronic.Unit';
 
 describe('Lib: Electronic', () => {
   describe('Electronic Component Rotation', () => {

@@ -1,7 +1,7 @@
 import * as actions from '../actions/Tools';
 import { reducerWithInitialState as createReducer } from 'typescript-fsa-reducers';
 import State, { ToolMode } from './State.d';
-import { EC } from '../lib/Electronic';
+import { EC } from '../lib/Circuit.Electronic';
 
 const initialState: State = {
   selectedComponent: null,

@@ -1,6 +1,6 @@
 import Circuit from './Circuit';
 import Unit from './Circuit.Unit';
-import Electronic, { createElectronic, EC, Coordinate } from './Electronic';
+import Electronic, { createElectronic, EC, Coordinate } from './Circuit.Electronic';
 
 let circuit: Circuit;
 let result: Array<Array<Unit>>;

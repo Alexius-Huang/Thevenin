@@ -1,6 +1,6 @@
 import { GUIDGenerator } from './Circuit.Util';
-import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
-import ElectronicInfos, { PinName } from './Electronic.Info';
+import ElectronicUnit, { ElectronicUnitType } from './Circuit.Electronic.Unit';
+import ElectronicInfos, { PinName } from './Circuit.Electronic.Info';
 
 export type Coordinate = [number, number];
 export type ElectronicID = string;

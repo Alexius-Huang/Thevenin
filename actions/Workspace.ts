@@ -1,5 +1,5 @@
 import createAction from './createAction';
-import { EC } from '../lib/Electronic';
+import { EC } from '../lib/Circuit.Electronic';
 
 export const setSize = createAction<{
   height: number;

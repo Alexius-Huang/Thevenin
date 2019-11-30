@@ -1,5 +1,5 @@
 import Circuit from '../lib/Circuit';
-import Electronic from '../lib/Electronic';
+import Electronic from '../lib/Circuit.Electronic';
 import Graph from '../lib/Circuit.Graph';
 import CircuitUnit from '../lib/Circuit.Unit';
 

@@ -1,6 +1,6 @@
 import Graph, { Node, Edge, PinInfoMap, PinInfo, CurrentFlow } from './Circuit.Graph';
 import Equation from './Circuit.Equation';
-import { EC } from './Electronic';
+import { EC } from './Circuit.Electronic';
 import SimultaneousEquations from './Circuit.SimultaneousEquations';
 
 export default class CircuitSimulation {

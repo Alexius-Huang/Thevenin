@@ -5,7 +5,7 @@ import * as ElectronicComponent from '../electronics';
 import classnames from 'classnames';
 
 import { WorkspaceProps } from './Workspace.d';
-import { EC } from '../../lib/Electronic';
+import { EC } from '../../lib/Circuit.Electronic';
 import { ElectronicProps } from '../electronics/index.types';
 
 import { DestructuredStore, ToolMode } from '../../reducers/State.d';

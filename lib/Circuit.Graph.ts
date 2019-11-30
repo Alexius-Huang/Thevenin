@@ -1,5 +1,5 @@
-import Electronic from './Electronic';
-import { PinName } from './Electronic.Info';
+import Electronic from './Circuit.Electronic';
+import { PinName } from './Circuit.Electronic.Info';
 
 export type EdgeID = string;
 export enum CurrentFlow {

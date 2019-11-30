@@ -3,7 +3,7 @@ import { connect, useDispatch } from 'react-redux';
 import classnames from 'classnames';
 import { ToolsStoreState } from '../../reducers/State';
 import { ToolMode } from '../../reducers/State.d';
-import { EC } from '../../lib/Electronic';
+import { EC } from '../../lib/Circuit.Electronic';
 import * as actions from '../../actions/Tools';
 import * as workspaceActions from '../../actions/Workspace';
 import './Tools.scss';

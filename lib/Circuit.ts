@@ -1,6 +1,6 @@
-import Electronic, { Coordinate } from './Electronic';
+import Electronic, { Coordinate } from './Circuit.Electronic';
 import Unit, { CircuitUnitType } from './Circuit.Unit';
-import ElectronicUnit, { ElectronicUnitType } from './Electronic.Unit';
+import ElectronicUnit, { ElectronicUnitType } from './Circuit.Electronic.Unit';
 import Graph, { Node, Edge, PinInfoMap, PinInfo, CurrentFlow } from './Circuit.Graph';
 import CircuitUnit from './Circuit.Unit';
 import { CircuitUnitConnection, Connection } from './Circuit.Connection';

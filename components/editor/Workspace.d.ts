@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Action } from 'redux';
 import { ToolMode } from '../../reducers/State';
-import Electronic, { EC } from '../../lib/Electronic';
+import Electronic, { EC } from '../../lib/Circuit.Electronic';
 import Circuit from '../../lib/Circuit';
 
 export type Coordinate = [number, number];
